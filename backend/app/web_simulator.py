@@ -44,10 +44,10 @@ def get_simulator_html() -> str:
     /* Mobile Device Frame */
     .phone-wrapper {
       width: 100%;
-      max-width: 412px;
-      height: 840px;
+      max-width: 420px;
+      height: 870px;
       background: #FFFFFF;
-      border-radius: 40px;
+      border-radius: 42px;
       box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), 0 0 0 12px #334155;
       display: flex;
       flex-direction: column;
@@ -160,10 +160,68 @@ def get_simulator_html() -> str:
       text-transform: uppercase;
     }
 
-    /* Buttons */
+    /* Profile Card Header */
+    .profile-card {
+      background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+      border: 2px solid #E2E8F0;
+    }
+
+    .profile-stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      background: #F1F5F9;
+      padding: 12px;
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+
+    .profile-stat-box {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .profile-stat-box strong {
+      display: block;
+      font-size: 16px;
+      color: var(--text-main);
+      font-weight: 900;
+      margin-top: 2px;
+    }
+
+    .btn-row-profile {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-scale-quick {
+      flex: 1.3;
+      background: var(--success);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-edit-profile {
+      flex: 1;
+      background: var(--text-main);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    /* Biometric Action Buttons (3 buttons) */
     .btn-action-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn-bio {
@@ -171,7 +229,7 @@ def get_simulator_html() -> str:
       background: #EFF6FF;
       border: 2px solid #BFDBFE;
       border-radius: 14px;
-      padding: 14px 10px;
+      padding: 12px 6px;
       text-align: center;
       cursor: pointer;
       transition: transform 0.1s;
@@ -186,19 +244,24 @@ def get_simulator_html() -> str:
       border-color: #FECACA;
     }
 
+    .btn-bio-green {
+      background: #F0FDF4;
+      border-color: #BBF7D0;
+    }
+
     .btn-bio-icon {
-      font-size: 28px;
+      font-size: 26px;
       margin-bottom: 4px;
     }
 
     .btn-bio-title {
-      font-size: 13px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 900;
       color: var(--text-main);
     }
 
     .btn-bio-val {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       color: var(--text-muted);
       margin-top: 2px;
@@ -285,6 +348,8 @@ def get_simulator_html() -> str:
       border-radius: 28px 28px 0 0;
       padding: 24px;
       animation: slideUp 0.25s ease-out;
+      max-height: 85%;
+      overflow-y: auto;
     }
 
     @keyframes slideUp {
@@ -332,6 +397,34 @@ def get_simulator_html() -> str:
 
     .btn-success {
       background: var(--success);
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--text-main);
+      background: #F8FAFC;
+    }
+
+    .form-row-2 {
+      display: flex;
+      gap: 10px;
     }
 
     /* Grocery list styling */
@@ -416,7 +509,38 @@ def get_simulator_html() -> str:
         <p id="alert-msg">Instrucciones inmediatas.</p>
       </div>
 
-      <!-- Tarjeta 1: Mediciones con OCR en 2 toques -->
+      <!-- TARJETA 0: DATOS DE LA PERSONA Y ESTADO PONDERAL -->
+      <div class="card profile-card">
+        <div class="card-header">
+          <div>
+            <div id="card-fullname" class="card-title">Ramón García Fernández</div>
+            <div id="card-subdetails" class="card-subtitle">58 años • Estatura: 172 cm</div>
+          </div>
+          <span id="badge-bmi-category" class="badge" style="background: var(--warning);">Sobrepeso</span>
+        </div>
+
+        <div class="profile-stats-grid">
+          <div class="profile-stat-box">
+            <span>Peso Actual:</span>
+            <strong><span id="disp-profile-weight">84.5</span> kg</strong>
+          </div>
+          <div class="profile-stat-box">
+            <span>Índice Masa Corporal:</span>
+            <strong>IMC <span id="disp-profile-bmi">28.56</span></strong>
+          </div>
+        </div>
+
+        <div class="btn-row-profile">
+          <button class="btn-scale-quick" onclick="openCaptureModal('WEIGHT')">
+            📸 FOTO BÁSCULA
+          </button>
+          <button class="btn-edit-profile" onclick="openProfileModal()">
+            ✏️ EDITAR DATOS
+          </button>
+        </div>
+      </div>
+
+      <!-- Tarjeta 1: Mediciones del Día con OCR en 2 toques (3 botones) -->
       <div class="card">
         <div class="card-header">
           <div>
@@ -435,6 +559,11 @@ def get_simulator_html() -> str:
             <div class="btn-bio-icon">💓</div>
             <div class="btn-bio-title">TENSIÓMETRO</div>
             <div id="disp-bp" class="btn-bio-val">124/82 mmHg</div>
+          </div>
+          <div class="btn-bio btn-bio-green" onclick="openCaptureModal('WEIGHT')">
+            <div class="btn-bio-icon">⚖️</div>
+            <div class="btn-bio-title">BÁSCULA</div>
+            <div id="disp-scale-btn" class="btn-bio-val">84.5 kg</div>
           </div>
         </div>
       </div>
@@ -495,6 +624,20 @@ def get_simulator_html() -> str:
 
     <!-- Active Screen: Métricas -->
     <div id="tab-metricas" class="screen-content tab-view" style="display:none;">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Control Ponderal e IMC</div>
+            <div class="card-subtitle">Evolución del peso corporal</div>
+          </div>
+          <span id="badge-metric-bmi" class="badge" style="background:var(--warning);">IMC 28.56</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; margin-top:4px;">
+          <div>Peso actual: <strong id="disp-metric-weight">84.5 kg</strong></div>
+          <div>Estatura: <strong id="disp-metric-height">172 cm</strong></div>
+        </div>
+      </div>
+
       <div class="card">
         <div class="card-header">
           <div>
@@ -598,7 +741,7 @@ def get_simulator_html() -> str:
           </div>
         </div>
         <p style="font-size:13px; color:var(--text-muted); line-height:18px; margin-bottom:12px;">
-          Resumen ejecutivo con Tiempo en Rango (TIR), medias tensionales, adherencia farmacológica y pasos pasivos.
+          Resumen ejecutivo con filiación completa, Tiempo en Rango (TIR), medias tensionales, adherencia farmacológica y evolución ponderal.
         </p>
         <button class="btn-primary" onclick="downloadReport()">
           📄 DESCARGAR / VER INFORME PDF
@@ -607,10 +750,13 @@ def get_simulator_html() -> str:
 
       <div class="card" style="font-size:13px;">
         <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f1f5f9;">
-          <span>Paciente:</span> <strong>Ramón (58 años)</strong>
+          <span>Paciente:</span> <strong id="report-patient-name">Ramón García Fernández</strong>
         </div>
         <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f1f5f9;">
-          <span>IMC Actual:</span> <strong>28.5 kg/m² (-1.2 kg)</strong>
+          <span>Edad y Talla:</span> <strong id="report-patient-age-height">58 años • 172 cm</strong>
+        </div>
+        <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f1f5f9;">
+          <span>Peso e IMC:</span> <strong id="report-patient-weight-bmi">84.5 kg • IMC 28.56</strong>
         </div>
         <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #f1f5f9;">
           <span>Glucemia TIR:</span> <strong style="color:var(--success);">85% en objetivo</strong>
@@ -644,7 +790,7 @@ def get_simulator_html() -> str:
       </button>
     </div>
 
-    <!-- Modal de Captura OCR (Simulación de 2 toques) -->
+    <!-- Modal de Captura OCR (Simulación de 2 toques: Glucómetro, Tensiómetro, Báscula) -->
     <div id="capture-modal" class="modal-overlay">
       <div class="modal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -655,7 +801,7 @@ def get_simulator_html() -> str:
         <div id="view-snap">
           <div class="camera-frame">
             <h3 id="camera-prompt">Encuadre la pantalla aquí</h3>
-            <p>El algoritmo extraerá automáticamente los números</p>
+            <p id="camera-subtext">El algoritmo extraerá automáticamente los números</p>
           </div>
           <button class="btn-primary" onclick="simulateSnap()">
             📸 1. CAPTURAR PANTALLA
@@ -664,11 +810,11 @@ def get_simulator_html() -> str:
 
         <div id="view-confirm" style="display:none;">
           <div style="background:#DCFCE7; padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px; color:#166534; font-weight:700;">
-            ✓ Valor detectado con 97% de precisión óptica
+            ✓ Valor detectado con 98% de precisión óptica
           </div>
           <div style="text-align:center; padding:14px; background:#F8FAFC; border-radius:12px; margin-bottom:14px; border:1.5px solid var(--border);">
-            <div id="detected-val" style="font-size:42px; font-weight:900; color:var(--text-main);">118</div>
-            <div id="detected-unit" style="font-size:14px; font-weight:700; color:var(--text-muted);">mg/dL (Glucemia)</div>
+            <div id="detected-val" style="font-size:42px; font-weight:900; color:var(--text-main);">84.2</div>
+            <div id="detected-unit" style="font-size:14px; font-weight:700; color:var(--text-muted);">kg (Báscula Digital)</div>
           </div>
           <button class="btn-primary btn-success" onclick="saveReading()">
             ✓ 2. CONFIRMAR Y GUARDAR
@@ -676,11 +822,116 @@ def get_simulator_html() -> str:
         </div>
       </div>
     </div>
+
+    <!-- Modal para Editar Datos Personales y Ponderales -->
+    <div id="profile-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-size:18px; font-weight:800; color:var(--text-main);">Ficha de la Persona</h3>
+          <span style="cursor:pointer; font-size:20px; font-weight:bold;" onclick="closeProfileModal()">✕</span>
+        </div>
+
+        <div class="form-group">
+          <label>Nombre:</label>
+          <input id="input-first-name" class="form-control" type="text" value="Ramón">
+        </div>
+
+        <div class="form-group">
+          <label>Apellidos:</label>
+          <input id="input-last-name" class="form-control" type="text" value="García Fernández">
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group" style="flex:1;">
+            <label>Edad (años):</label>
+            <input id="input-age" class="form-control" type="number" value="58">
+          </div>
+          <div class="form-group" style="flex:1;">
+            <label>Estatura (cm):</label>
+            <input id="input-height" class="form-control" type="number" value="172">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Peso Actual (kg):</label>
+          <input id="input-weight" class="form-control" type="number" step="0.1" value="84.5">
+          <p style="font-size:11.5px; color:var(--text-muted); margin-top:4px;">
+            * Consejo: También puede subir el peso directamente con una foto de la báscula.
+          </p>
+        </div>
+
+        <button class="btn-primary" onclick="saveProfileData()" style="margin-top:10px;">
+          GUARDAR DATOS PERSONALES
+        </button>
+      </div>
+    </div>
   </div>
 
   <script>
+    // Global Patient State
+    let patient = {
+      firstName: "Ramón",
+      lastName: "García Fernández",
+      fullName: "Ramón García Fernández",
+      age: 58,
+      heightCm: 172.0,
+      weightKg: 84.5,
+      bmi: 28.56,
+      bmiCategory: "Sobrepeso (Grado II)"
+    };
+
     let currentMetric = 'GLUCOSE';
     let steps = 2850;
+
+    function calculateBmi(weight, height) {
+      const hM = height / 100.0;
+      const bmi = Math.round((weight / (hM * hM)) * 100) / 100;
+      let cat = "Normopeso";
+      if (bmi < 18.5) cat = "Bajo peso";
+      else if (bmi < 25.0) cat = "Normopeso";
+      else if (bmi < 30.0) cat = "Sobrepeso (Grado II)";
+      else if (bmi < 35.0) cat = "Obesidad (Grado I)";
+      else if (bmi < 40.0) cat = "Obesidad (Grado II)";
+      else cat = "Obesidad Mórbida (Grado III)";
+      return { bmi, cat };
+    }
+
+    function updateProfileUI() {
+      const { bmi, cat } = calculateBmi(patient.weightKg, patient.heightCm);
+      patient.bmi = bmi;
+      patient.bmiCategory = cat;
+
+      document.getElementById('card-fullname').innerText = patient.fullName;
+      document.getElementById('card-subdetails').innerText = patient.age + ' años • Estatura: ' + patient.heightCm + ' cm';
+      document.getElementById('disp-profile-weight').innerText = patient.weightKg;
+      document.getElementById('disp-profile-bmi').innerText = patient.bmi;
+      document.getElementById('disp-scale-btn').innerText = patient.weightKg + ' kg';
+      document.getElementById('badge-bmi-category').innerText = patient.bmiCategory;
+      document.getElementById('badge-bmi-category').style.background = patient.bmi < 25 ? 'var(--success)' : 'var(--warning)';
+
+      // Update Métricas tab
+      document.getElementById('disp-metric-weight').innerText = patient.weightKg + ' kg';
+      document.getElementById('disp-metric-height').innerText = patient.heightCm + ' cm';
+      document.getElementById('badge-metric-bmi').innerText = 'IMC ' + patient.bmi;
+
+      // Update Informe tab
+      document.getElementById('report-patient-name').innerText = patient.fullName;
+      document.getElementById('report-patient-age-height').innerText = patient.age + ' años • ' + patient.heightCm + ' cm';
+      document.getElementById('report-patient-weight-bmi').innerText = patient.weightKg + ' kg • IMC ' + patient.bmi;
+
+      // Notify backend if available
+      fetch('/api/v1/patient', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: patient.firstName,
+          last_name: patient.lastName,
+          age: patient.age,
+          height_cm: patient.heightCm,
+          current_weight_kg: patient.weightKg
+        })
+      }).catch(() => {});
+    }
 
     function switchTab(tabId, btn) {
       document.querySelectorAll('.tab-view').forEach(el => el.style.display = 'none');
@@ -691,8 +942,20 @@ def get_simulator_html() -> str:
 
     function openCaptureModal(type) {
       currentMetric = type;
-      document.getElementById('modal-title').innerText = type === 'GLUCOSE' ? 'Glucómetro Digital' : 'Tensiómetro Digital';
-      document.getElementById('camera-prompt').innerText = type === 'GLUCOSE' ? 'Encuadre la pantalla del Glucómetro' : 'Encuadre la pantalla del Tensiómetro';
+      if (type === 'GLUCOSE') {
+        document.getElementById('modal-title').innerText = 'Glucómetro Digital';
+        document.getElementById('camera-prompt').innerText = 'Encuadre la pantalla del Glucómetro';
+        document.getElementById('camera-subtext').innerText = 'Extracción automática de mg/dL';
+      } else if (type === 'BP') {
+        document.getElementById('modal-title').innerText = 'Tensiómetro Digital';
+        document.getElementById('camera-prompt').innerText = 'Encuadre la pantalla del Tensiómetro';
+        document.getElementById('camera-subtext').innerText = 'Extracción de Sistólica/Diastólica en mmHg';
+      } else if (type === 'WEIGHT') {
+        document.getElementById('modal-title').innerText = 'Báscula Digital de Peso';
+        document.getElementById('camera-prompt').innerText = 'Encuadre la pantalla de la Báscula';
+        document.getElementById('camera-subtext').innerText = 'Extracción óptica de peso en kg y cálculo de IMC';
+      }
+
       document.getElementById('view-snap').style.display = 'block';
       document.getElementById('view-confirm').style.display = 'none';
       document.getElementById('capture-modal').style.display = 'flex';
@@ -702,31 +965,69 @@ def get_simulator_html() -> str:
       document.getElementById('capture-modal').style.display = 'none';
     }
 
+    function openProfileModal() {
+      document.getElementById('input-first-name').value = patient.firstName;
+      document.getElementById('input-last-name').value = patient.lastName;
+      document.getElementById('input-age').value = patient.age;
+      document.getElementById('input-height').value = patient.heightCm;
+      document.getElementById('input-weight').value = patient.weightKg;
+      document.getElementById('profile-modal').style.display = 'flex';
+    }
+
+    function closeProfileModal() {
+      document.getElementById('profile-modal').style.display = 'none';
+    }
+
+    function saveProfileData() {
+      patient.firstName = document.getElementById('input-first-name').value.trim() || patient.firstName;
+      patient.lastName = document.getElementById('input-last-name').value.trim() || patient.lastName;
+      patient.fullName = patient.firstName + ' ' + patient.lastName;
+      patient.age = parseInt(document.getElementById('input-age').value, 10) || patient.age;
+      patient.heightCm = parseFloat(document.getElementById('input-height').value) || patient.heightCm;
+      patient.weightKg = parseFloat(document.getElementById('input-weight').value) || patient.weightKg;
+
+      updateProfileUI();
+      closeProfileModal();
+
+      const banner = document.getElementById('clinical-alert-banner');
+      banner.classList.add('show');
+      document.getElementById('alert-title').innerText = '✓ DATOS ACTUALIZADOS';
+      document.getElementById('alert-msg').innerText = 'Ficha actualizada: ' + patient.fullName + ' • IMC recalculado: ' + patient.bmi;
+      setTimeout(() => banner.classList.remove('show'), 3500);
+    }
+
     function simulateSnap() {
       document.getElementById('view-snap').style.display = 'none';
       document.getElementById('view-confirm').style.display = 'block';
       if (currentMetric === 'GLUCOSE') {
         document.getElementById('detected-val').innerText = '112';
         document.getElementById('detected-unit').innerText = 'mg/dL (Glucosa en Ayunas)';
-      } else {
+      } else if (currentMetric === 'BP') {
         document.getElementById('detected-val').innerText = '122/80';
         document.getElementById('detected-unit').innerText = 'mmHg (Sistólica / Diastólica)';
+      } else if (currentMetric === 'WEIGHT') {
+        document.getElementById('detected-val').innerText = '84.1';
+        document.getElementById('detected-unit').innerText = 'kg (Foto de Báscula Digital)';
       }
     }
 
     function saveReading() {
       if (currentMetric === 'GLUCOSE') {
         document.getElementById('disp-glucose').innerText = '112 mg/dL';
-      } else {
+      } else if (currentMetric === 'BP') {
         document.getElementById('disp-bp').innerText = '122/80 mmHg';
+      } else if (currentMetric === 'WEIGHT') {
+        patient.weightKg = 84.1;
+        updateProfileUI();
       }
       closeCaptureModal();
       
-      // Clinical alert simulation test
       const banner = document.getElementById('clinical-alert-banner');
       banner.classList.add('show');
-      document.getElementById('alert-title').innerText = '✓ REGISTRO VALIDADO';
-      document.getElementById('alert-msg').innerText = 'Su medición está dentro de la meta clínica (70-130 mg/dL y <130/80 mmHg).';
+      document.getElementById('alert-title').innerText = '✓ REGISTRO GUARDADO';
+      document.getElementById('alert-msg').innerText = currentMetric === 'WEIGHT' 
+        ? 'Peso de 84.1 kg guardado desde foto de la báscula. IMC actualizado a ' + patient.bmi + '.'
+        : 'Su medición está dentro de la meta clínica de control vascular.';
       setTimeout(() => banner.classList.remove('show'), 4000);
     }
 
@@ -756,6 +1057,9 @@ def get_simulator_html() -> str:
     function downloadReport() {
       window.open('/api/v1/reports/pdf-html', '_blank');
     }
+
+    // Initialize UI on load
+    updateProfileUI();
   </script>
 </body>
 </html>

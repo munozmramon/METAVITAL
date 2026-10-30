@@ -9,12 +9,15 @@ import {
 
 export const INITIAL_PATIENT: PatientProfile = {
   id: 'pat-001',
-  name: 'Ramón',
+  firstName: 'Ramón',
+  lastName: 'García Fernández',
+  name: 'Ramón García Fernández',
   age: 58,
   gender: 'MALE',
   heightCm: 172,
   currentWeightKg: 84.5,
   bmi: 28.56,
+  bmiCategory: 'Sobrepeso (Grado II)',
   targetGlucoseMin: 70,
   targetGlucoseMax: 130,
   targetSystolicMax: 130,

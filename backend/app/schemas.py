@@ -63,3 +63,25 @@ class ClinicalReportRequest(BaseModel):
     patient_id: str
     period_days: int = 30
 
+
+class PatientProfileUpdate(BaseModel):
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
+    age: Optional[int] = None
+    height_cm: Optional[float] = None
+    current_weight_kg: Optional[float] = None
+
+
+class PatientProfileSchema(BaseModel):
+    id: str
+    first_name: str
+    last_name: str
+    full_name: str
+    age: int
+    gender: str
+    height_cm: float
+    current_weight_kg: float
+    bmi: float
+    bmi_category: str
+
+

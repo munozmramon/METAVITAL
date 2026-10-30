@@ -95,12 +95,15 @@ export interface ClinicalAlert {
 
 export interface PatientProfile {
   id: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  name: string; // Nombre completo (firstName + lastName)
   age: number;
   gender: 'MALE' | 'FEMALE';
   heightCm: number;
   currentWeightKg: number;
   bmi: number;
+  bmiCategory: string; // ej. "Normopeso", "Sobrepeso", "Obesidad Grado I"
   targetGlucoseMin: number; // default 70
   targetGlucoseMax: number; // default 130
   targetSystolicMax: number; // default 130

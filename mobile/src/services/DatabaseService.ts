@@ -37,6 +37,42 @@ export class DatabaseService {
     return this.patient;
   }
 
+  public static calculateBMI(weightKg: number, heightCm: number): { bmi: number; category: string } {
+    const heightM = heightCm / 100;
+    const bmi = Math.round((weightKg / (heightM * heightM)) * 100) / 100;
+    let category = 'Normopeso';
+    if (bmi < 18.5) category = 'Bajo peso';
+    else if (bmi < 25.0) category = 'Normopeso';
+    else if (bmi < 30.0) category = 'Sobrepeso (Grado II)';
+    else if (bmi < 35.0) category = 'Obesidad (Grado I)';
+    else if (bmi < 40.0) category = 'Obesidad (Grado II)';
+    else category = 'Obesidad Mórbida (Grado III)';
+    return { bmi, category };
+  }
+
+  public static async updatePatientProfile(updates: Partial<PatientProfile>): Promise<PatientProfile> {
+    const updated = { ...this.patient, ...updates };
+    
+    // Recalculate full name if first or last name changed
+    if (updates.firstName || updates.lastName) {
+      const fName = updates.firstName ?? this.patient.firstName;
+      const lName = updates.lastName ?? this.patient.lastName;
+      updated.name = `${fName} ${lName}`.trim();
+    }
+
+    // Recalculate BMI and category
+    const weight = updates.currentWeightKg ?? this.patient.currentWeightKg;
+    const height = updates.heightCm ?? this.patient.heightCm;
+    const { bmi, category } = this.calculateBMI(weight, height);
+    updated.currentWeightKg = weight;
+    updated.heightCm = height;
+    updated.bmi = bmi;
+    updated.bmiCategory = category;
+
+    this.patient = updated;
+    return this.patient;
+  }
+
   public static async getBiometrics(): Promise<BiometricReading[]> {
     return [...this.biometrics].sort(
       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
@@ -49,6 +85,12 @@ export class DatabaseService {
       id: `bio-${Date.now()}`,
     };
     this.biometrics.unshift(newRecord);
+
+    // If the reading is a weight measurement, update the patient's current weight and BMI
+    if (reading.metricType === 'WEIGHT') {
+      await this.updatePatientProfile({ currentWeightKg: reading.valuePrimary });
+    }
+
     return newRecord;
   }
 

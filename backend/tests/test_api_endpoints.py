@@ -10,7 +10,9 @@ from app.main import (
     add_medication, 
     log_adherence, 
     generate_clinical_report, 
-    health_check
+    health_check,
+    get_patient,
+    update_patient
 )
 from app.schemas import (
     BiometricReadingCreate, 
@@ -19,7 +21,8 @@ from app.schemas import (
     CaptureMethod,
     MedicationCreate,
     AdherenceLogCreate,
-    ClinicalReportRequest
+    ClinicalReportRequest,
+    PatientProfileUpdate
 )
 from app.ocr_processor import MedicalOCRProcessor
 
@@ -117,6 +120,50 @@ class TestAPIEndpointsAndOCR(unittest.TestCase):
         self.assertIsNotNone(glu_parsed)
         self.assertEqual(glu_parsed["metric_type"], "GLUCOSE")
         self.assertEqual(glu_parsed["value_primary"], 114)
+
+        # Scale (Weight) display string from scale photo
+        scale_parsed = MedicalOCRProcessor.parse_screen_text("84.5 KG BASCULA")
+        self.assertIsNotNone(scale_parsed)
+        self.assertEqual(scale_parsed["metric_type"], "WEIGHT")
+        self.assertEqual(scale_parsed["value_primary"], 84.5)
+
+    def test_patient_profile_management(self):
+        pat_res = get_patient()
+        self.assertTrue(pat_res["success"])
+        self.assertEqual(pat_res["patient"]["first_name"], "Ramón")
+
+        # Update patient: name, last name, age, height, weight
+        update_data = PatientProfileUpdate(
+            first_name="Ramón",
+            last_name="García Fernández",
+            age=59,
+            height_cm=175.0,
+            current_weight_kg=81.0
+        )
+        up_res = update_patient(update_data)
+        self.assertTrue(up_res["success"])
+        self.assertEqual(up_res["patient"]["full_name"], "Ramón García Fernández")
+        self.assertEqual(up_res["patient"]["age"], 59)
+        self.assertEqual(up_res["patient"]["height_cm"], 175.0)
+        self.assertEqual(up_res["patient"]["current_weight_kg"], 81.0)
+        # BMI = 81 / (1.75^2) = 81 / 3.0625 = 26.45
+        self.assertAlmostEqual(up_res["patient"]["bmi"], 26.45, places=2)
+        self.assertEqual(up_res["patient"]["bmi_category"], "Sobrepeso (Grado II)")
+
+    def test_record_weight_updates_patient_bmi(self):
+        # Emulate scale reading
+        reading = BiometricReadingCreate(
+            patient_id="pat-001",
+            metric_type=MetricType.WEIGHT,
+            value_primary=79.5,
+            context=MeasurementContext.FASTING,
+            capture_method=CaptureMethod.OCR_CAMERA,
+            timestamp=datetime.now(timezone.utc)
+        )
+        res = record_biometric_reading(reading)
+        self.assertTrue(res["success"])
+        pat_res = get_patient()
+        self.assertEqual(pat_res["patient"]["current_weight_kg"], 79.5)
 
 
 if __name__ == '__main__':

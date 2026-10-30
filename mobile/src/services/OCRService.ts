@@ -60,7 +60,22 @@ export class OCRService {
       }
     }
 
-    // 2. Check for Glucose Pattern (e.g. "112 MG/DL" or single prominent number between 30 and 550)
+    // 2. Check for Scale (Weight) Pattern (e.g. "84.5 KG", "84,5 kg", "84.5")
+    const weightMatch = cleanedText.match(/(\b\d{2,3}(?:[.,]\d)?\b)\s*(?:KG|KGS|KILOS)?/);
+    const hasKgUnit = cleanedText.includes('KG') || cleanedText.includes('KILO');
+    if (weightMatch && hasKgUnit) {
+      const val = parseFloat(weightMatch[1].replace(',', '.'));
+      if (val >= 25.0 && val <= 350.0) {
+        return {
+          detectedMetric: 'WEIGHT',
+          primaryValue: val,
+          confidence: 0.96,
+          rawText: ocrRawText,
+        };
+      }
+    }
+
+    // 3. Check for Glucose Pattern (e.g. "112 MG/DL" or single prominent number between 30 and 550)
     const glucoseUnitMatch = cleanedText.match(/(\d{2,3})\s*(?:MG\/DL|MG\s*DL|MGDL)/);
     if (glucoseUnitMatch) {
       const val = parseInt(glucoseUnitMatch[1], 10);
@@ -132,6 +147,13 @@ export class OCRService {
         tertiaryValue: 71,
         confidence: 0.95,
         rawText: 'SYS 124 DIA 82 PULSE 71 mmHg',
+      };
+    } else if (presetType === 'WEIGHT') {
+      return {
+        detectedMetric: 'WEIGHT',
+        primaryValue: 84.2,
+        confidence: 0.98,
+        rawText: '84.2 KG BASCULA DIGITAL',
       };
     }
 

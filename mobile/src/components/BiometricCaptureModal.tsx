@@ -36,6 +36,26 @@ export const BiometricCaptureModal: React.FC<BiometricCaptureModalProps> = ({
   const [confidence, setConfidence] = useState<number>(0.96);
 
   const isGlucose = metricType === 'GLUCOSE';
+  const isWeight = metricType === 'WEIGHT';
+  const isBP = metricType === 'BLOOD_PRESSURE';
+
+  const modalTitle = isGlucose 
+    ? 'Escaneo de Glucómetro' 
+    : isWeight 
+    ? 'Escaneo de Báscula Digital' 
+    : 'Escaneo de Tensiómetro';
+
+  const targetPrompt = isGlucose
+    ? 'Encuadre la pantalla del glucómetro aquí'
+    : isWeight
+    ? 'Encuadre la pantalla digital de la báscula aquí'
+    : 'Encuadre la pantalla del tensiómetro digital aquí';
+
+  const targetSub = isGlucose
+    ? 'Detección óptica automática (mg/dL)'
+    : isWeight
+    ? 'Detección óptica de peso corporal (kg) y recálculo de IMC'
+    : 'Detección óptica de presión (mmHg) y pulso';
 
   const handleSimulateOCRScan = async () => {
     setStep('PROCESSING');
@@ -68,7 +88,7 @@ export const BiometricCaptureModal: React.FC<BiometricCaptureModalProps> = ({
           {/* Header */}
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>
-              {isGlucose ? 'Escaneo de Glucómetro' : 'Escaneo de Tensiómetro'}
+              {modalTitle}
             </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
               <Text style={styles.closeButtonText}>✕</Text>
@@ -80,12 +100,10 @@ export const BiometricCaptureModal: React.FC<BiometricCaptureModalProps> = ({
               <View style={styles.cameraViewport}>
                 <View style={styles.scanTargetBox}>
                   <Text style={styles.targetInstruction}>
-                    {isGlucose 
-                      ? 'Encuadre la pantalla del glucómetro aquí'
-                      : 'Encuadre la pantalla del tensiómetro digital aquí'}
+                    {targetPrompt}
                   </Text>
                   <Text style={styles.targetSub}>
-                    Detección óptica automática (mg/dL y mmHg)
+                    {targetSub}
                   </Text>
                 </View>
               </View>
@@ -126,12 +144,27 @@ export const BiometricCaptureModal: React.FC<BiometricCaptureModalProps> = ({
                     <TextInput
                       style={styles.largeInput}
                       value={primaryValue.toString()}
-                      onChangeText={(val) => setPrimaryValue(parseInt(val, 10) || 0)}
+                      onChangeText={(val) => setPrimaryValue(parseFloat(val) || 0)}
                       keyboardType="numeric"
                       accessibilityLabel="Valor de glucosa en mg por decilitro"
                     />
                     <Text style={styles.unitText}>mg/dL</Text>
                   </View>
+                </View>
+              ) : isWeight ? (
+                <View style={styles.valueDisplayBox}>
+                  <Text style={styles.valueLabel}>Peso detectado en báscula:</Text>
+                  <View style={styles.numberRow}>
+                    <TextInput
+                      style={styles.largeInput}
+                      value={primaryValue.toString()}
+                      onChangeText={(val) => setPrimaryValue(parseFloat(val) || 0)}
+                      keyboardType="decimal-pad"
+                      accessibilityLabel="Valor de peso en kilogramos"
+                    />
+                    <Text style={styles.unitText}>kg</Text>
+                  </View>
+                  <Text style={styles.subtext}>Se recalculará automáticamente su IMC</Text>
                 </View>
               ) : (
                 <View style={styles.valueDisplayBox}>

@@ -74,7 +74,22 @@ class MedicalOCRProcessor:
                     "confidence": 0.96
                 }
 
-        # 2. Glucose Pattern: "114 MG/DL" or single isolated number 30-500
+        # 2. Digital Scale (Weight) Pattern: "84.5 KG", "84,5 kg" or "PESO: 84.5"
+        weight_match = re.search(r'(\d{2,3}(?:[.,]\d)?)\s*(?:KG|KGS|KILOS)?', cleaned)
+        has_kg = "KG" in cleaned or "KILO" in cleaned or "BASCULA" in cleaned or "PESO" in cleaned
+        if weight_match and has_kg:
+            val = float(weight_match.group(1).replace(",", "."))
+            if 25.0 <= val <= 350.0:
+                return {
+                    "metric_type": "WEIGHT",
+                    "value_primary": val,
+                    "value_secondary": None,
+                    "value_tertiary": None,
+                    "unit": "kg",
+                    "confidence": 0.97
+                }
+
+        # 3. Glucose Pattern: "114 MG/DL" or single isolated number 30-500
         glu_match = re.search(r'(\d{2,3})\s*(?:MG\/DL|MG\s*DL|MGDL)?', cleaned)
         if glu_match:
             val = int(glu_match.group(1))
@@ -89,3 +104,4 @@ class MedicalOCRProcessor:
                 }
 
         return None
+

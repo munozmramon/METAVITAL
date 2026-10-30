@@ -4,7 +4,9 @@ import {
   Text, 
   ScrollView, 
   StyleSheet, 
-  TouchableOpacity 
+  TouchableOpacity,
+  Modal,
+  TextInput
 } from 'react-native';
 import { AccessibleCard } from '../components/AccessibleCard';
 import { BiometricCaptureModal } from '../components/BiometricCaptureModal';
@@ -20,7 +22,8 @@ import {
   Medication, 
   AdherenceLog, 
   StepActivity, 
-  ClinicalAlert 
+  ClinicalAlert,
+  PatientProfile
 } from '../types';
 
 export const TodayScreen: React.FC = () => {
@@ -28,21 +31,37 @@ export const TodayScreen: React.FC = () => {
   const [activeMetricType, setActiveMetricType] = useState<MetricType>('GLUCOSE');
   const [activeAlert, setActiveAlert] = useState<ClinicalAlert | null>(null);
 
+  const [patient, setPatient] = useState<PatientProfile | null>(null);
   const [biometrics, setBiometrics] = useState<BiometricReading[]>([]);
   const [medications, setMedications] = useState<Medication[]>([]);
   const [adherenceLogs, setAdherenceLogs] = useState<AdherenceLog[]>([]);
   const [stepActivity, setStepActivity] = useState<StepActivity | null>(null);
 
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [formFirstName, setFormFirstName] = useState('');
+  const [formLastName, setFormLastName] = useState('');
+  const [formAge, setFormAge] = useState('');
+  const [formHeight, setFormHeight] = useState('');
+  const [formWeight, setFormWeight] = useState('');
+
   const loadData = async () => {
+    const pat = await DatabaseService.getPatient();
     const bios = await DatabaseService.getBiometrics();
     const meds = await DatabaseService.getMedications();
     const adhs = await DatabaseService.getAdherenceLogs();
     const steps = await DatabaseService.getStepActivity();
 
+    setPatient(pat);
     setBiometrics(bios);
     setMedications(meds);
     setAdherenceLogs(adhs);
     setStepActivity(steps);
+
+    setFormFirstName(pat.firstName);
+    setFormLastName(pat.lastName);
+    setFormAge(pat.age.toString());
+    setFormHeight(pat.heightCm.toString());
+    setFormWeight(pat.currentWeightKg.toString());
   };
 
   useEffect(() => {
@@ -52,6 +71,18 @@ export const TodayScreen: React.FC = () => {
   const handleOpenCapture = (type: MetricType) => {
     setActiveMetricType(type);
     setModalVisible(true);
+  };
+
+  const handleSaveProfile = async () => {
+    const updated = await DatabaseService.updatePatientProfile({
+      firstName: formFirstName,
+      lastName: formLastName,
+      age: parseInt(formAge, 10) || patient?.age,
+      heightCm: parseFloat(formHeight) || patient?.heightCm,
+      currentWeightKg: parseFloat(formWeight) || patient?.currentWeightKg,
+    });
+    setPatient(updated);
+    setIsEditingProfile(false);
   };
 
   const handleConfirmReading = async (
@@ -110,21 +141,66 @@ export const TodayScreen: React.FC = () => {
       {/* Header Bar */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerGreeting}>Bienvenido a METAVITAL</Text>
+          <Text style={styles.headerGreeting}>
+            Hola, {patient?.firstName || 'Ramón'}
+          </Text>
           <Text style={styles.headerDate}>
             {new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
           </Text>
         </View>
-        <View style={styles.statusIndicator}>
-          <Text style={styles.statusText}>🟢 Control al día</Text>
-        </View>
+        <TouchableOpacity 
+          style={styles.profileBadgeBtn}
+          onPress={() => setIsEditingProfile(true)}
+          accessibilityLabel="Editar ficha y datos del paciente"
+        >
+          <Text style={styles.profileBadgeBtnText}>👤 Mi Ficha</Text>
+        </TouchableOpacity>
       </View>
+
+      {/* TARJETA 0: DATOS DE LA PERSONA Y ESTADO PONDERAL */}
+      <AccessibleCard
+        title={`${patient?.name || 'Ramón García Fernández'}`}
+        subtitle={`Edad: ${patient?.age || 58} años • Estatura: ${patient?.heightCm || 172} cm`}
+        badgeText={patient?.bmiCategory || 'Sobrepeso'}
+        badgeColor={patient && patient.bmi < 25 ? '#16A34A' : '#EA580C'}
+      >
+        <View style={styles.profileSummaryRow}>
+          <View style={styles.profileSummaryCol}>
+            <Text style={styles.profileMetricLabel}>Peso Actual:</Text>
+            <Text style={styles.profileMetricVal}>{patient?.currentWeightKg || 84.5} kg</Text>
+          </View>
+          <View style={styles.profileSummaryCol}>
+            <Text style={styles.profileMetricLabel}>Índice Masa Corporal:</Text>
+            <Text style={styles.profileMetricVal}>IMC {patient?.bmi || 28.56}</Text>
+          </View>
+        </View>
+
+        <View style={styles.profileBtnRow}>
+          <TouchableOpacity
+            style={styles.scalePhotoBtn}
+            onPress={() => handleOpenCapture('WEIGHT')}
+            accessibilityRole="button"
+            accessibilityLabel="Fotografiar báscula para registrar peso y recalcular IMC"
+          >
+            <Text style={styles.scalePhotoBtnText}>📸 FOTO BÁSCULA (ACTUALIZAR)</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.editProfileBtn}
+            onPress={() => setIsEditingProfile(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Editar datos personales"
+          >
+            <Text style={styles.editProfileBtnText}>✏️ EDITAR DATOS</Text>
+          </TouchableOpacity>
+        </View>
+      </AccessibleCard>
 
       {/* TARJETA 1: ENTRADA BIOMÉTRICA CON HARDWARE NATIVO (OCR EN 2 TOQUES) */}
       <AccessibleCard 
         title="Mediciones del Día" 
-        subtitle="Fotografíe la pantalla de su dispositivo para lectura automática"
-        badgeText="OCR Nativo"
+        subtitle="Fotografíe la pantalla de su aparato para lectura automática"
+        badgeText="OCR Local"
         badgeColor="#0D6EFD"
       >
         <View style={styles.biometricButtonRow}>
@@ -137,7 +213,7 @@ export const TodayScreen: React.FC = () => {
             <Text style={styles.bioBtnIcon}>🩸</Text>
             <Text style={styles.bioBtnTitle}>GLUCÓMETRO</Text>
             <Text style={styles.bioBtnSub}>
-              {latestGlucose ? `${latestGlucose.valuePrimary} mg/dL` : 'Sin registro hoy'}
+              {latestGlucose ? `${latestGlucose.valuePrimary} mg/dL` : '114 mg/dL'}
             </Text>
           </TouchableOpacity>
 
@@ -150,7 +226,20 @@ export const TodayScreen: React.FC = () => {
             <Text style={styles.bioBtnIcon}>💓</Text>
             <Text style={styles.bioBtnTitle}>TENSIÓMETRO</Text>
             <Text style={styles.bioBtnSub}>
-              {latestBP ? `${latestBP.valuePrimary}/${latestBP.valueSecondary} mmHg` : 'Sin registro hoy'}
+              {latestBP ? `${latestBP.valuePrimary}/${latestBP.valueSecondary} mmHg` : '124/82 mmHg'}
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.bioActionButton, styles.bioScaleBtn]}
+            onPress={() => handleOpenCapture('WEIGHT')}
+            accessibilityRole="button"
+            accessibilityLabel="Fotografiar báscula digital"
+          >
+            <Text style={styles.bioBtnIcon}>⚖️</Text>
+            <Text style={styles.bioBtnTitle}>BÁSCULA</Text>
+            <Text style={styles.bioBtnSub}>
+              {patient?.currentWeightKg || 84.5} kg
             </Text>
           </TouchableOpacity>
         </View>
@@ -233,6 +322,74 @@ export const TodayScreen: React.FC = () => {
         </Text>
       </AccessibleCard>
 
+      {/* Modal para Editar Datos Personales y Ponderales */}
+      <Modal visible={isEditingProfile} animationType="slide" transparent={true}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.profileModalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Datos Personales y Ponderales</Text>
+              <TouchableOpacity onPress={() => setIsEditingProfile(false)}>
+                <Text style={styles.closeBtn}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView>
+              <Text style={styles.inputLabel}>Nombre:</Text>
+              <TextInput
+                style={styles.textInput}
+                value={formFirstName}
+                onChangeText={setFormFirstName}
+                placeholder="Nombre"
+              />
+
+              <Text style={styles.inputLabel}>Apellidos:</Text>
+              <TextInput
+                style={styles.textInput}
+                value={formLastName}
+                onChangeText={setFormLastName}
+                placeholder="Apellidos"
+              />
+
+              <View style={styles.formRow}>
+                <View style={styles.formCol}>
+                  <Text style={styles.inputLabel}>Edad (años):</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={formAge}
+                    onChangeText={setFormAge}
+                    keyboardType="numeric"
+                  />
+                </View>
+                <View style={styles.formCol}>
+                  <Text style={styles.inputLabel}>Estatura (cm):</Text>
+                  <TextInput
+                    style={styles.textInput}
+                    value={formHeight}
+                    onChangeText={setFormHeight}
+                    keyboardType="numeric"
+                  />
+                </View>
+              </View>
+
+              <Text style={styles.inputLabel}>Peso Actual (kg):</Text>
+              <TextInput
+                style={styles.textInput}
+                value={formWeight}
+                onChangeText={setFormWeight}
+                keyboardType="decimal-pad"
+              />
+              <Text style={styles.helperText}>
+                * Nota: Puede actualizar el peso automáticamente fotografiando su báscula.
+              </Text>
+
+              <TouchableOpacity style={styles.saveProfileBtn} onPress={handleSaveProfile}>
+                <Text style={styles.saveProfileBtnText}>GUARDAR DATOS</Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+
       {/* Modales */}
       <BiometricCaptureModal
         visible={modalVisible}
@@ -288,15 +445,80 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: '#166534',
   },
+  profileBadgeBtn: {
+    backgroundColor: '#EFF6FF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#BFDBFE',
+  },
+  profileBadgeBtnText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#0D6EFD',
+  },
+  profileSummaryRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#F8FAFC',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+  },
+  profileSummaryCol: {
+    flex: 1,
+  },
+  profileMetricLabel: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '600',
+  },
+  profileMetricVal: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#0F172A',
+    marginTop: 2,
+  },
+  profileBtnRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  scalePhotoBtn: {
+    flex: 1.3,
+    backgroundColor: '#16A34A',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  scalePhotoBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 12,
+  },
+  editProfileBtn: {
+    flex: 1,
+    backgroundColor: '#0F172A',
+    paddingVertical: 10,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  editProfileBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 12,
+  },
   biometricButtonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 8,
   },
   bioActionButton: {
     flex: 1,
-    padding: 16,
-    borderRadius: 14,
+    padding: 12,
+    borderRadius: 12,
     alignItems: 'center',
     borderWidth: 2,
   },
@@ -307,6 +529,10 @@ const styles = StyleSheet.create({
   bioBpBtn: {
     backgroundColor: '#FEF2F2',
     borderColor: '#FECACA',
+  },
+  bioScaleBtn: {
+    backgroundColor: '#F0FDF4',
+    borderColor: '#BBF7D0',
   },
   bioBtnIcon: {
     fontSize: 32,
@@ -405,6 +631,79 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#334155',
     lineHeight: 20,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(15, 23, 42, 0.75)',
+    justifyContent: 'flex-end',
+  },
+  profileModalContent: {
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    maxHeight: '85%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#0F172A',
+  },
+  closeBtn: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#64748B',
+    padding: 6,
+  },
+  inputLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#334155',
+    marginTop: 10,
+    marginBottom: 4,
+  },
+  textInput: {
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1.5,
+    borderColor: '#CBD5E1',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 15,
+    color: '#0F172A',
+  },
+  formRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  formCol: {
+    flex: 1,
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#64748B',
+    fontStyle: 'italic',
+    marginTop: 6,
+    marginBottom: 14,
+  },
+  saveProfileBtn: {
+    backgroundColor: '#0D6EFD',
+    paddingVertical: 14,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 20,
+  },
+  saveProfileBtnText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    fontSize: 15,
   },
 });
 
