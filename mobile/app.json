@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "METAVITAL",
+    "slug": "metavital",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0D6EFD"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "METAVITAL utiliza la cámara de forma local y privada para leer automáticamente los números de la pantalla de su glucómetro y tensiómetro digital mediante OCR.",
+        "NSMotionUsageDescription": "METAVITAL cuantifica sus pasos de forma pasiva para ayudarle a cumplir su meta anti-sedentarismo e incentivar paseos posprandiales."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0D6EFD"
+      },
+      "permissions": [
+        "CAMERA",
+        "ACTIVITY_RECOGNITION"
+      ]
+    }
+  }
+}
+
