@@ -719,6 +719,7 @@ def get_simulator_html() -> str:
       gap: 10px;
     }
   </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
@@ -736,6 +737,9 @@ def get_simulator_html() -> str:
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:6px;">
+        <button id="btn-auth-header" class="btn-header-upload" onclick="openAuthModal()" style="background:#FFFFFF; color:#0369A1; padding:6px 9px; font-size:11px;" title="Acceso de Paciente">
+          <span>👤</span> <span id="auth-header-label">Mi Cuenta</span>
+        </button>
         <button class="btn-header-upload" onclick="openCoverModal()" style="background:rgba(255,255,255,0.18); color:#FFFFFF; border:1px solid rgba(255,255,255,0.35); padding:6px 9px; font-size:11px;" title="Ver Portada Oficial">
           <span>🌟</span> <span>PORTADA</span>
         </button>
@@ -1658,6 +1662,96 @@ def get_simulator_html() -> str:
       </button>
     </div>
 
+    
+    <!-- Modal de Autenticación y Cuenta de Supabase -->
+    <div id="auth-modal" class="modal-overlay">
+      <div class="modal-box" style="max-width:380px; padding:22px 18px; border-radius:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 id="auth-modal-title" style="margin:0; color:#1E3A8A; font-size:16px;">🔐 Acceso de Paciente</h3>
+          <span style="cursor:pointer; font-size:22px; font-weight:bold; color:#64748B;" onclick="closeAuthModal()">✕</span>
+        </div>
+
+        <!-- Estado conectado -->
+        <div id="auth-logged-in-view" style="display:none; text-align:center;">
+          <div style="width:60px; height:60px; border-radius:50%; background:#EFF6FF; border:2px solid #0284C7; display:flex; align-items:center; justify-content:center; margin:0 auto 10px auto; font-size:26px;">
+            👤
+          </div>
+          <h4 id="auth-user-display-name" style="margin:0 0 4px 0; color:#0F172A; font-size:15px;">Usuario</h4>
+          <p id="auth-user-display-email" style="margin:0 0 12px 0; color:#64748B; font-size:12px;">email@ejemplo.com</p>
+          <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:8px; font-size:11.5px; color:#166534; margin-bottom:14px;">
+            🟢 <strong>Conectado a Supabase Cloud:</strong> Tus mediciones, fármacos y comidas se sincronizan en tu base de datos privada.
+          </div>
+          <button class="btn-primary" onclick="handleSupabaseLogout()" style="background:#DC2626; border:none; padding:10px; font-size:12.5px; font-weight:bold;">
+            🚪 Cerrar Sesión
+          </button>
+        </div>
+
+        <!-- Formularios de Login / Registro -->
+        <div id="auth-forms-view">
+          <!-- Pestañas Login vs Registro -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:14px;">
+            <button type="button" id="tab-btn-login" onclick="switchAuthTab('login')" style="padding:8px; font-size:12px; font-weight:800; border-radius:8px; border:1.5px solid #0284C7; background:#0284C7; color:#FFF; cursor:pointer;">
+              Iniciar Sesión
+            </button>
+            <button type="button" id="tab-btn-signup" onclick="switchAuthTab('signup')" style="padding:8px; font-size:12px; font-weight:700; border-radius:8px; border:1.5px solid #CBD5E1; background:#F8FAFC; color:#475569; cursor:pointer;">
+              Crear Cuenta
+            </button>
+          </div>
+
+          <!-- Mensaje de estado -->
+          <div id="auth-status-msg" style="display:none; padding:8px 10px; border-radius:8px; font-size:11.5px; margin-bottom:12px; line-height:15px;"></div>
+
+          <!-- Formulario Login -->
+          <form id="form-login" onsubmit="event.preventDefault(); handleSupabaseLogin();">
+            <div style="margin-bottom:10px; text-align:left;">
+              <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Correo Electrónico:</label>
+              <input type="email" id="login-email" required placeholder="tu@correo.com" style="width:100%; padding:9px; border:1px solid #CBD5E1; border-radius:8px; font-size:12.5px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:14px; text-align:left;">
+              <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Contraseña:</label>
+              <input type="password" id="login-password" required placeholder="••••••••" style="width:100%; padding:9px; border:1px solid #CBD5E1; border-radius:8px; font-size:12.5px; box-sizing:border-box;">
+            </div>
+            <button type="submit" id="btn-submit-login" class="btn-primary" style="background:#0284C7; padding:10px; font-size:13px; font-weight:800; width:100%;">
+              🚀 Entrar a Mi Cuenta
+            </button>
+          </form>
+
+          <!-- Formulario Registro -->
+          <form id="form-signup" style="display:none;" onsubmit="event.preventDefault(); handleSupabaseSignUp();">
+            <div style="margin-bottom:10px; text-align:left;">
+              <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Nombre y Apellidos:</label>
+              <input type="text" id="signup-name" required placeholder="Ej: Ramón Muñoz Martínez" style="width:100%; padding:9px; border:1px solid #CBD5E1; border-radius:8px; font-size:12.5px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:10px; text-align:left;">
+              <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Correo Electrónico:</label>
+              <input type="email" id="signup-email" required placeholder="tu@correo.com" style="width:100%; padding:9px; border:1px solid #CBD5E1; border-radius:8px; font-size:12.5px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:10px; text-align:left;">
+              <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Contraseña (mínimo 6 caracteres):</label>
+              <input type="password" id="signup-password" minlength="6" required placeholder="••••••••" style="width:100%; padding:9px; border:1px solid #CBD5E1; border-radius:8px; font-size:12.5px; box-sizing:border-box;">
+            </div>
+            <div style="margin-bottom:14px; text-align:left; font-size:11px; color:#475569; line-height:15px; display:flex; gap:6px; align-items:flex-start;">
+              <input type="checkbox" id="signup-rgpd" required style="margin-top:2px; cursor:pointer;">
+              <label for="signup-rgpd" style="cursor:pointer;">
+                Autorizo expresamente el tratamiento de mis datos de salud con fines preventivos (Art. 9 RGPD).
+              </label>
+            </div>
+            <button type="submit" id="btn-submit-signup" class="btn-primary" style="background:#16A34A; padding:10px; font-size:13px; font-weight:800; width:100%;">
+              ✨ Crear Mi Cuenta de Paciente
+            </button>
+          </form>
+
+          <!-- Acceso como Invitado / Demo -->
+          <div style="margin-top:12px; border-top:1px dashed #E2E8F0; padding-top:10px; text-align:center;">
+            <button type="button" onclick="closeAuthModal()" style="background:none; border:none; color:#64748B; font-size:11px; cursor:pointer; text-decoration:underline;">
+              Continuar en modo demostración local
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
     <!-- Modal de Portada Oficial de METAVITAL -->
     <div id="cover-modal" class="modal-overlay">
       <div class="modal-box" style="text-align:center; padding:22px 18px; border-radius:24px; max-width:390px;">
@@ -2535,6 +2629,7 @@ def get_simulator_html() -> str:
         btn.style.fontWeight = '800';
       }
       loadDietDayInputs();
+      initSupabase();
     }
 
     function loadDietDayInputs() {
@@ -2958,6 +3053,292 @@ def get_simulator_html() -> str:
       
       const el = document.getElementById('diet-real-desayuno');
       if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+
+    // ==========================================
+    // SUPABASE CLIENT & CLOUD SYNC ENGINE
+    // ==========================================
+    const SUPABASE_CONFIG = {
+      url: "https://mqhicpwhcjkjvdavbggx.supabase.co",
+      anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xaGljcHdoY2pranZkYXZiZ2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM0MzgzMzUsImV4cCI6MjEwOTAxNDMzNX0.VlxVHJtFC0BNElHdcADdL-SucUIHQYln-q45xM4PmAc"
+    };
+
+    let sbClient = null;
+    let currentUserSession = null;
+
+    function initSupabase() {
+      try {
+        if (window.supabase) {
+          sbClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.anonKey);
+          console.log("Supabase client initialized successfully!");
+          checkAuthSession();
+        }
+      } catch(err) {
+        console.error("Error initializing Supabase:", err);
+      }
+    }
+
+    async function checkAuthSession() {
+      if (!sbClient) return;
+      try {
+        const { data: { session } } = await sbClient.auth.getSession();
+        if (session && session.user) {
+          onUserAuthenticated(session.user);
+        } else {
+          onUserSignedOut();
+        }
+
+        sbClient.auth.onAuthStateChange((event, session) => {
+          if (session && session.user) {
+            onUserAuthenticated(session.user);
+          } else {
+            onUserSignedOut();
+          }
+        });
+      } catch(e) {
+        console.error("Error checking session:", e);
+      }
+    }
+
+    function onUserAuthenticated(user) {
+      currentUserSession = user;
+      const label = document.getElementById('auth-header-label');
+      const name = user.user_metadata?.full_name || user.email.split('@')[0];
+      if (label) label.textContent = name;
+
+      document.getElementById('auth-forms-view').style.display = 'none';
+      document.getElementById('auth-logged-in-view').style.display = 'block';
+      document.getElementById('auth-user-display-name').textContent = name;
+      document.getElementById('auth-user-display-email').textContent = user.email;
+
+      // Hydrate user profile from Cloud
+      loadCloudUserData(user);
+    }
+
+    function onUserSignedOut() {
+      currentUserSession = null;
+      const label = document.getElementById('auth-header-label');
+      if (label) label.textContent = 'Mi Cuenta';
+      document.getElementById('auth-forms-view').style.display = 'block';
+      document.getElementById('auth-logged-in-view').style.display = 'none';
+    }
+
+    function openAuthModal() {
+      document.getElementById('auth-modal').classList.add('active');
+    }
+
+    function closeAuthModal() {
+      document.getElementById('auth-modal').classList.remove('active');
+    }
+
+    function switchAuthTab(tab) {
+      const btnLogin = document.getElementById('tab-btn-login');
+      const btnSignup = document.getElementById('tab-btn-signup');
+      const formLogin = document.getElementById('form-login');
+      const formSignup = document.getElementById('form-signup');
+      const msg = document.getElementById('auth-status-msg');
+      if (msg) msg.style.display = 'none';
+
+      if (tab === 'login') {
+        btnLogin.style.background = '#0284C7';
+        btnLogin.style.color = '#FFF';
+        btnLogin.style.borderColor = '#0284C7';
+        btnLogin.style.fontWeight = '800';
+
+        btnSignup.style.background = '#F8FAFC';
+        btnSignup.style.color = '#475569';
+        btnSignup.style.borderColor = '#CBD5E1';
+        btnSignup.style.fontWeight = '700';
+
+        formLogin.style.display = 'block';
+        formSignup.style.display = 'none';
+      } else {
+        btnSignup.style.background = '#16A34A';
+        btnSignup.style.color = '#FFF';
+        btnSignup.style.borderColor = '#16A34A';
+        btnSignup.style.fontWeight = '800';
+
+        btnLogin.style.background = '#F8FAFC';
+        btnLogin.style.color = '#475569';
+        btnLogin.style.borderColor = '#CBD5E1';
+        btnLogin.style.fontWeight = '700';
+
+        formLogin.style.display = 'none';
+        formSignup.style.display = 'block';
+      }
+    }
+
+    async function handleSupabaseLogin() {
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const msg = document.getElementById('auth-status-msg');
+      const btn = document.getElementById('btn-submit-login');
+
+      if (!sbClient) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Conectando...';
+      msg.style.display = 'none';
+
+      try {
+        const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+        if (error) {
+          msg.style.display = 'block';
+          msg.style.background = '#FEF2F2';
+          msg.style.color = '#991B1B';
+          msg.style.border = '1px solid #FECACA';
+          msg.textContent = '⚠️ ' + (error.message || 'Error al iniciar sesión.');
+        } else {
+          msg.style.display = 'block';
+          msg.style.background = '#F0FDF4';
+          msg.style.color = '#166534';
+          msg.style.border = '1px solid #BBF7D0';
+          msg.textContent = '✅ ¡Bienvenido de nuevo!';
+          setTimeout(() => { closeAuthModal(); }, 1000);
+        }
+      } catch(e) {
+        msg.style.display = 'block';
+        msg.style.background = '#FEF2F2';
+        msg.style.color = '#991B1B';
+        msg.textContent = 'Error de conexión con el servidor.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🚀 Entrar a Mi Cuenta';
+      }
+    }
+
+    async function handleSupabaseSignUp() {
+      const fullName = document.getElementById('signup-name').value.trim();
+      const email = document.getElementById('signup-email').value.trim();
+      const password = document.getElementById('signup-password').value;
+      const msg = document.getElementById('auth-status-msg');
+      const btn = document.getElementById('btn-submit-signup');
+
+      if (!sbClient) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Creando cuenta...';
+      msg.style.display = 'none';
+
+      try {
+        const { data, error } = await sbClient.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: fullName }
+          }
+        });
+
+        if (error) {
+          msg.style.display = 'block';
+          msg.style.background = '#FEF2F2';
+          msg.style.color = '#991B1B';
+          msg.style.border = '1px solid #FECACA';
+          msg.textContent = '⚠️ ' + (error.message || 'Error al registrar usuario.');
+        } else {
+          msg.style.display = 'block';
+          msg.style.background = '#F0FDF4';
+          msg.style.color = '#166534';
+          msg.style.border = '1px solid #BBF7D0';
+          msg.textContent = '🎉 ¡Cuenta creada con éxito! Ya puedes iniciar sesión con tus credenciales.';
+          setTimeout(() => { switchAuthTab('login'); }, 1500);
+        }
+      } catch(e) {
+        msg.style.display = 'block';
+        msg.style.background = '#FEF2F2';
+        msg.style.color = '#991B1B';
+        msg.textContent = 'Error al conectar con Supabase.';
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '✨ Crear Mi Cuenta de Paciente';
+      }
+    }
+
+    async function handleSupabaseLogout() {
+      if (!sbClient) return;
+      await sbClient.auth.signOut();
+      closeAuthModal();
+    }
+
+    // Sync Biometric Reading to Supabase Cloud
+    async function syncBiometricToCloud(metricType, primaryVal, secondaryVal, tertiaryVal) {
+      if (!sbClient || !currentUserSession) return;
+      try {
+        const { error } = await sbClient.from('biometric_readings').insert({
+          user_id: currentUserSession.id,
+          metric_type: metricType,
+          val_primary: primaryVal,
+          val_secondary: secondaryVal || null,
+          val_tertiary: tertiaryVal || null,
+          device_source: 'manual',
+          measured_at: new Date().toISOString()
+        });
+        if (error) console.warn("Supabase biometrics insert warning:", error);
+        else console.log("Biometric synced to Supabase Cloud!");
+      } catch(e) {
+        console.warn("Supabase sync exception:", e);
+      }
+    }
+
+    // Sync Food Log to Supabase Cloud
+    async function syncFoodLogToCloud(dayKey, des, com, cen, auditStatus, auditData) {
+      if (!sbClient || !currentUserSession) return;
+      try {
+        const todayStr = new Date().toISOString().split('T')[0];
+        const { error } = await sbClient.from('daily_food_logs').upsert({
+          user_id: currentUserSession.id,
+          log_date: todayStr,
+          day_name: dayKey,
+          desayuno_text: des,
+          comida_text: com,
+          cena_text: cen,
+          audit_status: auditStatus,
+          audit_feedback: auditData
+        }, { onConflict: 'user_id,log_date' });
+        if (error) console.warn("Supabase food upsert warning:", error);
+        else console.log("Food log synced to Supabase Cloud!");
+      } catch(e) {}
+    }
+
+    // Load User Data from Supabase Cloud
+    async function loadCloudUserData(user) {
+      if (!sbClient || !user) return;
+      try {
+        // 1. Fetch Profile
+        const { data: profile } = await sbClient.from('profiles').select('*').eq('id', user.id).single();
+        if (profile) {
+          const nameEl = document.getElementById('disp-user-name');
+          if (nameEl) nameEl.textContent = profile.full_name;
+        }
+
+        // 2. Fetch Latest Biometrics
+        const { data: bios } = await sbClient.from('biometric_readings')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('measured_at', { ascending: false })
+          .limit(10);
+
+        if (bios && bios.length > 0) {
+          bios.forEach(b => {
+            if (b.metric_type === 'GLUCOSE') {
+              const el = document.getElementById('disp-glucose');
+              if (el) el.textContent = b.val_primary + ' mg/dL';
+            } else if (b.metric_type === 'BP') {
+              const el = document.getElementById('disp-bp');
+              if (el) el.textContent = b.val_primary + '/' + (b.val_secondary || '80') + ' mmHg';
+            } else if (b.metric_type === 'WEIGHT') {
+              const el = document.getElementById('disp-scale-btn');
+              if (el) el.textContent = b.val_primary + ' kg';
+            } else if (b.metric_type === 'STEPS') {
+              const el = document.getElementById('disp-steps-btn');
+              if (el) el.textContent = Number(b.val_primary).toLocaleString('es-ES') + ' pasos';
+            }
+          });
+        }
+      } catch(e) {
+        console.warn("Error hydrating from Supabase:", e);
+      }
     }
 
 </script>
