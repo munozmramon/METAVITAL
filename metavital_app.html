@@ -711,7 +711,19 @@
       gap: 10px;
     }
   </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+    // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('auth') === 'open' || urlParams.get('login') === '1') {
+          setTimeout(() => {
+            if (typeof openAuthModal === 'function') openAuthModal();
+          }, 350);
+        }
+      } catch(e) {}
+    });
+</script>
 </head>
 <body>
 
@@ -729,6 +741,9 @@
         </div>
       </div>
       <div style="display:flex; align-items:center; gap:6px;">
+        <a href="/" class="btn-header-upload" style="background:rgba(255,255,255,0.18); color:#FFFFFF; border:1px solid rgba(255,255,255,0.35); padding:6px 9px; font-size:11px; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" title="Ir a la Portada Web">
+          <span>🌐</span> <span>WEB</span>
+        </a>
         <button id="btn-auth-header" class="btn-header-upload" onclick="openAuthModal()" style="background:#FFFFFF; color:#0369A1; padding:6px 9px; font-size:11px;" title="Acceso de Paciente">
           <span>👤</span> <span id="auth-header-label">Mi Cuenta</span>
         </button>
