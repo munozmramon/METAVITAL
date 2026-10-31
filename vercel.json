@@ -16,6 +16,18 @@
     {
       "source": "/api/v1/reports/download-pdf",
       "destination": "/api/reports/download-pdf"
+    },
+    {
+      "source": "/privacidad",
+      "destination": "/privacidad.html"
+    },
+    {
+      "source": "/terminos",
+      "destination": "/terminos.html"
+    },
+    {
+      "source": "/aviso-legal",
+      "destination": "/aviso-legal.html"
     }
   ]
 }
