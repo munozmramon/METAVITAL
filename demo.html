@@ -725,6 +725,17 @@
     });
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- PWA Meta Tags & Icons -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0B1120">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="METAVITAL">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
 </head>
 <body>
 
@@ -745,6 +756,9 @@
         <a href="/" class="btn-header-upload" style="background:rgba(255,255,255,0.18); color:#FFFFFF; border:1px solid rgba(255,255,255,0.35); padding:6px 9px; font-size:11px; text-decoration:none; display:inline-flex; align-items:center; gap:4px;" title="Ir a la Portada Web">
           <span>🌐</span> <span>WEB</span>
         </a>
+        <button id="pwa-header-install-btn" class="btn-header-upload" onclick="openPwaInstallModal()" style="background:linear-gradient(135deg, #10B981, #059669); color:#FFFFFF; border:none; padding:6px 9px; font-size:11px; display:inline-flex; align-items:center; gap:4px;" title="Instalar como App en este teléfono">
+          <span>📲</span> <span>INSTALAR APP</span>
+        </button>
         <button id="btn-auth-header" class="btn-header-upload" onclick="openAuthModal()" style="background:#FFFFFF; color:#0369A1; padding:6px 9px; font-size:11px;" title="Acceso de Paciente">
           <span>👤</span> <span id="auth-header-label">Mi Cuenta</span>
         </button>
@@ -3700,6 +3714,106 @@
         </div>
       </div>
     </div>
+
+
+  <!-- Modal de Instalación PWA (Móvil / Escritorio) -->
+  <div id="pwa-install-modal" class="modal-overlay" style="display:none; z-index:99999;">
+    <div class="modal-box" style="max-width:380px; text-align:center; padding:24px 20px; border-radius:20px; border:2px solid #0284C7;">
+      <div style="width:64px; height:64px; border-radius:16px; background:#0B1120; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 14px rgba(2,132,199,0.35);">
+        <img src="/icons/icon-192.png" alt="METAVITAL Logo" style="width:48px; height:48px; border-radius:10px;">
+      </div>
+      <h3 style="font-size:17px; font-weight:900; color:#0F172A; margin-bottom:6px;">Instalar METAVITAL</h3>
+      <p style="font-size:12.5px; color:#64748B; margin-bottom:18px; line-height:1.5;">
+        Accede a tus 4 tomas diarias con un solo toque desde tu pantalla de inicio, sin barras de navegación y con soporte sin conexión.
+      </p>
+
+      <div id="pwa-android-install-view" style="display:none;">
+        <button class="btn-primary" id="btn-pwa-install-now" style="width:100%; padding:12px; font-size:14px; font-weight:800; margin-bottom:8px;">
+          📲 Instalar en este Dispositivo
+        </button>
+      </div>
+
+      <div id="pwa-ios-install-view" style="display:none; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px; text-align:left; font-size:12px; color:#334155; margin-bottom:12px; line-height:1.6;">
+        <strong>Para instalar en iPhone / iPad:</strong><br>
+        1. Pulsa el botón <strong>Compartir</strong> <span style="font-size:14px;">📤</span> en la barra inferior de Safari.<br>
+        2. Desplaza hacia abajo y selecciona <strong>"Añadir a la pantalla de inicio"</strong> <span style="font-size:14px;">➕</span>.<br>
+        3. Pulsa <strong>Añadir</strong> arriba a la derecha.
+      </div>
+
+      <button class="btn-secondary" onclick="closePwaInstallModal()" style="width:100%; padding:10px; font-size:12px; font-weight:700;">
+        Ahora no
+      </button>
+    </div>
+  </div>
+
+  <script>
+    let deferredPwaPrompt = null;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPwaPrompt = e;
+      const installBtn = document.getElementById('pwa-header-install-btn');
+      if (installBtn) installBtn.style.display = 'inline-flex';
+      const androidView = document.getElementById('pwa-android-install-view');
+      if (androidView) androidView.style.display = 'block';
+    });
+
+    function openPwaInstallModal() {
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+
+      if (isStandalone) {
+        alert('METAVITAL ya está instalada y funcionando como aplicación en tu dispositivo.');
+        return;
+      }
+
+      const modal = document.getElementById('pwa-install-modal');
+      if (modal) modal.style.display = 'flex';
+
+      const iosView = document.getElementById('pwa-ios-install-view');
+      const androidView = document.getElementById('pwa-android-install-view');
+
+      if (isIOS) {
+        if (iosView) iosView.style.display = 'block';
+        if (androidView) androidView.style.display = 'none';
+      } else {
+        if (iosView) iosView.style.display = 'none';
+        if (androidView) androidView.style.display = 'block';
+      }
+    }
+
+    function closePwaInstallModal() {
+      const modal = document.getElementById('pwa-install-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    const btnInstallNow = document.getElementById('btn-pwa-install-now');
+    if (btnInstallNow) {
+      btnInstallNow.addEventListener('click', async () => {
+        if (deferredPwaPrompt) {
+          deferredPwaPrompt.prompt();
+          const { outcome } = await deferredPwaPrompt.userChoice;
+          console.log('PWA outcome:', outcome);
+          deferredPwaPrompt = null;
+        }
+        closePwaInstallModal();
+      });
+    }
+  </script>
+
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          console.log('METAVITAL PWA Service Worker activo:', reg.scope);
+        }).catch((err) => {
+          console.log('Error registrando Service Worker:', err);
+        });
+      });
+    }
+  </script>
 
 </body>
 </html>

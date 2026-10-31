@@ -645,6 +645,17 @@
       }
     }
   </style>
+  <!-- PWA Meta Tags & Icons -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0B1120">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="METAVITAL">
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
 </head>
 <body>
 
@@ -923,6 +934,20 @@
       <br>© 2026 METAVITAL. Todos los derechos reservados.
     </div>
   </footer>
+
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          console.log('METAVITAL PWA Service Worker activo:', reg.scope);
+        }).catch((err) => {
+          console.log('Error registrando Service Worker:', err);
+        });
+      });
+    }
+  </script>
 
 </body>
 </html>
