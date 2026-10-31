@@ -1188,9 +1188,10 @@
   transition: opacity 0.45s ease, visibility 0.45s ease;
 }
 .pwa-splash-overlay.hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  display: none !important;
 }
 .pwa-splash-logo-wrap {
   position: relative;
@@ -1320,7 +1321,8 @@
     }
 
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
     window.addEventListener('DOMContentLoaded', () => {
       try {
@@ -1430,7 +1432,7 @@
           </button>
         </div>
 
-        <div class="hero-center-row">
+        <div class="hero-center-row" onclick="openDoctorModal()" style="cursor:pointer;" title="Ver Ficha del Médico">
           <div class="hero-left-info">
             <span class="hero-role-tag">Médica Responsable</span>
             <h3 class="hero-doc-title">Dra. Elena Morales</h3>
@@ -1454,7 +1456,7 @@
         <span id="disp-target-bp" style="display:none;">130/80</span>
 
         <!-- TIRA SEMANAL HORIZONTAL DE 7 DÍAS -->
-        <div class="hero-subcard-strip">
+        <div class="hero-subcard-strip" onclick="switchTab('tab-semana')" style="cursor:pointer;" title="Ver Seguimiento Semanal Completo">
           <div class="subcard-strip-hdr">
             <span>Seguimiento Semanal • 4 Tomas</span>
             <span>&lt; Octubre 2026 &gt;</span>
@@ -2474,6 +2476,39 @@
         <button class="btn-primary" onclick="closeCoverModal()" style="width:100%; background:linear-gradient(135deg, #0D9488 0%, #0F766E 100%); font-size:14px; font-weight:900; padding:13px; border-radius:12px; box-shadow:0 4px 14px rgba(13, 148, 136, 0.35); color:#FFF; border:none; cursor:pointer;">
           🚀 ENTRAR A METAVITAL
         </button>
+      </div>
+    </div>
+
+    <!-- Modal de Captura OCR (Glucómetro, Tensiómetro, Báscula) -->
+    <div id="capture-modal" class="modal-overlay">
+      <div class="modal-box">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <h3 id="modal-title" style="font-size:18px; font-weight:800;">Captura OCR</h3>
+          <span style="cursor:pointer; font-size:20px; font-weight:bold;" onclick="closeCaptureModal()">✕</span>
+        </div>
+
+        <div id="view-snap">
+          <div class="camera-frame">
+            <h3 id="camera-prompt">Encuadre la pantalla aquí</h3>
+            <p id="camera-subtext">El algoritmo extraerá automáticamente los números</p>
+          </div>
+          <button class="btn-primary" onclick="simulateSnap()">
+            📸 1. CAPTURAR PANTALLA / CAJA
+          </button>
+        </div>
+
+        <div id="view-confirm" style="display:none;">
+          <div style="background:#DCFCE7; padding:10px; border-radius:8px; margin-bottom:12px; font-size:13px; color:#166534; font-weight:700;">
+            ✓ Detección óptica verificada con 98% de precisión
+          </div>
+          <div style="text-align:center; padding:14px; background:#F8FAFC; border-radius:12px; margin-bottom:14px; border:1.5px solid var(--border);">
+            <div id="detected-val" style="font-size:38px; font-weight:900; color:var(--text-main);">84.2</div>
+            <div id="detected-unit" style="font-size:14px; font-weight:700; color:var(--text-muted);">kg (Báscula Digital)</div>
+          </div>
+          <button class="btn-primary btn-success" onclick="saveReading()">
+            ✓ 2. CONFIRMAR Y GUARDAR
+          </button>
+        </div>
       </div>
     </div>
 
@@ -4436,7 +4471,7 @@
   </script>
 
 <script>
-    function toggleHeaderMenu(e) {
+function toggleHeaderMenu(e) {
   if (e) e.stopPropagation();
   const m = document.getElementById('header-dropdown-menu');
   if (m) {
@@ -4445,14 +4480,13 @@
     m.style.flexDirection = 'column';
   }
 }
-    }
-    document.addEventListener('click', (e) => {
-      const m = document.getElementById('header-dropdown-menu');
-      const btn = document.getElementById('btn-header-menu-toggle');
-      if (m && m.style.display === 'flex' && !m.contains(e.target) && e.target !== btn) {
-        m.style.display = 'none';
-      }
-    });
+document.addEventListener('click', (e) => {
+  const m = document.getElementById('header-dropdown-menu');
+  const btn = document.getElementById('btn-header-menu-toggle');
+  if (m && m.style.display === 'flex' && !m.contains(e.target) && e.target !== btn) {
+    m.style.display = 'none';
+  }
+});
 </script>
 <script>
 // PWA Launch Splash Screen Controller
