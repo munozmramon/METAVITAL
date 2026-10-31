@@ -719,6 +719,481 @@
       gap: 10px;
     }
   
+    /* STATUS BAR & DYNAMIC ISLAND */
+    .status-bar {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: #F4F8F7;
+      font-size: 13px;
+      font-weight: 700;
+      color: #132E27;
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    .dynamic-island {
+      width: 100px;
+      height: 24px;
+      background: #000000;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 10px;
+      gap: 6px;
+    }
+    .island-lens {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #1E293B;
+    }
+
+    /* MODERN TEAL HEADER */
+    .modern-app-header {
+      background: #F4F8F7;
+      padding: 10px 18px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .header-user-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .user-avatar-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0D9488 0%, #14B8A6 100%);
+      color: #FFFFFF;
+      font-weight: 800;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+    }
+    .online-badge {
+      width: 10px;
+      height: 10px;
+      background: #10B981;
+      border: 2px solid #FFFFFF;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 0;
+      right: 0;
+    }
+    .user-text-col {
+      display: flex;
+      flex-direction: column;
+    }
+    .user-greeting {
+      font-size: 17px;
+      font-weight: 800;
+      color: #132E27;
+      line-height: 1.2;
+    }
+    .user-date {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #607B75;
+    }
+
+    .header-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hdr-circle-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      border: 1px solid #E1EBE7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s;
+      position: relative;
+    }
+    .hdr-circle-btn:hover {
+      background: #F0FDF4;
+      transform: translateY(-1px);
+    }
+    .hdr-red-dot {
+      width: 7px;
+      height: 7px;
+      background: #EF4444;
+      border-radius: 50%;
+      position: absolute;
+      top: 7px;
+      right: 7px;
+      border: 1.5px solid #FFFFFF;
+    }
+
+    /* DROPDOWN MENU */
+    .hdr-dropdown-menu {
+      position: absolute;
+      top: 46px;
+      right: 0;
+      background: #FFFFFF;
+      border: 1px solid #E1EBE7;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+      width: 160px;
+      padding: 6px 0;
+      z-index: 100;
+    }
+    .hdr-dropdown-item {
+      display: block;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #132E27;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .hdr-dropdown-item:hover {
+      background: #F0FDF4;
+      color: #0D9488;
+    }
+
+    /* TEAL HERO CARD (STYLE INSPIRED BY CENTER PHONE "TOP DOCTORS") */
+    .teal-hero-card {
+      background: var(--teal-hero);
+      border-radius: 28px;
+      padding: 20px;
+      color: #FFFFFF;
+      margin-bottom: 18px;
+      box-shadow: 0 16px 36px rgba(13, 148, 136, 0.32);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .hero-rating-pill {
+      background: rgba(255, 255, 255, 0.95);
+      color: #0F766E;
+      font-size: 11.5px;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .hero-shield-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .hero-center-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    .hero-left-info {
+      flex: 1;
+    }
+    .hero-role-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #CCFBF1;
+      display: block;
+      margin-bottom: 2px;
+    }
+    .hero-doc-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.15;
+    }
+    .hero-doc-sub {
+      font-size: 12px;
+      color: #CCFBF1;
+      margin-top: 2px;
+    }
+    .hero-doc-avatar-wrap {
+      width: 58px;
+      height: 58px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    }
+
+    /* SUB-CARD WITH 7-DAY SELECTOR STRIP */
+    .hero-subcard-strip {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      padding: 12px 14px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+    .subcard-strip-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: #CCFBF1;
+      margin-bottom: 8px;
+    }
+    .strip-days-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .strip-day-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 5px 6px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 700;
+      color: #E6F4F1;
+      min-width: 34px;
+    }
+    .strip-day-col.active-day {
+      background: #FFFFFF;
+      color: #0F766E;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+    .strip-day-col.active-day strong {
+      color: #0D9488;
+      font-size: 13px;
+    }
+
+    /* 2x2 MODERN TILES (DISEASE MONITORING GRID) */
+    .modern-section-hdr {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .modern-hdr-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #132E27;
+      letter-spacing: -0.3px;
+    }
+    .modern-hdr-action {
+      background: #FFFFFF;
+      border: 1px solid #E1EBE7;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    .bio-grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .bio-tile-card {
+      background: #FFFFFF;
+      border: 1.5px solid #E1EBE7;
+      border-radius: 22px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 130px;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.05);
+    }
+    .bio-tile-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(13, 148, 136, 0.12);
+      border-color: #0D9488;
+    }
+    .bio-tile-card.featured-teal {
+      background: linear-gradient(145deg, #0D9488 0%, #0F766E 100%);
+      border-color: transparent;
+      color: #FFFFFF;
+      box-shadow: 0 10px 26px rgba(13, 148, 136, 0.28);
+    }
+    .tile-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+    .tile-icon-box {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: #F0FDF4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .bio-tile-card.featured-teal .tile-icon-box {
+      background: rgba(255, 255, 255, 0.2);
+    }
+    .tile-tag-pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: #ECFDF5;
+      color: #059669;
+    }
+    .bio-tile-card.featured-teal .tile-tag-pill {
+      background: rgba(255, 255, 255, 0.25);
+      color: #FFFFFF;
+    }
+    .tile-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #607B75;
+      margin-bottom: 2px;
+    }
+    .bio-tile-card.featured-teal .tile-title {
+      color: #CCFBF1;
+    }
+    .tile-main-val {
+      font-size: 18px;
+      font-weight: 900;
+      color: #132E27;
+      line-height: 1.1;
+    }
+    .bio-tile-card.featured-teal .tile-main-val {
+      color: #FFFFFF;
+    }
+    .tile-main-val small {
+      font-size: 11px;
+      font-weight: 600;
+      color: #607B75;
+    }
+    .bio-tile-card.featured-teal .tile-main-val small {
+      color: #CCFBF1;
+    }
+    .tile-arrow-circle {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #F4F8F7;
+      border: 1px solid #E1EBE7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 900;
+      color: #0D9488;
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+    }
+    .bio-tile-card.featured-teal .tile-arrow-circle {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: transparent;
+      color: #FFFFFF;
+    }
+
+    /* SIGNATURE CONNECTED WAVE BOTTOM NAV (AS IN REFERENCE IMAGE) */
+    .connected-bottom-dock {
+      height: 74px;
+      background: #FFFFFF;
+      padding: 8px 12px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-top: 1px solid #E1EBE7;
+      flex-shrink: 0;
+      z-index: 50;
+      box-shadow: 0 -4px 20px rgba(13, 148, 136, 0.06);
+    }
+    .connected-nav-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: #F4F8F7;
+      padding: 4px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(13, 148, 136, 0.25);
+    }
+    .connected-tab-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #607B75;
+    }
+    .connected-tab-btn.active {
+      background: #0D9488;
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(13, 148, 136, 0.35);
+      padding: 8px 16px;
+    }
+    .tab-btn-icon {
+      font-size: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tab-btn-label {
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      display: none;
+    }
+    .connected-tab-btn.active .tab-btn-label {
+      display: inline-block;
+      color: #FFFFFF;
+    }
+    .connected-tab-btn.active .tab-btn-icon {
+      color: #FFFFFF;
+    }
+
+
   </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
