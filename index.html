@@ -651,75 +651,93 @@
 
     /* THE 4 PILLARS (EL MÉTODO) */
     .solution-section {
-      padding: 100px 24px;
+      padding: 70px 20px;
       background: var(--bg-page);
     }
     .solution-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 20px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      align-items: stretch;
     }
     .solution-card {
-      background: var(--bg-card);
-      border-radius: 24px;
-      padding: 30px 22px;
+      background: #FFFFFF;
       border: 1.5px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 0;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      transition: all 0.3s;
-      position: relative;
-      box-shadow: var(--shadow-sm);
+      min-width: 0;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
     .solution-card:hover {
       transform: translateY(-4px);
       border-color: var(--primary);
-      box-shadow: var(--shadow-md);
+      box-shadow: 0 12px 28px rgba(13, 148, 136, 0.12);
     }
-    .solution-icon-box {
-      width: 52px;
-      height: 52px;
-      border-radius: 16px;
-      background: var(--primary-tint);
-      border: 1px solid rgba(13, 148, 136, 0.2);
+    .solution-img-wrap {
+      width: 100%;
+      height: 135px;
+      position: relative;
+      overflow: hidden;
+      background: #E6F4F1;
+      flex-shrink: 0;
+    }
+    .solution-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .solution-card:hover .solution-img {
+      transform: scale(1.05);
+    }
+    .solution-img-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(13, 148, 136, 0.92);
+      backdrop-filter: blur(4px);
+      color: #FFFFFF;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+    .solution-card-body {
+      padding: 14px 14px 16px;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-    }
-    .solution-title {
-      font-size: 18.5px;
-      font-weight: 900;
-      color: var(--text-main);
-      line-height: 1.25;
-    }
-    .solution-desc {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.6;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
     }
     .solution-tag {
-      font-size: 11px;
+      font-size: 10.5px;
       font-weight: 800;
       text-transform: uppercase;
       color: var(--primary-dark);
       letter-spacing: 0.5px;
+      margin: 0;
+    }
+    .solution-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.25;
+      margin: 0;
+    }
+    .solution-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin: 0;
     }
     .solution-corner-arrow {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: var(--bg-page);
-      border: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 13px;
-      font-weight: 900;
-      color: var(--primary);
-      position: absolute;
-      bottom: 20px;
-      right: 20px;
+      display: none;
     }
 
     /* COMPARATIVA ANTES VS DESPUÉS */
@@ -1045,16 +1063,18 @@
       font-size: 11.5px;
     }
 
-    @media (max-width: 1080px) {
+    @media (max-width: 840px) {
       .solution-grid,
       .pain-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
       }
     }
-    @media (max-width: 640px) {
+    @media (max-width: 520px) {
       .solution-grid,
       .pain-grid {
         grid-template-columns: 1fr;
+        gap: 12px;
       }
     }
     @media (max-width: 768px) {
