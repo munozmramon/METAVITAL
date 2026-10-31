@@ -98,6 +98,15 @@ export class DatabaseService {
     return this.medications;
   }
 
+  public static async addMedication(med: Omit<Medication, 'id'>): Promise<Medication> {
+    const newMed: Medication = {
+      ...med,
+      id: `med-${Date.now()}`,
+    };
+    this.medications.push(newMed);
+    return newMed;
+  }
+
   public static async getAdherenceLogs(): Promise<AdherenceLog[]> {
     return this.adherenceLogs;
   }

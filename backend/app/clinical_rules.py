@@ -27,9 +27,14 @@ class TriageResult:
 
 class ClinicalRuleEngine:
     @staticmethod
-    def evaluate_glucose(glucose_mg_dl: int, context: str = "FASTING") -> TriageResult:
+    def evaluate_glucose(
+        glucose_mg_dl: int, 
+        context: str = "FASTING",
+        target_min: int = 70,
+        target_max: int = 130
+    ) -> TriageResult:
         """
-        Evaluates glucose against ADA (American Diabetes Association) clinical cutoffs.
+        Evaluates glucose against ADA clinical cutoffs and personalized clinical targets.
         """
         if glucose_mg_dl < 54:
             return TriageResult(
@@ -44,10 +49,10 @@ class ClinicalRuleEngine:
                 trigger_call_prompt=True,
                 push_family_contact=True,
             )
-        elif glucose_mg_dl < 70:
+        elif glucose_mg_dl < target_min:
             return TriageResult(
                 level=AlertLevel.CRITICAL,
-                title="HIPOGLUCEMIA LEVE/MODERADA (< 70 mg/dL)",
+                title=f"HIPOGLUCEMIA (< {target_min} mg/dL)",
                 action_instructions=(
                     "REGLA DE LOS 15: Tome 15g de hidratos simples (medio vaso de zumo). "
                     "Espere 15 minutos en reposo absoluto y repita la medición con el glucómetro."
@@ -68,10 +73,10 @@ class ClinicalRuleEngine:
                 trigger_call_prompt=False,
                 push_family_contact=True,
             )
-        elif context == "FASTING" and glucose_mg_dl > 140:
+        elif context == "FASTING" and glucose_mg_dl > target_max:
             return TriageResult(
                 level=AlertLevel.WARNING,
-                title="GLUCEMIA BASAL FUERA DE RANGO (> 140 mg/dL)",
+                title=f"GLUCEMIA BASAL FUERA DE RANGO (> {target_max} mg/dL)",
                 action_instructions="Evite hidratos simples en el desayuno y realice un paseo activo de 15 minutos.",
                 trigger_sound=False,
                 trigger_call_prompt=False,
@@ -80,7 +85,7 @@ class ClinicalRuleEngine:
         else:
             return TriageResult(
                 level=AlertLevel.NORMAL,
-                title="GLUCEMIA CONTROLADA (70 - 130 mg/dL)",
+                title=f"GLUCEMIA CONTROLADA ({target_min} - {target_max} mg/dL)",
                 action_instructions="Valor dentro de su objetivo cardioprotector.",
                 trigger_sound=False,
                 trigger_call_prompt=False,
@@ -88,9 +93,15 @@ class ClinicalRuleEngine:
             )
 
     @staticmethod
-    def evaluate_blood_pressure(systolic: int, diastolic: int, has_symptoms: bool = False) -> TriageResult:
+    def evaluate_blood_pressure(
+        systolic: int, 
+        diastolic: int, 
+        has_symptoms: bool = False,
+        target_sys_max: int = 130,
+        target_dia_max: int = 80
+    ) -> TriageResult:
         """
-        Evaluates blood pressure against ESC/ESH (European Society of Cardiology / Hypertension) guidelines.
+        Evaluates blood pressure against ESC/ESH guidelines and personalized target thresholds.
         """
         if systolic >= 180 or diastolic >= 120:
             if has_symptoms:
@@ -114,10 +125,10 @@ class ClinicalRuleEngine:
                     trigger_call_prompt=False,
                     push_family_contact=False,
                 )
-        elif systolic >= 140 or diastolic >= 90:
+        elif systolic >= target_sys_max or diastolic >= target_dia_max:
             return TriageResult(
                 level=AlertLevel.WARNING,
-                title="PRESIÓN ARTERIAL ELEVADA (Estadio 1 o 2)",
+                title=f"PRESIÓN ARTERIAL ELEVADA (≥ {target_sys_max}/{target_dia_max} mmHg)",
                 action_instructions="Compruebe la toma de su antihipertensivo prescrito y restrinja el sodio.",
                 trigger_sound=False,
                 trigger_call_prompt=False,
@@ -135,7 +146,7 @@ class ClinicalRuleEngine:
         else:
             return TriageResult(
                 level=AlertLevel.NORMAL,
-                title="PRESIÓN ARTERIAL CONTROLADA (< 130/80 mmHg)",
+                title=f"PRESIÓN ARTERIAL CONTROLADA (< {target_sys_max}/{target_dia_max} mmHg)",
                 action_instructions="Valores en rango óptimo de protección vascular.",
                 trigger_sound=False,
                 trigger_call_prompt=False,

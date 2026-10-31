@@ -4,6 +4,7 @@ Conforms to ADA/EASD and ESC/ESH Guidelines.
 """
 
 from typing import Dict, Any
+from .static.logo_base64 import METAVITAL_LOGO_WHITE_B64
 
 
 class PDFCompiler:
@@ -87,9 +88,12 @@ class PDFCompiler:
 </head>
 <body>
   <div class="header">
-    <div>
-      <div class="title">METAVITAL</div>
-      <div class="subtitle">Informe de Síndrome Metabólico | Estándar ADA & ESC</div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <img src="data:image/png;base64,{METAVITAL_LOGO_WHITE_B64}" style="width: 48px; height: 48px; border-radius: 50%;" alt="Logo Metavital">
+      <div>
+        <div class="title">METAVITAL</div>
+        <div class="subtitle">Informe de Síndrome Metabólico | Estándar ADA & ESC</div>
+      </div>
     </div>
     <div style="text-align: right; font-size: 9pt; color: #718096;">
       Período: Últimos 30 días<br>Documento Médico Oficial
@@ -97,10 +101,10 @@ class PDFCompiler:
   </div>
 
   <div class="patient-bar">
-    <strong>Paciente:</strong> {patient.get('name', 'Ramón')} | 
-    <strong>Edad:</strong> {patient.get('age', 58)} años | 
-    <strong>IMC:</strong> {patient.get('bmi', 28.5)} kg/m² | 
-    <strong>Peso:</strong> {patient.get('current_weight_kg', 84.5)} kg
+    <strong>Paciente:</strong> {patient.get('name', 'Ramón Muñoz Martínez')} | 
+    <strong>Edad:</strong> {patient.get('age', 63)} años | 
+    <strong>IMC:</strong> {patient.get('bmi', 37.28)} kg/m² | 
+    <strong>Peso:</strong> {patient.get('current_weight_kg', 101.5)} kg
   </div>
 
   <div class="grid">

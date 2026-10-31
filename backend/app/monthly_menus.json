@@ -1,0 +1,669 @@
+{
+  "1": {
+    "title": "Semana 1: Cardioprotección & Omega-3 (Perfil Jaén - AOVE y Pescados)",
+    "badge": "Cardioprotectora",
+    "desc": "Prioriza ácidos grasos Omega-3 naturales para potenciar Omacor y AOVE virgen extra.",
+    "days": {
+      "lunes": {
+        "name": "Lunes",
+        "desayuno": {
+          "text": "Tostada de pan 100% integral con AOVE de Jaén, tomate natural rallado y 1 huevo poché. Infusión digestiva o café descafeinado solo.",
+          "function": "Proteína y carbohidrato de absorción lenta que protegen el estómago frente a Ramipril, Secalip y Synjardy. Cero azúcares refinados para frenar triglicéridos (346 mg/dL)."
+        },
+        "comida": {
+          "text": "Lomo de salmón fresco cocinado al vapor con ramilletes de brócoli al vapor y limón. Una rebanada fina de pan integral.",
+          "function": "Ácidos grasos Omega-3 naturales de absorción directa que potencian el efecto de Omacor 1000 mg reduciendo triglicéridos. Brócoli al vapor aporta fibra prebiótica protectora del colon."
+        },
+        "cena": {
+          "text": "Crema suave de calabacín y puerro (técnica de doble hervor para eliminar potasio), tortilla francesa de 2 claras y 1 yema, y manzana asada al horno con canela.",
+          "function": "Cena temprana y digestiva que previene reflujo y apneas nocturnas (SAOS). El calabacín es la hortaliza de menor potasio y la pectina de la manzana asada cuida la mucosa del sigma."
+        }
+      },
+      "martes": {
+        "name": "Martes",
+        "desayuno": {
+          "text": "Bol de copos de avena integral cocidos en leche desnatada o bebida de almendra sin azúcar, semillas de lino molidas y canela en polvo.",
+          "function": "Los betaglucanos de la avena y el lino atrapan sales biliares en el intestino acelerando el aclaramiento de triglicéridos en sangre."
+        },
+        "comida": {
+          "text": "Lentejas pardinas guisadas con verduras (pimiento verde, cebolla, calabacín; legumbres con 12h de remojo) y filete de pechuga de pavo a la plancha.",
+          "function": "El remojo previo de 12 horas elimina más del 60% del potasio libre, permitiendo disfrutar de legumbres sin sobrecargar el filtrado renal (FG 42)."
+        },
+        "cena": {
+          "text": "Suprema de merluza a la plancha con judías verdes cocidas (doble hervor) con AOVE virgen extra en crudo y pera al horno.",
+          "function": "Pescado blanco bajo en sodio y purinas, ideal para el reposo nocturno renal y cardiovascular."
+        }
+      },
+      "miercoles": {
+        "name": "Miércoles",
+        "desayuno": {
+          "text": "Tostada de pan de centeno con queso fresco 0% (bajo en sal) y AOVE de Jaén con infusión de jengibre o té rooibos.",
+          "function": "Aporte de calcio biodisponible y proteína sin elevar el fósforo ni la sal, protegiendo la tensión arterial."
+        },
+        "comida": {
+          "text": "Pechuga de pollo de corral a la plancha con hierbas provenzales y arroz integral hervido con láminas de calabacín salteado.",
+          "function": "Proteína magra sin grasas saturadas con hidrato complejo que evita picos glucémicos (Glucosa en rango 70-130)."
+        },
+        "cena": {
+          "text": "Revuelto de espárragos blancos (cocidos) con claras de huevo y lomo de bacalao desalado al horno con rodajas de manzana.",
+          "function": "Cena ligera que favorece el descanso cardíaco bajo tratamiento con Atenolol."
+        }
+      },
+      "jueves": {
+        "name": "Jueves",
+        "desayuno": {
+          "text": "Tortitas caseras de avena (claras de huevo, harina de avena, canela) con compota de manzana casera (sin azúcar) y café descafeinado solo.",
+          "function": "Desayuno saciante de índice glucémico bajo que frena el apetito matutino y modula la absorción de carbohidratos."
+        },
+        "comida": {
+          "text": "Guiso ligero de garbanzos (12h remojo) con espinacas previamente cocidas con doble hervor y huevo duro picado.",
+          "function": "Doble técnica de seguridad renal: remojo de garbanzos y doble cocción de espinacas para desarmar el potasio (K+ 5.5 mEq/L)."
+        },
+        "cena": {
+          "text": "Lomos de caballa o sardinas al horno con orégano y ensalada templada de canónigos con calabacín a la plancha y AOVE.",
+          "function": "Pescado azul pequeño libre de metales pesados con alto aporte de EPA y DHA antiinflamatorios."
+        }
+      },
+      "viernes": {
+        "name": "Viernes",
+        "desayuno": {
+          "text": "Biscotes de pan integral bajo en sal con AOVE y un puñado muy medido (15g) de nueces remojadas para retirar potasio e infusión.",
+          "function": "Grasas poliinsaturadas protectoras del endotelio vascular cerebral y coronario."
+        },
+        "comida": {
+          "text": "Filete de lubina al horno con calabacín, berenjena asada (pelada) y limón.",
+          "function": "La berenjena pelada y cocida es segura para el riñón y el limón potencia el sabor sin necesidad de sal."
+        },
+        "cena": {
+          "text": "Sopa de fideos de arroz con caldo casero de verduras desgrasado (sin pastillas de caldo) y hamburguesa de pavo casera a la plancha.",
+          "function": "Hidratación nocturna libre de sodio industrial que previene picos de tensión matutinos."
+        }
+      },
+      "sabado": {
+        "name": "Sábado",
+        "desayuno": {
+          "text": "Tostada de pan integral con requesón desnatado bajo en sal y semillas de lino molidas con infusión digestiva.",
+          "function": "Fibra soluble y proteína láctea de fácil digestión que mantiene el ritmo intestinal estable."
+        },
+        "comida": {
+          "text": "Paella de arroz integral con verduras variadas y tiras de pechuga de conejo o pollo de corral con ensalada de canónigos.",
+          "function": "Carne blanca hipermagra recomendada por nefrología por su nulo contenido en grasa aterogénica."
+        },
+        "cena": {
+          "text": "Dorada a la sal o al vapor con menestra de verduras cocidas con doble hervor y una manzana reineta asada.",
+          "function": "Cocción suave que preserva nutrientes y protege la mucosa digestiva baja."
+        }
+      },
+      "domingo": {
+        "name": "Domingo",
+        "desayuno": {
+          "text": "Desayuno suave pre-inyección de Ozempic 1 mg: Infusión tibia de manzanilla o té verde descafeinado con 2 tostadas de pan integral con AOVE y 1 yogur desnatado natural.",
+          "function": "Evita plenitud gástrica antes de la inyección semanal de Ozempic 1 mg facilitando la adaptación intestinal sin náuseas."
+        },
+        "comida": {
+          "text": "Almuerzo digestivo: Pechuga de pavo asada a baja temperatura con puré de calabacín (doble hervor) y caldo limpio casero.",
+          "function": "Proteína tierna de masticación y tránsito rápido que no compite con el vaciamiento gástrico enlentecido por el GLP-1."
+        },
+        "cena": {
+          "text": "Cena de asimilación ligera: Crema clarificada de calabaza cocida (con doble hervor) y 1 huevo pasado por agua con canela sobre rodajas de pera.",
+          "function": "Garantiza un descanso profundo sin reflujo ni pesadez digestiva."
+        }
+      }
+    },
+    "shopping": [
+      {
+        "cat": "🐟 Pescadería",
+        "items": [
+          "Salmón fresco (2 lomos)",
+          "Merluza fresca (2 supremas)",
+          "Bacalao desalado (2 raciones)",
+          "Caballa o sardinas frescas (300g)",
+          "Lubina y dorada frescas (1 pieza de cada)"
+        ]
+      },
+      {
+        "cat": "🥩 Carnicería Limpia",
+        "items": [
+          "Pechuga de pavo limpia sin sal (500g)",
+          "Pechuga de pollo de corral (500g)",
+          "Carne magra de conejo troceada (300g)"
+        ]
+      },
+      {
+        "cat": "🥦 Verduras y Frutas",
+        "items": [
+          "Calabacines verdes frescos (1.5 kg)",
+          "Brócoli (1 pieza grande)",
+          "Judías verdes redondas (500g)",
+          "Espinacas frescas para hervir (300g)",
+          "Puerros limpios (1 manojo)",
+          "Manzanas reinetas o golden (1.5 kg)",
+          "Peras de agua (1 kg)",
+          "Limones frescos (500g)"
+        ]
+      },
+      {
+        "cat": "🌾 Despensa y Granos",
+        "items": [
+          "AOVE de Jaén virgen extra (1 botella)",
+          "Pan 100% integral sin sal (2 barras)",
+          "Copos de avena integral fina (500g)",
+          "Lentejas pardinas secas (500g)",
+          "Garbanzos secos (500g)",
+          "Arroz integral (500g)",
+          "Fideos de arroz (250g)",
+          "Canela en rama y en polvo"
+        ]
+      },
+      {
+        "cat": "🥛 Lácteos y Huevos",
+        "items": [
+          "Huevos frescos de gallinas camperas (1 docena)",
+          "Leche desnatada o bebida almendra sin azúcar (2L)",
+          "Queso fresco desnatado 0% bajo en sal (2 tarrinas)",
+          "Yogures desnatados naturales (1 pack de 4)"
+        ]
+      }
+    ]
+  },
+  "2": {
+    "title": "Semana 2: Enfoque Hipolipídico (Triglicéridos) & Antioxidante",
+    "badge": "Hipolipídica",
+    "desc": "Enfocada en acelerar la reducción de triglicéridos basales (346 mg/dL) con pescados blancos y grasas monoinsaturadas.",
+    "days": {
+      "lunes": {
+        "name": "Lunes",
+        "desayuno": {
+          "text": "Tostada integral de espelta con AOVE virgen extra de Jaén, loncha fina de pechuga de pavo baja en sal y café descafeinado solo.",
+          "function": "Protección gástrica previa a la toma matinal de Ramipril y Secalip, con carbohidrato de espelta de bajo índice glucémico."
+        },
+        "comida": {
+          "text": "Lomo de bonito del norte o atún claro fresco a la plancha con judías verdes y zanahoria hervida con doble cambio de agua.",
+          "function": "Aporte de proteína noble con alta biodisponibilidad y cero grasas aterogénicas."
+        },
+        "cena": {
+          "text": "Sopa juliana de verduras cocidas con doble hervor, filete de lenguado a la plancha con limón y manzana dulce al vapor.",
+          "function": "Digestión sumamente rápida que favorece el descanso hemodinámico renal."
+        }
+      },
+      "martes": {
+        "name": "Martes",
+        "desayuno": {
+          "text": "Pudding de semillas de chía hidratadas en bebida de soja sin azúcar con frambuesas frescas e infusión de té rooibos.",
+          "function": "Ácido alfa-linolénico vegetal que coadyuva con Omacor en la limpieza de quilomicrones hepáticos."
+        },
+        "comida": {
+          "text": "Alubias pintas (con 12h de remojo y doble cocción) guisadas con calabaza y puerro, acompañadas de pechuga de pollo al limón.",
+          "function": "La doble cocción despoja el potasio de la alubia garantizando seguridad para el filtrado renal (FG 42)."
+        },
+        "cena": {
+          "text": "Tortilla de espárragos trigueros previamente hervidos (2 claras y 1 yema) y rodajas de pera tierna asada con canela.",
+          "function": "Diuresis suave natural y aporte de fibra insoluble protectora del sigma."
+        }
+      },
+      "miercoles": {
+        "name": "Miércoles",
+        "desayuno": {
+          "text": "Pan de avena integral con tomate natural rallado y aceite de oliva virgen extra con té verde descafeinado.",
+          "function": "Polifenoles antioxidantes que protegen la microvasculatura renal de la glucemia."
+        },
+        "comida": {
+          "text": "Cazuela de rape fresco con fideos de arroz y tiras de calabacín en caldo limpio casero de verduras.",
+          "function": "Pescado blanco magro rico en fósforo orgánico de muy baja asimilación, ideal en insuficiencia renal."
+        },
+        "cena": {
+          "text": "Filete de pechuga de pavo con orégano y compota casera de manzana sin azúcar con toque de hierbaluisa.",
+          "function": "Baja carga proteica nocturna para no forzar la proteinuria ni la hiperfiltración."
+        }
+      },
+      "jueves": {
+        "name": "Jueves",
+        "desayuno": {
+          "text": "Yogur desnatado 0% sin azúcar con 1 cucharada de semillas de lino molidas y tostada de pan integral de centeno.",
+          "function": "Probióticos lácteos que equilibran la microbiota intestinal reduciendo toxinas urémicas."
+        },
+        "comida": {
+          "text": "Arroz basmati integral con salmón al horno y alcachofas tiernas cocidas en doble agua con limón.",
+          "function": "La cinarina de la alcachofa favorece la función hepatobiliar mejorando la emulsión de triglicéridos."
+        },
+        "cena": {
+          "text": "Crema suave de apio y calabacín doble hervor con merluza al papillote con limón y una pera al horno.",
+          "function": "Efecto hipotensor natural sin sobrecargar los canales de potasio (K+ 5.5)."
+        }
+      },
+      "viernes": {
+        "name": "Viernes",
+        "desayuno": {
+          "text": "Tostada de pan integral con paté vegetal casero de berenjena asada (pelada) sin sal y AOVE con infusión de poleo menta.",
+          "function": "Grasa cardiosaludable pura sin colesterol que ayuda a mantener el HDL en rango."
+        },
+        "comida": {
+          "text": "Hamburguesas caseras de pechuga de pollo picada con calabacín rallado a la plancha y ensalada de canónigos frescos.",
+          "function": "Proteína blanca saciante de bajo impacto metabólico que no genera ácido úrico."
+        },
+        "cena": {
+          "text": "Gallo a la plancha con menestra de verduras hervidas con doble agua y AOVE en crudo con compota de manzana.",
+          "function": "Excelente digestibilidad y alto valor biológico proteico."
+        }
+      },
+      "sabado": {
+        "name": "Sábado",
+        "desayuno": {
+          "text": "Crepe fino casero de harina de garbanzo con un hilo de AOVE y requesón 0% con café descafeinado.",
+          "function": "Aporte de hierro vegetal y proteína no procesada sin elevar sodio ni azúcar."
+        },
+        "comida": {
+          "text": "Guiso marinero de patata nueva (remojada 12h y doble hervor) con sepia limpia a la plancha y laurel.",
+          "function": "La técnica del doble hervor permite disfrutar de la patata sin riesgo de hiperpotasemia."
+        },
+        "cena": {
+          "text": "Revuelto de champiñones laminados cocidos con claras de huevo y tosta de pan integral con pera al vapor.",
+          "function": "Cena rica en albúmina pura sin sobrecargar el aclaramiento de creatinina."
+        }
+      },
+      "domingo": {
+        "name": "Domingo",
+        "desayuno": {
+          "text": "Desayuno suave pre-Ozempic: Infusión de tila tibia con rebanada de pan integral con hilillo de AOVE y queso fresco desnatado.",
+          "function": "Aclimatación del estómago antes de la dosis subcutánea de Ozempic 1 mg."
+        },
+        "comida": {
+          "text": "Almuerzo digestivo: Caldo limpio de verduras y ave con filete de dorada al vapor y puré de calabacín escurrido.",
+          "function": "Digestión ligera y descanso de la pared gástrica."
+        },
+        "cena": {
+          "text": "Cena de asimilación: Crema ligera de zanahoria y calabacín (doble hervor) con 1 huevo poché templado.",
+          "function": "Evita reflujo nocturno y asegura tolerancia gastrointestinal perfecta."
+        }
+      }
+    },
+    "shopping": [
+      {
+        "cat": "🐟 Pescadería",
+        "items": [
+          "Bonito o atún claro fresco (2 rodajas)",
+          "Rape fresco (2 rodajas)",
+          "Salmón fresco (2 lomos)",
+          "Gallo fresco (2 piezas)",
+          "Sepia limpia fresca (300g)",
+          "Dorada y lenguado (1 pieza de cada)"
+        ]
+      },
+      {
+        "cat": "🥩 Carnicería Limpia",
+        "items": [
+          "Pechuga de pavo natural (500g)",
+          "Pechuga de pollo limpia (600g)"
+        ]
+      },
+      {
+        "cat": "🥦 Verduras y Frutas",
+        "items": [
+          "Calabacines (1.5 kg)",
+          "Zanahorias frescas (500g)",
+          "Judías verdes (500g)",
+          "Alcachofas frescas (4 unidades)",
+          "Berenjenas (2 unidades)",
+          "Apio fresco (1 rama)",
+          "Canónigos frescos (1 bolsa)",
+          "Manzanas y peras (1.5 kg de cada)",
+          "Frambuesas o arándanos frescos (1 tarrina)"
+        ]
+      },
+      {
+        "cat": "🌾 Despensa y Granos",
+        "items": [
+          "Pan integral de espelta (2 barras)",
+          "Arroz basmati integral (500g)",
+          "Alubias pintas secas (500g)",
+          "Semillas de chía (250g)",
+          "Harina de garbanzo (250g)",
+          "Fideos de arroz (250g)"
+        ]
+      },
+      {
+        "cat": "🥛 Lácteos y Huevos",
+        "items": [
+          "Huevos camperos (1 docena)",
+          "Bebida de soja o leche desnatada sin azúcar (2L)",
+          "Yogur desnatado 0% natural (pack de 4)",
+          "Requesón 0% bajo en sal (2 tarrinas)"
+        ]
+      }
+    ]
+  },
+  "3": {
+    "title": "Semana 3: Enfoque Nefroprotector (Control K+ 5.5 y Filtrado FG 42)",
+    "badge": "Nefroprotectora",
+    "desc": "Prioriza técnicas culinarias de extracción de potasio y control estricto de fósforo inorgánico y sodio.",
+    "days": {
+      "lunes": {
+        "name": "Lunes",
+        "desayuno": {
+          "text": "Tostada de pan de molde integral sin sal añadida con AOVE de Jaén e infusión de cola de caballo suave o manzanilla.",
+          "function": "Sin sodio añadido para proteger la microcirculación glomerular y facilitar la acción de Ramipril 2.5 mg."
+        },
+        "comida": {
+          "text": "Suprema de bacalao fresco al horno sobre cama de rodajas de manzana y cebolla pochada en AOVE virgen extra.",
+          "function": "Pescado blanco muy bajo en grasa y purinas con fibra de manzana que asiste al colon sin irritar el sigma."
+        },
+        "cena": {
+          "text": "Crema clarificada de calabacín pelado con doble hervor, tortilla francesa de 2 claras y compota de pera sin azúcar.",
+          "function": "El pelado del calabacín retira la mayor parte de sales potásicas periféricas garantizando K+ en rango seguro (<5.0)."
+        }
+      },
+      "martes": {
+        "name": "Martes",
+        "desayuno": {
+          "text": "Gachas de copos de avena fina hervidos en agua y chorrito de leche desnatada con canela en rama y semillas de lino.",
+          "function": "Control glucémico basal prolongado sin pico de insulina para DM2."
+        },
+        "comida": {
+          "text": "Garbanzos con 24h de remojo y triple cambio de agua guisados con calabaza, y filete de pechuga de pavo al limón.",
+          "function": "Triple seguridad renal en legumbre para proteger la tasa de filtrado glomerular (FG 42 mL/min)."
+        },
+        "cena": {
+          "text": "Filete de pescadilla a la plancha con puré de coliflor al vapor de doble hervor y manzana asada con canela.",
+          "function": "Coliflor desmineralizada en doble hervor que aporta saciedad sin sobrecarga electrolítica."
+        }
+      },
+      "miercoles": {
+        "name": "Miércoles",
+        "desayuno": {
+          "text": "Tostada de centeno con requesón desnatado bajo en sal y semillas de lino molidas con café suave descafeinado.",
+          "function": "Grasas saturadas casi inexistentes para favorecer la acción hipolipemiante de Secalip y Atorvastatina."
+        },
+        "comida": {
+          "text": "Solomillo de conejo asado al horno con romero y guarnición de judías verdes cocidas con abundante agua escurrida.",
+          "function": "Carne blanca con el menor contenido en colesterol y sodio del reino animal."
+        },
+        "cena": {
+          "text": "Sopa de sémola de trigo con caldo vegetal limpio desgrasado y tortilla de claras de huevo con manzana tibia.",
+          "function": "Asimilación rápida que evita sobrecarga cardíaca en decúbito bajo Atenolol 50 mg."
+        }
+      },
+      "jueves": {
+        "name": "Jueves",
+        "desayuno": {
+          "text": "Pan integral 100% con AOVE de Jaén y láminas finas de queso tierno 0% bajo en sal con infusión de rooibos.",
+          "function": "Acolchamiento gástrico suave y control de presión arterial matinal."
+        },
+        "comida": {
+          "text": "Lomo de pez espada / emperador a la plancha con perejil fresco y limón, con arroz blanco hervido en agua abundante escurrida.",
+          "function": "El arroz blanco muy hervido y escurrido elimina fósforo y potasio, recomendado puntualmente en nefrología."
+        },
+        "cena": {
+          "text": "Huevo escalfado sobre lecho de calabacín y berenjena pelada al vapor con pera cocida.",
+          "function": "Proteína perfecta de clara para mantener albúmina plasmática estable sin elevar urea."
+        }
+      },
+      "viernes": {
+        "name": "Viernes",
+        "desayuno": {
+          "text": "Tortitas de avena caseras preparadas con claras y compota de pera sin azúcar con infusión digestiva.",
+          "function": "Excelente aporte energético matinal que prepara para la caminata matinal en terreno llano."
+        },
+        "comida": {
+          "text": "Pechuga de pollo de corral a la plancha marinada en limón con menestra casera de verduras hervidas dos veces.",
+          "function": "Proteína magra combinada con verduras libres de sales libres por la doble cocción."
+        },
+        "cena": {
+          "text": "Merluza al horno con finas hierbas y caldo juliana ligero de verduras desgrasado con una manzana.",
+          "function": "Ligereza máxima para una óptima relajación miocárdica nocturna."
+        }
+      },
+      "sabado": {
+        "name": "Sábado",
+        "desayuno": {
+          "text": "Tostada de pan integral con aceite de oliva virgen extra y tomate rallado natural con café descafeinado.",
+          "function": "Antioxidantes naturales del AOVE que favorecen la salud endotelial renal."
+        },
+        "comida": {
+          "text": "Lentejas rojas peladas (muy digestivas, 12h de remojo) con verduras variadas y taco de salmón al vapor.",
+          "function": "La lenteja pelada no fermenta en el sigma y tiene menor contenido mineral que la entera."
+        },
+        "cena": {
+          "text": "Dorada a la espalda con ajo picado dorado en AOVE en crudo y puré ligero de calabacín escurrido.",
+          "function": "Grasa monoinsaturada cardiosaludable con digestibilidad insuperable."
+        }
+      },
+      "domingo": {
+        "name": "Domingo",
+        "desayuno": {
+          "text": "Desayuno suave pre-Ozempic: Infusión templada de hierbaluisa con 2 rebanadas finas de pan tostado con AOVE y 1 yogur natural 0%.",
+          "function": "Protección digestiva óptima antes de administrar Ozempic 1 mg."
+        },
+        "comida": {
+          "text": "Almuerzo digestivo: Pechuga de pavo al vapor con caldo limpio de ave y compota de manzana tibia.",
+          "function": "Mínima exigencia motora para el estómago en las horas posteriores a la inyección."
+        },
+        "cena": {
+          "text": "Cena de asimilación: Crema sedosa de calabacín con 1 huevo poché templado.",
+          "function": "Nutrición completa sin generar residuo cólico ni pesadez."
+        }
+      }
+    },
+    "shopping": [
+      {
+        "cat": "🐟 Pescadería",
+        "items": [
+          "Bacalao fresco (2 lomos gruesos)",
+          "Pescadilla fresca (2 piezas)",
+          "Emperador o pez espada (2 filetes)",
+          "Merluza fresca (2 supremas)",
+          "Salmón fresco (1 lomo)",
+          "Dorada fresca (1 pieza)"
+        ]
+      },
+      {
+        "cat": "🥩 Carnicería Limpia",
+        "items": [
+          "Carne de conejo limpia troceada (400g)",
+          "Pechuga de pavo (500g)",
+          "Pechuga de pollo de corral (500g)"
+        ]
+      },
+      {
+        "cat": "🥦 Verduras y Frutas",
+        "items": [
+          "Calabacines pelados (2 kg)",
+          "Coliflor fresca (1 pieza mediana)",
+          "Judías verdes finas (500g)",
+          "Berenjenas (2 unidades)",
+          "Cebollas dulces (500g)",
+          "Manzanas reinetas (2 kg)",
+          "Peras de agua (1.5 kg)",
+          "Limones frescos (1 kg)"
+        ]
+      },
+      {
+        "cat": "🌾 Despensa y Granos",
+        "items": [
+          "Pan integral sin sal añadida (2 barras)",
+          "Copos de avena fina (500g)",
+          "Garbanzos secos seleccionados (500g)",
+          "Lentejas rojas peladas (500g)",
+          "Sémola de trigo (250g)",
+          "Arroz blanco redondo (para escurrir potasio, 500g)"
+        ]
+      },
+      {
+        "cat": "🥛 Lácteos y Huevos",
+        "items": [
+          "Huevos camperos (1 docena)",
+          "Leche desnatada (2L)",
+          "Queso fresco desnatado 0% bajo sal (2 tarrinas)",
+          "Yogur natural desnatado 0% (pack de 4)"
+        ]
+      }
+    ]
+  },
+  "4": {
+    "title": "Semana 4: Enfoque Antiinflamatorio & Digestivo (Protección Sigma/Colon)",
+    "badge": "Antiinflamatoria",
+    "desc": "Alimentos con fibra soluble suave (pectinas) y pescados azules pequeños antiinflamatorios que cuidan el colon.",
+    "days": {
+      "lunes": {
+        "name": "Lunes",
+        "desayuno": {
+          "text": "Tostada de pan integral con AOVE de Jaén y semillas de lino molidas con infusión de cúrcuma y jengibre suave.",
+          "function": "Acción antiinflamatoria en la mucosa colónica y estimulación del peristaltismo no irritante."
+        },
+        "comida": {
+          "text": "Sardinas frescas al horno con orégano y limón, patata pequeña cocida con doble agua y ensalada de canónigos.",
+          "function": "Altísimo contenido en ácidos grasos EPA/DHA naturales para reducir triglicéridos y proteger el endotelio vascular."
+        },
+        "cena": {
+          "text": "Crema de calabaza y calabacín con doble hervor, filete de pechuga de pavo a la plancha y manzana asada.",
+          "function": "Fibra soluble prebiótica que nutre la pared del colon y previene episodios de diverticulitis en el sigma."
+        }
+      },
+      "martes": {
+        "name": "Martes",
+        "desayuno": {
+          "text": "Bol de avena cocida en bebida de almendra sin azúcar con manzana rallada fina y canela en polvo.",
+          "function": "Saciante y protector del revestimiento mucoso digestivo para fármacos matutinos."
+        },
+        "comida": {
+          "text": "Guiso de alubias blancas (12h de remojo y doble cocción) con puerro, y filete de gallo a la plancha.",
+          "function": "Aporte de almidón resistente que nutre los colonocitos del sigma sin generar picos de glucemia."
+        },
+        "cena": {
+          "text": "Tortilla francesa de 2 claras y 1 yema con calabacín rallado a la plancha y compota de pera sin azúcar.",
+          "function": "Cena ultra-ligera que reduce la presión intraabdominal nocturna."
+        }
+      },
+      "miercoles": {
+        "name": "Miércoles",
+        "desayuno": {
+          "text": "Tostada de centeno con aceite de oliva virgen extra y huevo cocido en rodajas con café descafeinado.",
+          "function": "Nutrición proteica completa y colina para el metabolismo lipídico hepático."
+        },
+        "comida": {
+          "text": "Cazuela de rape al horno con almejas bien limpias y tiras de pimiento asado sin piel en AOVE.",
+          "function": "Pimiento asado sin piel para no irritar el sigma, con marisco magro bajo en grasas saturadas."
+        },
+        "cena": {
+          "text": "Caldo de pollo y verduras desgrasado con fideos de arroz y filete de merluza al vapor con manzana.",
+          "function": "Hidratación nocturna que alivia la sobrecarga de trabajo tubular renal."
+        }
+      },
+      "jueves": {
+        "name": "Jueves",
+        "desayuno": {
+          "text": "Biscotes integrales con queso 0% sin sal y AOVE de Jaén con infusión digestiva de manzanilla dulce.",
+          "function": "Grasa saludable que activa la vesícula biliar y previene la litiasis durante el descenso de peso."
+        },
+        "comida": {
+          "text": "Hamburguesa vegetal casera de lentejas cocidas y avena, con pechuga de pollo al horno con hierbas provenzales.",
+          "function": "Combinación perfecta de proteína vegetal y animal sin purinas inflamatorias."
+        },
+        "cena": {
+          "text": "Revuelto de claras con setas de cultivo hervidas y escurridas, con rodajas de pera asada con canela.",
+          "function": "Las setas hervidas pierden el potasio libre aportando betaglucanos inmunoestimulantes."
+        }
+      },
+      "viernes": {
+        "name": "Viernes",
+        "desayuno": {
+          "text": "Tostada integral con AOVE de Jaén y láminas de pechuga de pavo natural con infusión rooibos.",
+          "function": "Mantiene niveles estables de glucemia basal para el ayuno intermedio."
+        },
+        "comida": {
+          "text": "Lomo de lubina al horno con limón y guarnición de judías verdes y zanahorias con doble cocción.",
+          "function": "Pescado semigraso rico en selenio que refuerza la capacidad antioxidante glomerular."
+        },
+        "cena": {
+          "text": "Sopa suave de sémola con caldo limpio, filete de lenguado a la plancha con compota de manzana al horno.",
+          "function": "Digestión fluida que previene flatulencias y distensión colónica."
+        }
+      },
+      "sabado": {
+        "name": "Sábado",
+        "desayuno": {
+          "text": "Crepe de avena con queso fresco desnatado y un hilo de AOVE con café descafeinado.",
+          "function": "Excelente tolerancia digestiva y aporte de calcio no lítico."
+        },
+        "comida": {
+          "text": "Arroz integral con alcachofas cocidas, sepia fresca limpia y un toque de azafrán natural.",
+          "function": "Plato completo cardiosaludable con azafrán antiinflamatorio natural."
+        },
+        "cena": {
+          "text": "Dorada al papillote con finas rodajas de calabacín al vapor y compota casera de manzana con canela.",
+          "function": "Cocción al papillote que concentra jugos sin necesidad de sal ni aditivos."
+        }
+      },
+      "domingo": {
+        "name": "Domingo",
+        "desayuno": {
+          "text": "Desayuno suave pre-Ozempic: Infusión templada de manzanilla con anís y 2 tostadas finas integrales con AOVE de Jaén.",
+          "function": "Previene náuseas y prepara el estómago para la inyección semanal de Ozempic 1 mg."
+        },
+        "comida": {
+          "text": "Almuerzo digestivo: Pechuga de pollo de corral asada a fuego lento con puré de manzana sin azúcar y puré de calabacín.",
+          "function": "Fibra en forma de puré sedoso que facilita el vaciamiento gástrico retardado por el análogo de GLP-1."
+        },
+        "cena": {
+          "text": "Cena de asimilación: Crema ligera clarificada de calabacín y zanahoria (doble hervor) con 1 huevo pasado por agua.",
+          "function": "Protección total frente al reflujo gastroesofágico y descanso reparador."
+        }
+      }
+    },
+    "shopping": [
+      {
+        "cat": "🐟 Pescadería",
+        "items": [
+          "Sardinas frescas (400g)",
+          "Gallo fresco (2 piezas)",
+          "Rape fresco (2 rodajas)",
+          "Almejas frescas limpias (200g)",
+          "Merluza fresca (2 lomos)",
+          "Lubina y lenguado (1 pieza de cada)",
+          "Sepia limpia fresca (300g)",
+          "Dorada fresca (1 pieza)"
+        ]
+      },
+      {
+        "cat": "🥩 Carnicería Limpia",
+        "items": [
+          "Pechuga de pavo limpia (500g)",
+          "Pechuga de pollo de corral (600g)"
+        ]
+      },
+      {
+        "cat": "🥦 Verduras y Frutas",
+        "items": [
+          "Calabazas (1 trozo de 500g)",
+          "Calabacines verdes (1.5 kg)",
+          "Canónigos frescos (1 bolsa)",
+          "Puerros (1 manojo)",
+          "Pimientos rojos para asar (2 unidades)",
+          "Alcachofas (4 unidades)",
+          "Setas de cultivo (300g)",
+          "Manzanas y peras (1.5 kg de cada)"
+        ]
+      },
+      {
+        "cat": "🌾 Despensa y Granos",
+        "items": [
+          "Pan 100% integral (2 barras)",
+          "Copos de avena fina (500g)",
+          "Alubias blancas secas (500g)",
+          "Lentejas secas (500g)",
+          "Arroz integral (500g)",
+          "Fideos de arroz (250g)",
+          "Semillas de lino y chía (250g)",
+          "Cúrcuma y azafrán en hebra"
+        ]
+      },
+      {
+        "cat": "🥛 Lácteos y Huevos",
+        "items": [
+          "Huevos camperos (1 docena)",
+          "Bebida de almendra o leche desnatada sin azúcar (2L)",
+          "Queso 0% bajo en sal (2 tarrinas)"
+        ]
+      }
+    ]
+  }
+}

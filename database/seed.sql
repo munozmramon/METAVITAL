@@ -3,7 +3,7 @@
 -- =====================================================================
 
 INSERT INTO patients (id, medical_record_hash, birth_date, gender, height_cm, baseline_weight_kg)
-VALUES ('a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'hash_sha256_patient_ramon_001', '1968-05-14', 'MALE', 172.0, 84.5)
+VALUES ('a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'hash_sha256_patient_ramon_munoz_001', '1963-04-12', 'MALE', 165.0, 101.5)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO medications (id, patient_id, commercial_name, active_ingredient, dose_mg, therapeutic_class, scheduled_time, instructions)

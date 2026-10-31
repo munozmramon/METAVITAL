@@ -70,6 +70,21 @@ class PatientProfileUpdate(BaseModel):
     age: Optional[int] = None
     height_cm: Optional[float] = None
     current_weight_kg: Optional[float] = None
+    target_glucose_min: Optional[int] = None
+    target_glucose_max: Optional[int] = None
+    target_systolic_max: Optional[int] = None
+    target_diastolic_max: Optional[int] = None
+    target_steps_daily: Optional[int] = None
+    clinical_profile: Optional[str] = None
+
+
+class MedicationBoxScanRequest(BaseModel):
+    ocr_text: str
+
+
+class ClinicalDocumentScanRequest(BaseModel):
+    document_text: str
+    source: Optional[str] = "CAMERA_PHOTO"  # "CAMERA_PHOTO" | "PDF_CLICSALUD"
 
 
 class PatientProfileSchema(BaseModel):
@@ -83,5 +98,20 @@ class PatientProfileSchema(BaseModel):
     current_weight_kg: float
     bmi: float
     bmi_category: str
+    target_glucose_min: int = 70
+    target_glucose_max: int = 130
+    target_systolic_max: int = 130
+    target_diastolic_max: int = 80
+    target_steps_daily: int = 4000
+    clinical_profile: str = "STANDARD"
+
+
+class DoctorProfileSchema(BaseModel):
+    name: str = "Dr. Nicolás Cobo Fernández"
+    health_center: str = "Centro de Salud de Baeza"
+    specialty: str = "Medicina Familiar / Nefrología"
+    whatsapp_phone: str = "+34 600 000 000"
+    monthly_report_day: int = 1
+
 
 

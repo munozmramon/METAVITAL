@@ -10,7 +10,9 @@ export class ClinicalEngine {
    * Evaluates a glucose reading according to American Diabetes Association (ADA) guidelines.
    */
   public static evaluateGlucose(
-    reading: BiometricReading
+    reading: BiometricReading,
+    targetMin: number = 70,
+    targetMax: number = 130
   ): ClinicalAlert | null {
     const value = reading.valuePrimary;
 
@@ -29,11 +31,11 @@ export class ClinicalEngine {
       };
     }
 
-    if (value < 70) {
+    if (value < targetMin) {
       return {
         id: `alert-glu-${Date.now()}`,
         severity: 'CRITICAL',
-        title: 'HIPOGLUCEMIA LEVE/MODERADA (< 70 mg/dL)',
+        title: `HIPOGLUCEMIA (< ${targetMin} mg/dL)`,
         description: `Lectura de ${value} mg/dL registrada.`,
         instructions: 
           'Regla de los 15: Tome 15g de carbohidratos simples (medio vaso de zumo o agua con azúcar). Descanse sentado 15 minutos y vuelva a medir su glucosa con el glucómetro.',
@@ -59,12 +61,12 @@ export class ClinicalEngine {
       };
     }
 
-    if (reading.context === 'FASTING' && value > 140) {
+    if (reading.context === 'FASTING' && value > targetMax) {
       return {
         id: `alert-glu-${Date.now()}`,
         severity: 'WARNING',
-        title: 'GLUCEMIA BASAL ELEVADA (> 140 mg/dL)',
-        description: `Su nivel de glucosa en ayunas (${value} mg/dL) se sitúa por encima del rango óptimo (70-130 mg/dL).`,
+        title: `GLUCEMIA BASAL ELEVADA (> ${targetMax} mg/dL)`,
+        description: `Su nivel de glucosa en ayunas (${value} mg/dL) se sitúa por encima de su objetivo personalizado (${targetMin}-${targetMax} mg/dL).`,
         instructions: 
           'Priorice un desayuno sin azúcares libres ni harinas refinadas. Programe un paseo suave de 15 minutos después de desayunar.',
         requiresImmediateAction: false,
@@ -78,11 +80,14 @@ export class ClinicalEngine {
   }
 
   /**
-   * Evaluates blood pressure reading according to European Society of Cardiology (ESC/ESH) guidelines.
+   * Evaluates blood pressure reading according to European Society of Cardiology (ESC/ESH) guidelines
+   * and personalized blood pressure targets.
    */
   public static evaluateBloodPressure(
     reading: BiometricReading,
-    hasSymptoms: boolean = false
+    hasSymptoms: boolean = false,
+    targetSysMax: number = 130,
+    targetDiaMax: number = 80
   ): ClinicalAlert | null {
     const sys = reading.valuePrimary;
     const dia = reading.valueSecondary || 0;
@@ -118,11 +123,21 @@ export class ClinicalEngine {
       };
     }
 
-    // Stage 1 or 2 Hypertension (> 140 or > 90)
-    if (sys >= 140 || dia >= 90) {
+    // Elevated above personalized target
+    if (sys >= targetSysMax || dia >= targetDiaMax) {
       return {
         id: `alert-bp-${Date.now()}`,
         severity: 'WARNING',
+        title: `PRESIÓN ARTERIAL ELEVADA (≥ ${targetSysMax}/${targetDiaMax} mmHg)`,
+        description: `Presión actual: ${sys}/${dia} mmHg (Por encima del objetivo personalizado < ${targetSysMax}/${targetDiaMax} mmHg).`,
+        instructions: 
+          'Compruebe si ha tomado su medicación antihipertensiva pautada de hoy. Limite estrictamente el consumo de sal en las próximas comidas y evite el café o bebidas estimulantes.',
+        requiresImmediateAction: false,
+        emergencyCallPrompt: false,
+        familyContactPrompt: false,
+        timestamp: new Date().toISOString(),
+      };
+    }
         title: 'PRESIÓN ARTERIAL ELEVADA (≥ 140/90 mmHg)',
         description: `Presión actual: ${sys}/${dia} mmHg (Por encima del objetivo cardioprotector < 130/80 mmHg).`,
         instructions: 
