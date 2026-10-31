@@ -7,7 +7,11 @@
     },
     {
       "source": "/demo",
-      "destination": "/app.html"
+      "destination": "/demo.html"
+    },
+    {
+      "source": "/api/v1/reports/download-pdf",
+      "destination": "/api/reports/download-pdf"
     }
   ]
 }
