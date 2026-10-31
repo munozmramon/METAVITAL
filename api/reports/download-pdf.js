@@ -145,3 +145,4 @@ export default function handler(req, res) {
     res.status(500).json({ error: "Error generating PDF report", details: err.message });
   }
 }
+

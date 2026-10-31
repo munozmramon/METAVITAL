@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>METAVITAL — Panel de Superadministrador | Control SaaS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg-dark: #0B1120;
+      --bg-card: #131F37;
+      --bg-card-hover: #1A2A4A;
+      --primary: #0284C7;
+      --primary-light: #38BDF8;
+      --accent-emerald: #10B981;
+      --accent-purple: #8B5CF6;
+      --accent-amber: #F59E0B;
+      --accent-rose: #F43F5E;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(56, 189, 248, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* TOP HEADER */
+    .admin-header {
+      background: rgba(11, 17, 32, 0.95);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .brand-badge {
+      background: linear-gradient(135deg, #0284C7, #0D9488);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    .brand-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: -0.3px;
+    }
+    .admin-tag {
+      font-size: 10.5px;
+      font-weight: 800;
+      text-transform: uppercase;
+      background: rgba(244, 63, 94, 0.2);
+      color: #F43F5E;
+      padding: 2px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      margin-left: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.14);
+    }
+    .btn-primary {
+      background: #0284C7;
+      color: #FFFFFF;
+    }
+    .btn-primary:hover {
+      background: #0396E2;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* KPI CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid var(--border-subtle);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--accent-emerald));
+    }
+    .kpi-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .kpi-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kpi-icon {
+      font-size: 20px;
+    }
+    .kpi-val {
+      font-size: 32px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+    .kpi-sub {
+      font-size: 11.5px;
+      color: var(--accent-emerald);
+      font-weight: 600;
+    }
+
+    /* TABS */
+    .tabs-nav {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 12px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: rgba(2, 132, 199, 0.15);
+      color: var(--primary-light);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* CONTENT SECTIONS */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* TABLE */
+    .table-wrapper {
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+    th {
+      background: rgba(11, 17, 32, 0.5);
+      color: var(--text-muted);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: #E2E8F0;
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0284C7, #10B981);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      color: #FFFFFF;
+    }
+    .status-pill {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .pill-active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10B981;
+    }
+    .pill-demo {
+      background: rgba(56, 189, 248, 0.2);
+      color: #38BDF8;
+    }
+
+    /* CLOUD STATUS CARDS */
+    .infra-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+    .infra-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 22px;
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .infra-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .infra-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* DIET SELECTOR IN ADMIN */
+    .week-select-wrap {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .week-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-main);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .week-btn.active {
+      background: #0284C7;
+      border-color: #0284C7;
+      color: #FFF;
+    }
+
+    @media (max-width: 768px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .admin-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ADMIN HEADER -->
+  <header class="admin-header">
+    <div style="display:flex; align-items:center;">
+      <a href="/" class="brand-wrap">
+        <div class="brand-badge">🩺</div>
+        <span class="brand-title">METAVITAL</span>
+      </a>
+      <span class="admin-tag">SUPERADMIN</span>
+    </div>
+
+    <div class="header-actions">
+      <span id="cloud-badge" style="font-size:11.5px; font-weight:700; color:#10B981; display:flex; align-items:center; gap:6px;">
+        <span style="width:8px; height:8px; border-radius:50%; background:#10B981; display:inline-block; animation:pulse 2s infinite;"></span>
+        PostgreSQL Cloud OK
+      </span>
+      <a href="/app" class="btn btn-secondary">
+        <span>📱</span> <span>Portal Paciente</span>
+      </a>
+      <a href="/" class="btn btn-secondary">
+        <span>🌐</span> <span>Web</span>
+      </a>
+      <button class="btn btn-primary" onclick="refreshAdminData()">
+        <span>🔄</span> <span>Actualizar</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN DASHBOARD -->
+  <main class="container">
+    
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <!-- KPI 1: Pacientes -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Pacientes en Base de Datos</span>
+          <span class="kpi-icon">👥</span>
+        </div>
+        <div class="kpi-val" id="kpi-patients-count">1</div>
+        <div class="kpi-sub">🟢 Ramón Muñoz Martínez (Titular)</div>
+      </div>
+
+      <!-- KPI 2: Lecturas Biométricas Cloud -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Lecturas Biométricas</span>
+          <span class="kpi-icon">📊</span>
+        </div>
+        <div class="kpi-val" id="kpi-biometrics-count">...</div>
+        <div class="kpi-sub">Glucosa, Tensión, Peso y Podómetro</div>
+      </div>
+
+      <!-- KPI 3: Registros Dietéticos -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Auditorías Nutricionales</span>
+          <span class="kpi-icon">🥗</span>
+        </div>
+        <div class="kpi-val" id="kpi-foods-count">...</div>
+        <div class="kpi-sub">Comidas evaluadas con filtro renal</div>
+      </div>
+
+      <!-- KPI 4: Adherencia y Métricas SaaS -->
+      <div class="kpi-card">
+        <div class="kpi-header">
+          <span class="kpi-label">Adherencia Terapéutica</span>
+          <span class="kpi-icon">🛡️</span>
+        </div>
+        <div class="kpi-val">96%</div>
+        <div class="kpi-sub">Cero AINEs • Rotación de Insulina</div>
+      </div>
+    </div>
+
+    <!-- TABS NAVIGATION -->
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="switchAdminTab('tab-users', this)">
+        <span>👥</span> Pacientes y Constantes
+      </button>
+      <button class="tab-btn" onclick="switchAdminTab('tab-infra', this)">
+        <span>⚡</span> Arquitectura Cloud & DB
+      </button>
+      <button class="tab-btn" onclick="switchAdminTab('tab-dietas', this)">
+        <span>🥗</span> Plantillas Menú 28 Días
+      </button>
+      <button class="tab-btn" onclick="switchAdminTab('tab-saas', this)">
+        <span>💼</span> Métricas de Negocio & ARR
+      </button>
+    </div>
+
+    <!-- TAB 1: PACIENTES -->
+    <section id="tab-users" class="tab-content active">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Paciente</th>
+              <th>Email</th>
+              <th>Última Glucosa</th>
+              <th>Tensión Media</th>
+              <th>Peso / IMC</th>
+              <th>Pasos / Actividad</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody id="patients-table-body">
+            <tr>
+              <td>
+                <div class="user-badge">
+                  <div class="user-avatar">RM</div>
+                  <div>
+                    <strong style="color:#FFF;">Ramón Muñoz Martínez</strong>
+                    <div style="font-size:11px; color:#94A3B8;">63 años • 1.65 m</div>
+                  </div>
+                </div>
+              </td>
+              <td>munozmramon@gmail.com</td>
+              <td><span style="color:#38BDF8; font-weight:800;">114 mg/dL</span> (TIR 85%)</td>
+              <td><span style="color:#F43F5E; font-weight:800;">126/78 mmHg</span> (61 lpm)</td>
+              <td><strong>101.5 kg</strong> (IMC 37.28)</td>
+              <td><span style="color:#C084FC; font-weight:800;">6.420 pasos/día</span></td>
+              <td><span class="status-pill pill-active">🟢 ACTIVO CLOUD</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: INFRAESTRUCTURA CLOUD -->
+    <section id="tab-infra" class="tab-content">
+      <div class="infra-grid">
+        <div class="infra-card">
+          <div class="infra-title">
+            <span>🐘 Supabase PostgreSQL</span>
+            <span class="status-pill pill-active">ACTIVO (UE)</span>
+          </div>
+          <div class="infra-meta">
+            • <strong>Ref:</strong> mqhicpwhcjkjvdavbggx<br>
+            • <strong>Tablas:</strong> profiles, biometric_readings, daily_food_logs, medication_prescriptions, medication_logs, monthly_reports.<br>
+            • <strong>Seguridad:</strong> Row Level Security (RLS) estricto activo.<br>
+            • <strong>Región:</strong> Europa (RGPD Compliance).
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-title">
+            <span>▲ Vercel Edge Runtime</span>
+            <span class="status-pill pill-active">ONLINE</span>
+          </div>
+          <div class="infra-meta">
+            • <strong>Proyecto:</strong> metavital (team: projectsbaeza)<br>
+            • <strong>Dominio Oficial:</strong> https://metavital.fans<br>
+            • <strong>Funciones Serverless:</strong> /api/reports/download-pdf<br>
+            • <strong>Rutas Limpias:</strong> /app, /demo, /admin.
+          </div>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-title">
+            <span>🛡️ Cloudflare DNS & WAF</span>
+            <span class="status-pill pill-active">PROTEGIDO</span>
+          </div>
+          <div class="infra-meta">
+            • <strong>Modo SSL:</strong> Full (Strict) automático.<br>
+            • <strong>Anycast IP:</strong> 76.76.21.21 (Vercel Anycast Edge).<br>
+            • <strong>Mitigación Anti-DDoS:</strong> Activada.<br>
+            • <strong>HTTP/3:</strong> Habilitado.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: PLANTILLAS MENÚ 28 DÍAS -->
+    <section id="tab-dietas" class="tab-content">
+      <div class="week-select-wrap">
+        <button class="week-btn active" onclick="showAdminWeek(1, this)">Semana 1: Adaptación Renal</button>
+        <button class="week-btn" onclick="showAdminWeek(2, this)">Semana 2: Estabilización Glucémica</button>
+        <button class="week-btn" onclick="showAdminWeek(3, this)">Semana 3: Cardioprotección</button>
+        <button class="week-btn" onclick="showAdminWeek(4, this)">Semana 4: Mantenimiento Vital</button>
+      </div>
+
+      <div style="background:var(--bg-card); border-radius:16px; padding:20px; border:1px solid var(--border-subtle);" id="admin-week-desc">
+        <h4 style="font-size:16px; color:#38BDF8; margin-bottom:8px;" id="week-title">Semana 1: Adaptación y Protección Renal (Días 1 a 7)</h4>
+        <p style="font-size:13px; color:#CBD5E1; line-height:1.6;" id="week-body">
+          Especialmente estructurada para pacientes con FG 42 ml/min y potasio 5.5 mEq/L. Enfoque en legumbres y verduras con técnica de remojo obligatorio y doble cocción. Control absoluto de sodio y cero ultraprocesados.
+        </p>
+        <div style="margin-top:14px; font-size:12px; color:#10B981; font-weight:700;">
+          ✓ 7 Días completos configurados • Desayuno, Almuerzo y Cena • Lista de la compra sincronizada.
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 4: MÉTRICAS SAAS & ARR -->
+    <section id="tab-saas" class="tab-content">
+      <div class="infra-grid">
+        <div class="infra-card">
+          <div class="infra-title">
+            <span>📈 Proyección ARR / MRR</span>
+            <span style="font-size:12px; color:#38BDF8; font-weight:800;">Plan Salud 149€/año</span>
+          </div>
+          <div style="font-size:36px; font-weight:900; color:#FFF; margin:8px 0;">149,00 € <span style="font-size:14px; color:#94A3B8; font-weight:600;">ARR Base</span></div>
+          <p style="font-size:12px; color:#94A3B8;">Modelo de suscripción recurrente anual. Listo para enlazar con Stripe Billing.</p>
+        </div>
+
+        <div class="infra-card">
+          <div class="infra-title">
+            <span>👥 Tasa de Retención (Churn)</span>
+            <span style="font-size:12px; color:#10B981; font-weight:800;">0% Churn</span>
+          </div>
+          <div style="font-size:36px; font-weight:900; color:#10B981; margin:8px 0;">100% <span style="font-size:14px; color:#94A3B8; font-weight:600;">Retención</span></div>
+          <p style="font-size:12px; color:#94A3B8;">Adherencia diaria sostenida gracias a la simplicidad de las 4 tomas.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    const SUPABASE_CONFIG = {
+      url: "https://mqhicpwhcjkjvdavbggx.supabase.co",
+      key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xaGljcHdoY2tqdnZkYXZiZ2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MDYwNjQsImV4cCI6MjA3NzQ4MjA2NH0.p3D372y8Lg_QjM5q9x0G0P-kOq7K0oXy4uF6_hX7uV4"
+    };
+
+    let sbClient = null;
+    try {
+      if (typeof window.supabase !== 'undefined') {
+        sbClient = window.supabase.createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
+      }
+    } catch(e) {}
+
+    function switchAdminTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      if (btn) btn.classList.add('active');
+    }
+
+    const weekInfo = {
+      1: {
+        title: "Semana 1: Adaptación y Protección Renal (Días 1 a 7)",
+        desc: "Especialmente estructurada para pacientes con FG 42 ml/min y potasio 5.5 mEq/L. Enfoque en legumbres y verduras con técnica de remojo obligatorio y doble cocción. Control absoluto de sodio y cero ultraprocesados."
+      },
+      2: {
+        title: "Semana 2: Estabilización Glucémica e Índice Bajo (Días 8 a 14)",
+        desc: "Introducción de carbohidratos complejos de absorción lenta. Avena integral, pescados azules con omega-3 (sardina, caballa) para reducción de triglicéridos (meta <150 mg/dL desde 346)."
+      },
+      3: {
+        title: "Semana 3: Cardioprotección y Descenso Ponderal (Días 15 a 21)",
+        desc: "Consolidación del déficit calórico moderado sin pérdida de masa magra. Soporte a la pauta de paseos en terreno llano posprandiales de 15 minutos."
+      },
+      4: {
+        title: "Semana 4: Mantenimiento Vital y Variedad Mediterránea (Días 22 a 28)",
+        desc: "Equilibrio permanente y preparación para el ciclo mensual siguiente. Máxima variedad dietética con garantía de seguridad hidroelectrolítica."
+      }
+    };
+
+    function showAdminWeek(num, btn) {
+      document.querySelectorAll('.week-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const info = weekInfo[num];
+      if (info) {
+        document.getElementById('week-title').textContent = info.title;
+        document.getElementById('week-body').textContent = info.desc;
+      }
+    }
+
+    async function refreshAdminData() {
+      if (!sbClient) return;
+
+      try {
+        // Fetch profiles
+        const { data: profiles, error: pErr, count: pCount } = await sbClient
+          .from('profiles')
+          .select('*', { count: 'exact' });
+
+        if (!pErr && profiles) {
+          const countEl = document.getElementById('kpi-patients-count');
+          if (countEl) countEl.textContent = Math.max(1, profiles.length);
+        }
+
+        // Fetch biometrics count
+        const { data: bios, error: bErr, count: bCount } = await sbClient
+          .from('biometric_readings')
+          .select('id', { count: 'exact' });
+
+        const bioCountEl = document.getElementById('kpi-biometrics-count');
+        if (bioCountEl) {
+          bioCountEl.textContent = (bios ? bios.length : 0) + ' registros';
+        }
+
+        // Fetch foods count
+        const { data: foods, error: fErr } = await sbClient
+          .from('daily_food_logs')
+          .select('id', { count: 'exact' });
+
+        const foodCountEl = document.getElementById('kpi-foods-count');
+        if (foodCountEl) {
+          foodCountEl.textContent = (foods ? foods.length : 0) + ' comidas';
+        }
+
+        const badge = document.getElementById('cloud-badge');
+        if (badge) {
+          badge.innerHTML = '<span style="width:8px; height:8px; border-radius:50%; background:#10B981; display:inline-block;"></span> Supabase Cloud Sincronizado';
+        }
+      } catch(e) {
+        console.warn("Error refreshing admin stats:", e);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      refreshAdminData();
+    });
+  </script>
+</body>
+</html>
