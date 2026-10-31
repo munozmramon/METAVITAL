@@ -754,7 +754,7 @@
     /* MODERN TEAL HEADER */
     .modern-app-header {
       background: #F4F8F7;
-      padding: 10px 18px 14px;
+      padding: calc(env(safe-area-inset-top, 0px) + 14px) 18px 14px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -1327,6 +1327,21 @@
   transform: scale(1.05);
 }
 
+
+    @media (max-width: 600px) {
+      body {
+        padding: 0 !important;
+        background: #F4F8F7 !important;
+      }
+      .phone-wrapper {
+        max-width: 100% !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+    }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
@@ -1381,32 +1396,20 @@
 
   <div class="phone-wrapper">
 
-<!-- STATUS BAR (DYNAMIC ISLAND) & MODERN APP HEADER -->
-    <div class="status-bar">
-      <span class="status-time">9:41</span>
-      <div class="dynamic-island">
-        <div class="island-lens"></div>
-      </div>
-      <div style="display:flex; align-items:center; gap:5px; font-size:11px;">
-        <span>📶</span>
-        <span>5G</span>
-        <span>🔋</span>
-      </div>
-    </div>
-
+<!-- MODERN APP HEADER -->
     <div class="modern-app-header">
       <div style="display:flex; align-items:center; gap:8px;">
         <img src="/logo.png" alt="METAVITAL Logo" onclick="openCoverModal()" class="modern-hdr-logo" title="Ver Portada Oficial METAVITAL">
         <div class="header-user-group" onclick="openProfileModal()" style="cursor:pointer;" title="Ver Perfil de Salud">
-        <div class="user-avatar-circle">
-          RM
-          <div class="online-badge"></div>
+          <div class="user-avatar-circle">
+            RM
+            <div class="online-badge"></div>
+          </div>
+          <div class="user-text-col">
+            <span class="user-greeting" id="hdr-user-greeting">Hola, Ramón</span>
+            <span class="user-date">31 Octubre, 2026</span>
+          </div>
         </div>
-        <div class="user-text-col">
-          <span class="user-greeting" id="hdr-user-greeting">Hola, Ramón</span>
-          <span class="user-date">31 Octubre, 2026</span>
-        </div>
-      </div>
       </div>
 
       <div class="header-btn-group">
