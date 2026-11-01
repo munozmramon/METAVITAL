@@ -2795,6 +2795,7 @@
       firstName: "Neli",
       lastName: "Gómez Serrano",
       fullName: "Neli Gómez Serrano",
+      name: "Neli Gómez Serrano",
       age: 58,
       heightCm: 162.0,
       weightKg: 71.4,
@@ -2872,7 +2873,7 @@
 
     // Cargar historial de localStorage si existe
     try {
-      const savedHist = localStorage.getItem('metavital_history');
+      const savedHist = localStorage.getItem('metavital_demo_history');
       if (savedHist) {
         const parsedHist = JSON.parse(savedHist);
         if (Array.isArray(parsedHist) && parsedHist.length > 0) {
@@ -3822,7 +3823,7 @@
 
       // Persist to localStorage
       try {
-        localStorage.setItem('metavital_history', JSON.stringify(measurementHistory));
+        localStorage.setItem('metavital_demo_history', JSON.stringify(measurementHistory));
       } catch(e) {}
 
       renderMeasurementHistory();
