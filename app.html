@@ -2979,7 +2979,6 @@
         if (manualView) manualView.style.display = 'none';
         if (tabCam) { tabCam.style.background = '#0D9488'; tabCam.style.color = '#FFFFFF'; }
         if (tabMan) { tabMan.style.background = 'transparent'; tabMan.style.color = '#475569'; }
-        startLiveCamera();
       } else {
         stopLiveCamera();
         if (snapView) snapView.style.display = 'none';
@@ -3068,7 +3067,7 @@
           if (camControls) camControls.style.display = 'flex';
         } catch (fallbackErr) {
           if (camError) {
-            camError.innerHTML = '<strong>No se pudo activar la cámara:</strong> Permiso denegado en el navegador o dispositivo sin cámara activa.<br>💡 Pulsa <strong>"Subir foto de galería"</strong> o usa la pestaña <strong>"Escribir a Mano"</strong>.';
+            camError.innerHTML = '<strong>No se pudo activar la cámara:</strong> Permiso de cámara bloqueado o dispositivo sin webcam.<br>• Toca el <strong>candado 🔒</strong> en la barra de tu navegador para dar permiso a la Cámara.<br>• O usa la pestaña <strong>"Escribir a Mano"</strong> para guardarlo en 2 segundos.';
             camError.style.display = 'block';
           }
         }
@@ -3270,8 +3269,6 @@
       }
 
       document.getElementById('capture-modal').style.display = 'flex';
-      // Iniciar cámara en directo automáticamente al abrir
-      startLiveCamera();
     }
 
     function closeCaptureModal() {
