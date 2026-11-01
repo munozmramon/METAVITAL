@@ -1336,6 +1336,23 @@
         if (urlParams.get('auth') === 'open' || urlParams.get('login') === '1') {
           setTimeout(() => {
             if (typeof openAuthModal === 'function') openAuthModal();
+            const plan = urlParams.get('plan');
+            const planBanner = document.getElementById('auth-selected-plan-banner');
+            if (plan && planBanner) {
+              if (typeof switchAuthTab === 'function') switchAuthTab('signup');
+              planBanner.style.display = 'block';
+              if (plan === 'essential') {
+                planBanner.style.background = '#F0FDFA';
+                planBanner.style.border = '1.5px solid #14B8A6';
+                planBanner.style.color = '#0F766E';
+                planBanner.innerHTML = '📋 <strong>Plan Seleccionado:</strong> Control Esencial (4,99 €/mes)';
+              } else if (plan === 'integral') {
+                planBanner.style.background = '#EFF6FF';
+                planBanner.style.border = '1.5px solid #3B82F6';
+                planBanner.style.color = '#1E40AF';
+                planBanner.innerHTML = '👑 <strong>Plan Seleccionado:</strong> Salud Integral (9,99 €/mes)';
+              }
+            }
           }, 350);
         }
       } catch(e) {}
@@ -2390,6 +2407,9 @@
 
         <!-- Formularios de Login / Registro -->
         <div id="auth-forms-view">
+          <!-- Banner de Plan Seleccionado -->
+          <div id="auth-selected-plan-banner" style="display:none; padding:8px 12px; border-radius:10px; font-size:12px; font-weight:700; text-align:center; margin-bottom:12px;"></div>
+
           <!-- Pestañas Login vs Registro -->
           <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-bottom:14px;">
             <button type="button" id="tab-btn-login" onclick="switchAuthTab('login')" style="padding:8px; font-size:12px; font-weight:800; border-radius:8px; border:1.5px solid #0284C7; background:#0284C7; color:#FFF; cursor:pointer;">
