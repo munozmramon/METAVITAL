@@ -3102,667 +3102,76 @@
 
     <!-- PÁGINA 2: SEMANA & MEDICACIÓN (Datos acumulados semana anterior + Medicamentos + Explicación Tomar) -->
 
-        <!-- PÁGINA 2: SEMANA (EVOLUCIÓN) -->
+            <!-- PÁGINA 2: SEMANA (EVOLUCIÓN) -->
     <div id="tab-semana" class="screen-content tab-view" style="display:none;">
-      <!-- EPÍGRAFE DEMO 2 -->
-      <div style="background: linear-gradient(135deg, #0284C7, #0369A1); color:#FFFFFF; border-radius:14px; padding:12px 14px; margin-bottom:12px; box-shadow:0 2px 8px rgba(2,132,199,0.18);">
+      <!-- ETIQUETA AZUL -->
+      <div style="background: linear-gradient(135deg, #0284C7, #0369A1); color:#FFFFFF; border-radius:14px; padding:14px 16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(2,132,199,0.2);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-          <span style="background:rgba(255,255,255,0.22); font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; letter-spacing:0.4px;">EPÍGRAFE 2 • MUESTRA DEMO</span>
+          <span style="background:rgba(255,255,255,0.22); font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; letter-spacing:0.4px;">MUESTRA DEMO</span>
           <span style="font-size:11px; font-weight:700; color:#BAE6FD;">Paso 2 de 5</span>
         </div>
-        <h3 style="font-size:14.5px; font-weight:900; margin:0 0 4px 0; color:#FFFFFF;">Gráficas de Evolución y Bandas Diana</h3>
-        <p style="font-size:11.5px; line-height:16px; margin:0; color:#F0F9FF;">
+        <h3 style="font-size:15px; font-weight:900; margin:0 0 4px 0; color:#FFFFFF;">Gráficas de Evolución y Bandas Diana</h3>
+        <p style="font-size:12px; line-height:16px; margin:0; color:#F0F9FF;">
           Supervisa si tu medicación y estilo de vida están funcionando. Compara tus niveles reales frente a los objetivos médicos de seguridad (KDIGO / ADA).
         </p>
       </div>
 
-      <!-- TARJETA: BALANCE DE EVOLUCIÓN GLOBAL DEL ESTADO DE SALUD -->
-
-      <div class="card" style="border: 2px solid #16A34A; background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%);">
-
-        <div class="card-header">
-
-          <div>
-
-            <div class="card-title" style="color: #166534; font-size: 15.5px;">📈 Evolución Global de Salud</div>
-
-            <div class="card-subtitle">Balance clínico acumulado a lo largo del tiempo</div>
-
-          </div>
-
-          <span id="clinical-evolution-status-badge" class="badge" style="background: #16A34A; font-size: 10.5px;">🟢 EVOLUCIÓN POSITIVA</span>
-
+      <!-- LOS 3 ENCABEZAMIENTOS PRINCIPALES NADA MÁS -->
+      <div class="card" style="border: 1.5px solid #E2E8F0; padding: 18px 16px; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #F1F5F9;">
+          <strong style="font-size:13.5px; color:#1E293B;">Parámetros Clínicos en Seguimiento:</strong>
+          <span style="background:#DCFCE7; color:#15803D; font-size:11px; font-weight:800; padding:3px 8px; border-radius:999px;">🟢 EVOLUCIÓN POSITIVA</span>
         </div>
 
-
-
-        <!-- Comentario Clínico General -->
-
-        <div style="background: #FFFFFF; border: 1.5px solid #BBF7D0; border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 12px; line-height: 18px; color: #1E293B;">
-
-          <div style="font-weight: 800; color: #15803D; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-size: 13px;">
-
-            <span>🩺</span> <span>Comentario Médico de Evolución General:</span>
-
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- 1. Azúcar / Glucosa -->
+          <div style="background:#F8FAFC; border-left:4px solid #10B981; border-radius:8px; padding:12px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="font-size:14px; color:#0F172A;">🩸 Azúcar / Glucosa</strong>
+              <span style="font-size:12px; font-weight:900; color:#10B981; background:#ECFDF5; padding:2px 8px; border-radius:6px;">109 mg/dL ✓</span>
+            </div>
+            <p style="font-size:12px; color:#475569; margin:0; line-height:16px;">
+              <strong style="color:#15803D;">Evolución muy favorable:</strong> Valores en rango diana estricto (70-130 mg/dL), previniendo hiperglucemias e hipoglucemias.
+            </p>
           </div>
 
-          <p id="clinical-summary-comment-text" style="margin-bottom: 8px;">
-
-            <strong>Neli, tu evolución global en este período es CLARAMENTE POSITIVA (+):</strong> La adherencia a las tomas (96%), la caminata diaria y el seguimiento del menú terapéutico muestran una respuesta muy favorable en los parámetros clave que tú controlas:
-
-          </p>
-
-          <div id="clinical-summary-bullets" style="border-top: 1px dashed #E2E8F0; padding-top: 8px;">
-
-            • 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#15803D; font-weight:700;">Evolución muy favorable.</em> Tu media basal ha descendido de 138 a 118 mg/dL, logrando un 85% de tiempo en rango diana (70-130) sin registrar hipoglucemias.<br>
-
-            • 💓 <strong>Tensión Arterial:</strong> <em style="color:#15803D; font-weight:700;">Evolución favorable.</em> Curva en descenso continuo de 142/88 a 126/78 mmHg de media semanal, con pulso estable a 61 lpm bajo tratamiento con Atenolol.<br>
-
-            • ⚖️ <strong>Peso Corporal:</strong> <em style="color:#15803D; font-weight:700;">Evolución excelente (-4.4 kg).</em> De 75.8 kg a 71.4 kg (IMC de 28.88 a 27.20); este descenso alivia la sobrecarga articular y protege tu función cardiovascular y renal.<br>
-
-            • ⚠️ <strong>Punto a Vigilar:</strong> Mantener el control del sodio y potasio en rango y continuar con la pauta indicada por la Dra. Elena Morales Castillo.
-
+          <!-- 2. Tensión Arterial -->
+          <div style="background:#F8FAFC; border-left:4px solid #0284C7; border-radius:8px; padding:12px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="font-size:14px; color:#0F172A;">💓 Tensión Arterial</strong>
+              <span style="font-size:12px; font-weight:900; color:#0284C7; background:#F0F9FF; padding:2px 8px; border-radius:6px;">124/76 mmHg ✓</span>
+            </div>
+            <p style="font-size:12px; color:#475569; margin:0; line-height:16px;">
+              <strong style="color:#0284C7;">Evolución excelente:</strong> Cifras en diana de estricta protección cardiorrenal (&lt;130/80 mmHg), protegiendo el filtrado de tus riñones.
+            </p>
           </div>
 
+          <!-- 3. Peso Corporal -->
+          <div style="background:#F8FAFC; border-left:4px solid #0D9488; border-radius:8px; padding:12px 14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <strong style="font-size:14px; color:#0F172A;">⚖️ Peso Corporal</strong>
+              <span style="font-size:12px; font-weight:900; color:#0D9488; background:#F0FDFA; padding:2px 8px; border-radius:6px;">71.4 kg (📉 -4.4 kg)</span>
+            </div>
+            <p style="font-size:12px; color:#475569; margin:0; line-height:16px;">
+              <strong style="color:#0D9488;">Evolución excelente:</strong> Descenso sostenido desde 75.8 kg (IMC 27.20), aliviando la sobrecarga en articulaciones y la presión renal.
+            </p>
+          </div>
         </div>
-
-
-
-        <!-- Evolución a lo largo del tiempo con histórico comparativo de los 3 parámetros -->
-
-        <div style="font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">
-
-          📊 Evolución Temporal Comparativa (Inicio vs Hace 15 Días vs Hoy):
-
-        </div>
-
-
-
-        <!-- 1. Glucemia -->
-
-        <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px;">
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-
-            <strong style="color: #0284C7; font-size: 12.5px;">🩸 Glucemia en Ayunas (Azúcar)</strong>
-
-            <span id="summary-glu-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -20 mg/dL (Mejoría)</span>
-
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
-
-            <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
-
-              <span style="color: #991B1B; font-size: 9.5px; display: block; font-weight:700;">Hace 1 Mes</span>
-
-              <strong style="color: #B91C1C; font-size: 13px;">138 mg/dL</strong>
-
-            </div>
-
-            <div style="background: #FFFBEB; padding: 6px; border-radius: 6px; border: 1px solid #FDE68A;">
-
-              <span style="color: #92400E; font-size: 9.5px; display: block; font-weight:700;">Hace 15 Días</span>
-
-              <strong style="color: #D97706; font-size: 13px;">128 mg/dL</strong>
-
-            </div>
-
-            <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
-
-              <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-
-              <strong id="summary-curr-glucose" style="color: #15803D; font-size: 13px;">118 mg/dL ✓</strong>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- 2. Tensión -->
-
-        <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px;">
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-
-            <strong style="color: #DC2626; font-size: 12.5px;">💓 Tensión Arterial & Pulso</strong>
-
-            <span id="summary-bp-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 Normalizada</span>
-
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
-
-            <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
-
-              <span style="color: #991B1B; font-size: 9.5px; display: block; font-weight:700;">Hace 1 Mes</span>
-
-              <strong style="color: #B91C1C; font-size: 13px;">142/88</strong>
-
-            </div>
-
-            <div style="background: #FFFBEB; padding: 6px; border-radius: 6px; border: 1px solid #FDE68A;">
-
-              <span style="color: #92400E; font-size: 9.5px; display: block; font-weight:700;">Hace 15 Días</span>
-
-              <strong style="color: #D97706; font-size: 13px;">134/80</strong>
-
-            </div>
-
-            <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
-
-              <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-
-              <strong id="summary-curr-bp" style="color: #15803D; font-size: 13px;">126/78 ✓</strong>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- 3. Peso e IMC -->
-
-        <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px;">
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-
-            <strong style="color: #16A34A; font-size: 12.5px;">⚖️ Peso Corporal e IMC</strong>
-
-            <span id="summary-weight-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -4.4 kg Perdidos</span>
-
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
-
-            <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
-
-              <span style="color: #991B1B; font-size: 9.5px; display: block; font-weight:700;">Inicio (Consulta)</span>
-
-              <strong style="color: #B91C1C; font-size: 13px;">75.8 kg</strong>
-
-              <small style="font-size:9px; color:#64748B; display:block;">IMC 28.88</small>
-
-            </div>
-
-            <div style="background: #FFFBEB; padding: 6px; border-radius: 6px; border: 1px solid #FDE68A;">
-
-              <span style="color: #92400E; font-size: 9.5px; display: block; font-weight:700;">Hace 15 Días</span>
-
-              <strong style="color: #D97706; font-size: 13px;">73.2 kg</strong>
-
-              <small style="font-size:9px; color:#64748B; display:block;">IMC 27.89</small>
-
-            </div>
-
-            <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
-
-              <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-
-              <strong style="color: #15803D; font-size: 13px;">71.4 kg ✓</strong>
-
-              <small style="font-size:9px; color:#15803D; font-weight:700; display:block;">IMC 27.20</small>
-
-            </div>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- 4. Pasos Andados en Llano -->
-
-        <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-top: 8px;">
-
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-
-            <strong style="color: #7E22CE; font-size: 12.5px;">👟 Pasos Andados Diarios (Terreno Llano)</strong>
-
-            <span style="font-size: 11px; font-weight: 800; color: #16A34A;">📈 +3.220 pasos (Hábito Activo)</span>
-
-          </div>
-
-          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
-
-            <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
-
-              <span style="color: #991B1B; font-size: 9.5px; display: block; font-weight:700;">Hace 1 Mes</span>
-
-              <strong style="color: #B91C1C; font-size: 13px;">3.200</strong>
-
-              <small style="font-size:9px; color:#64748B; display:block;">Sedentario</small>
-
-            </div>
-
-            <div style="background: #FFFBEB; padding: 6px; border-radius: 6px; border: 1px solid #FDE68A;">
-
-              <span style="color: #92400E; font-size: 9.5px; display: block; font-weight:700;">Hace 15 Días</span>
-
-              <strong style="color: #D97706; font-size: 13px;">5.100</strong>
-
-              <small style="font-size:9px; color:#64748B; display:block;">Progresando</small>
-
-            </div>
-
-            <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
-
-              <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-
-              <strong style="color: #15803D; font-size: 13px;">6.420 ✓</strong>
-
-              <small style="font-size:9px; color:#15803D; font-weight:700; display:block;">Objetivo cumplido</small>
-
-            </div>
-
-          </div>
-
-        </div>
-
       </div>
 
-
-
-
-
-            <!-- SECCIÓN A: EVOLUCIÓN Y LIBRETA DE REGISTROS (ÚLTIMO MES Y 7 DÍAS) -->
-
-      <div class="card" style="border-left:4px solid var(--primary); box-shadow:0 3px 14px rgba(13,148,136,0.12);">
-
-        <div class="card-header" style="flex-wrap:wrap; gap:8px;">
-
-          <div>
-
-            <div class="card-title">📈 Evolución y Libreta de Salud</div>
-
-            <div class="card-subtitle">Historial ordenado día a día y curvas de tendencia</div>
-
-          </div>
-
-          <!-- Selector de periodo: 7 Días vs 30 Días -->
-
-          <div style="display:flex; gap:4px; background:#F1F5F9; padding:3px; border-radius:8px; border:1px solid #CBD5E1;">
-
-            <button id="btn-period-7" type="button" onclick="setEvolutionPeriod(7)" style="background:var(--primary); color:#FFFFFF; border:none; padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">7 Días</button>
-
-            <button id="btn-period-30" type="button" onclick="setEvolutionPeriod(30)" style="background:transparent; color:#64748B; border:none; padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">Último Mes (30d)</button>
-
-          </div>
-
+      <!-- TEASER DE DESBLOQUEO -->
+      <div style="background:#F8FAFC; border:1.5px dashed #0284C7; border-radius:14px; padding:14px; text-align:center;">
+        <div style="font-size:12.5px; font-weight:800; color:#0369A1; margin-bottom:4px;">🔒 Gráficas Continuas e Historial Completo de 30 Días</div>
+        <div style="font-size:11.5px; color:#64748B; line-height:16px; margin-bottom:10px;">
+          Las curvas de tendencia temporal, las bandas diana interactivas y la libreta completa de 30 días se activan en los planes de suscripción.
         </div>
-
-
-
-        <!-- Selector de Métrica para la Gráfica -->
-
-        <div style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto; padding-bottom:2px;">
-
-          <button id="btn-chart-glu" type="button" onclick="setChartMetric('GLUCOSE')" style="flex:1; background:#F0FDF4; border:1.5px solid #16A34A; color:#15803D; padding:6px 4px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer; text-align:center;">🩸 Glucosa</button>
-
-          <button id="btn-chart-bp" type="button" onclick="setChartMetric('BP')" style="flex:1; background:#F8FAFC; border:1px solid #CBD5E1; color:#64748B; padding:6px 4px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer; text-align:center;">💓 Tensión</button>
-
-          <button id="btn-chart-weight" type="button" onclick="setChartMetric('WEIGHT')" style="flex:1; background:#F8FAFC; border:1px solid #CBD5E1; color:#64748B; padding:6px 4px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer; text-align:center;">⚖️ Peso</button>
-
-        </div>
-
-
-
-        <!-- Contenedor de la Gráfica SVG Dinámica -->
-
-        <div id="evolution-chart-container" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:10px 8px; margin-bottom:12px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.03);">
-
-          <!-- Generado dinámicamente por renderEvolutionChart() -->
-
-        </div>
-
-
-
-        <!-- Medias del periodo seleccionado -->
-
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:12px; text-align:center;">
-
-          <div style="background:#F8FAFC; padding:8px 4px; border-radius:8px; border:1px solid #E2E8F0;">
-
-            <div style="font-size:10px; color:var(--text-muted); font-weight:700;">GLUCOSA MED.</div>
-
-            <div id="stat-avg-glucose" style="font-size:14.5px; font-weight:900; color:var(--success);">116 <span style="font-size:9.5px;">mg/dL</span></div>
-
-            <div id="stat-range-glucose" style="font-size:9px; color:var(--success); font-weight:800;">92% en rango</div>
-
-          </div>
-
-          <div style="background:#F8FAFC; padding:8px 4px; border-radius:8px; border:1px solid #E2E8F0;">
-
-            <div style="font-size:10px; color:var(--text-muted); font-weight:700;">TENSIÓN MED.</div>
-
-            <div id="stat-avg-bp" style="font-size:14.5px; font-weight:900; color:var(--success);">126/77</div>
-
-            <div style="font-size:9px; color:var(--text-muted);">Estable</div>
-
-          </div>
-
-          <div style="background:#F8FAFC; padding:8px 4px; border-radius:8px; border:1px solid #E2E8F0;">
-
-            <div style="font-size:10px; color:var(--text-muted); font-weight:700;">PESO MEDIO</div>
-
-            <div id="stat-avg-weight" style="font-size:14.5px; font-weight:900; color:var(--primary);">72.8 <span style="font-size:9.5px;">kg</span></div>
-
-            <div style="font-size:9px; color:var(--success); font-weight:800;">📉 -4.2 kg</div>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- Filtros de la Libreta Diaria -->
-
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
-
-          <strong style="font-size:12px; color:var(--text-main);">📋 Libreta ordenada por días:</strong>
-
-          <!-- Filtro de tipo en libreta -->
-
-          <div style="display:flex; gap:4px;">
-
-            <button class="filter-pill-hist active" onclick="filterHistoryBy('ALL', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid var(--primary); background:var(--primary); color:#FFF; cursor:pointer; font-weight:700;">Todos</button>
-
-            <button class="filter-pill-hist" onclick="filterHistoryBy('GLUCOSE', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid #CBD5E1; background:#FFF; color:#64748B; cursor:pointer; font-weight:700;">🩸</button>
-
-            <button class="filter-pill-hist" onclick="filterHistoryBy('BP', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid #CBD5E1; background:#FFF; color:#64748B; cursor:pointer; font-weight:700;">💓</button>
-
-            <button class="filter-pill-hist" onclick="filterHistoryBy('WEIGHT', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid #CBD5E1; background:#FFF; color:#64748B; cursor:pointer; font-weight:700;">⚖️</button>
-
-          </div>
-
-        </div>
-
-
-
-        <div id="history-list-container" style="display:flex; flex-direction:column; gap:8px;">
-
-          <!-- Generado dinámicamente agrupado por día -->
-
-        </div>
-
+        <a href="/app?auth=open&plan=essential" class="btn-primary" style="background:#0284C7; color:#FFF; font-size:12px; font-weight:800; padding:9px 18px; border-radius:10px; text-decoration:none; display:inline-block; box-shadow:0 2px 8px rgba(2,132,199,0.25);">
+          Activar Historial Completo (4,99 €/mes) ➔
+        </a>
       </div>
-
-
-
-      <!-- SECCIÓN B: MEDICAMENTOS A TOMAR CADA DÍA -->
-
-      <div class="card">
-
-        <div class="card-header">
-
-          <div>
-
-            <div class="card-title">💊 Medicamentos de Cada Día</div>
-
-            <div class="card-subtitle">Pauta activa (Hospital Univ. de Jaén)</div>
-
-          </div>
-
-          <span class="badge" style="background:var(--success);">Adherencia 96%</span>
-
-        </div>
-
-
-
-        <!-- EXPLICACIÓN MUY VISUAL DE CÓMO SE ACTIVA QUE YA TE LO HAS TOMADO -->
-
-        <div style="background:#EFF6FF; border:1.5px solid #93C5FD; border-radius:10px; padding:10px; margin-bottom:12px;">
-
-          <div style="display:flex; align-items:center; gap:6px; font-size:12px; font-weight:800; color:#1E40AF; margin-bottom:4px;">
-
-            <span>💡</span> <span>¿CÓMO SE ACTIVA QUE YA TE LO HAS TOMADO?</span>
-
-          </div>
-
-          <p style="font-size:11.5px; color:#1E3A8A; line-height:16px;">
-
-            Cada medicamento tiene a la derecha su botón azul <strong>TOMAR</strong>. En cuanto te tomes tu pastilla, <strong>pulsa ese botón</strong>: inmediatamente se pondrá verde con <strong>✓ TOMADA</strong>, se registrará la hora exacta de la toma y se silenciará la alarma.
-
-          </p>
-
-        </div>
-
-
-
-        <!-- Lista de Medicamentos Activos -->
-
-        <div id="med-list-container">
-
-          <!-- Ramipril -->
-
-          <div id="med-1" class="med-item taken">
-
-            <div class="med-info">
-
-              <h4>Ramipril 10 mg (1-0-0)</h4>
-
-              <p>⏰ 08:30 • Desayuno • Protección cardio-renal</p>
-
-              <span class="alarm-pill">🔔 Alarma Activa</span>
-
-            </div>
-
-            <button class="btn-take done">✓ TOMADA</button>
-
-          </div>
-
-
-
-          <!-- Secalip -->
-
-          <div id="med-2" class="med-item taken">
-
-            <div class="med-info">
-
-              <h4>Secalip supra 240 mg (1-0-0)</h4>
-
-              <p>⏰ 08:30 • Desayuno • Fenofibrato (Triglicéridos)</p>
-
-              <span class="alarm-pill">🔔 Alarma Activa</span>
-
-            </div>
-
-            <button class="btn-take done">✓ TOMADA</button>
-
-          </div>
-
-
-
-          <!-- Synjardy -->
-
-          <div id="med-3" class="med-item taken">
-
-            <div class="med-info">
-
-              <h4>Synjardy (Metf 1000 / Empa 12.5) (1-0-1)</h4>
-
-              <p>⏰ 08:30 • Desayuno y Cena • Doble protección</p>
-
-              <span class="alarm-pill">🔔 Alarma Activa</span>
-
-            </div>
-
-            <button class="btn-take done">✓ TOMADA</button>
-
-          </div>
-
-
-
-          <!-- Omacor -->
-
-          <div id="med-4" class="med-item">
-
-            <div class="med-info">
-
-              <h4>Omacor (Omega-3) (0-2-0)</h4>
-
-              <p>⏰ 14:00 • Almuerzo (2 cápsulas) • Triglicéridos</p>
-
-              <span class="alarm-pill">🔔 Alarma Activa</span>
-
-            </div>
-
-            <button id="btn-take-4" class="btn-take" onclick="takeMedication('med-4', 'btn-take-4')">TOMAR</button>
-
-          </div>
-
-
-
-          <!-- Atenolol -->
-
-          <div id="med-5" class="med-item">
-
-            <div class="med-info">
-
-              <h4>Atenolol 50 mg (0-0-1)</h4>
-
-              <p>⏰ 21:30 • Cena • Presión y Ritmo cardíaco (61 lpm)</p>
-
-              <span class="alarm-pill">🔔 Alarma Activa</span>
-
-            </div>
-
-            <button id="btn-take-5" class="btn-take" onclick="takeMedication('med-5', 'btn-take-5')">TOMAR</button>
-
-          </div>
-
-
-
-          <!-- Atorvastatina -->
-
-          <div id="med-6" class="med-item">
-
-            <div class="med-info">
-
-              <h4>Atorvastatina 40/10 mg (0-0-1)</h4>
-
-              <p>⏰ 21:30 • Cena • Colesterol LDL (en 49 mg/dL)</p>
-
-              <span class="alarm-pill">🔔 Alarma Activa</span>
-
-            </div>
-
-            <button id="btn-take-6" class="btn-take" onclick="takeMedication('med-6', 'btn-take-6')">TOMAR</button>
-
-          </div>
-
-
-
-          <!-- Ozempic 1 mg (Semanal - ACTIVO) -->
-
-          <div id="med-7" class="med-item taken">
-
-            <div class="med-info">
-
-              <h4>Ozempic 1 mg (Pauta Semanal)</h4>
-
-              <p>⏰ Domingos 09:00 • 1 inyección subcutánea/semana (ACTIVO)</p>
-
-              <span class="alarm-pill" style="background:#E0E7FF; color:#4338CA;">🔔 Alarma Semanal Activa</span>
-
-            </div>
-
-            <button class="btn-take done">✓ ACTIVO</button>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- Banner de Fármaco Suspendido por Nefrología -->
-
-        <div style="background:#FEF2F2; border:1.5px solid #FCA5A5; padding:10px; border-radius:10px; margin-top:10px;">
-
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-
-            <strong style="font-size:12px; color:#991B1B;">🚫 FÁRMACO SUSPENDIDO POR NEFROLOGÍA:</strong>
-
-            <span style="font-size:11px; font-weight:800; color:#DC2626;">NO TOMAR</span>
-
-          </div>
-
-          <p style="font-size:11.5px; color:#B91C1C; margin:4px 0 0 0; line-height:15px;">
-
-            • <strong>Trajenta 5 mg (Linagliptina)</strong>: Retirado expresamente por el Dra. Elena Morales.
-
-          </p>
-
-        </div>
-
-
-
-        <!-- Asistente de Rotación de Insulina (Prevención Lipodistrofia) -->
-
-        <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:10px; border-radius:10px; margin-top:10px;">
-
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-
-            <strong style="font-size:12.5px; color:#3730A3;">💉 Rotación de Insulina (Evitar bultos)</strong>
-
-            <span id="badge-quadrant-selected" class="badge" style="background:#4F46E5;">Cuadrante 2</span>
-
-          </div>
-
-          <p style="font-size:11px; color:#475569; margin-bottom:8px;">
-
-            El informe de Jaén advirtió no pinchar siempre en el mismo sitio para garantizar absorción uniforme:
-
-          </p>
-
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-
-            <button id="q-btn-1" class="btn-take" style="background:#F1F5F9; color:#334155; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(1, 'Abdomen Sup. Derecho')">1. Abd. Sup. Der.</button>
-
-            <button id="q-btn-2" class="btn-take" style="background:#4F46E5; color:#FFF; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(2, 'Abdomen Sup. Izquierdo')">2. Abd. Sup. Izq. ✓</button>
-
-            <button id="q-btn-3" class="btn-take" style="background:#F1F5F9; color:#334155; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(3, 'Abdomen Inf. Derecho')">3. Abd. Inf. Der.</button>
-
-            <button id="q-btn-4" class="btn-take" style="background:#F1F5F9; color:#334155; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(4, 'Abdomen Inf. Izquierdo')">4. Abd. Inf. Izq.</button>
-
-          </div>
-
-        </div>
-
-
-
-        <!-- Botones de Acción Rápida -->
-
-        <div style="display:flex; gap:8px; margin-top:12px;">
-
-          <button style="flex:1; background:#F1F5F9; border:1.5px dashed #94A3B8; color:#334155; padding:9px; border-radius:8px; font-weight:800; font-size:11.5px; cursor:pointer;" onclick="openCaptureModal('MED_BOX')">
-
-            📷 FOTO DE CAJA
-
-          </button>
-
-          <button style="flex:1; background:#EFF6FF; border:1.5px solid #0284C7; color:#0369A1; padding:9px; border-radius:8px; font-weight:800; font-size:11.5px; cursor:pointer;" onclick="openReportUploadModal()">
-
-            📄 SUBIR INFORME
-
-          </button>
-
-        </div>
-
-      </div>
-
     </div>
 
-
-
-    <!-- PÁGINA 3: MIS PARÁMETROS & SALUD (Semáforo: En Orden vs Desviados con Medidas Correctoras) -->
-
-        <!-- PÁGINA 3: INFORME MÉDICO -->
+<!-- PÁGINA 3: INFORME MÉDICO -->
     <div id="tab-parametros" class="screen-content tab-view" style="display:none;">
       <!-- EPÍGRAFE DEMO 3 -->
       <div style="background: linear-gradient(135deg, #1E3A8A, #1D4ED8); color:#FFFFFF; border-radius:14px; padding:12px 14px; margin-bottom:12px; box-shadow:0 2px 8px rgba(30,58,138,0.18);">
@@ -11253,7 +10662,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.13.0';
+        const CURRENT_VERSION = 'v2.14.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -11265,7 +10674,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.13.0') {
+                if (k !== 'metavital-cache-v2.14.0') {
 
                   caches.delete(k);
 
