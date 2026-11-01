@@ -1342,6 +1342,7 @@
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <!-- PWA Meta Tags, Splash & Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js" defer></script>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#0D9488">
   <meta name="mobile-web-app-capable" content="yes">
@@ -2558,11 +2559,17 @@
           </div>
         </div>
 
-        <!-- BOTÓN DE AUTOCOMPLETAR CON FOTO (Se lee el número y se desecha la foto) -->
-        <label style="display:flex; align-items:center; justify-content:center; gap:7px; width:100%; padding:11px; font-size:12.5px; font-weight:700; border-radius:12px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; margin-bottom:10px; text-align:center; box-sizing:border-box;">
-          📷 Rellenar subiendo foto del aparato (OCR)
-          <input type="file" accept="image/*" style="display:none;" onchange="handleOcrPhotoUploadAndFill(event)">
-        </label>
+        <!-- BOTONES DE AUTOCOMPLETAR CON FOTO (Camara o Galeria -> OCR y desechar foto) -->
+        <div style="display:flex; gap:8px; width:100%; margin-bottom:10px; box-sizing:border-box;">
+          <label style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 4px; font-size:12px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box;">
+            📸 Tomar Foto
+            <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="handleOcrPhotoUploadAndFill(event)">
+          </label>
+          <label style="flex:1; display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 4px; font-size:12px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box;">
+            📁 De Galería
+            <input type="file" accept="image/*" style="display:none;" onchange="handleOcrPhotoUploadAndFill(event)">
+          </label>
+        </div>
 
         <!-- Estado de reconocimiento de la foto -->
         <div id="ocr-fill-status" style="display:none; font-size:12px; padding:8px 10px; border-radius:8px; background:#ECFDF5; border:1px solid #A7F3D0; margin-bottom:12px; text-align:center;"></div>
@@ -2864,52 +2871,250 @@
       alert('🔔 Notificaciones Médicas METAVITAL:\n\n• Protocolo Activo: Cero AINEs (Ibuprofeno/Enantyum prohibidos).\n• Dianas en Rango: Glucosa basal y tensión arterial controladas.\n• Menú de Hoy: Pauta cardiorenal activa.');
     }
 
-    function handleOcrPhotoUploadAndFill(e) {
+    // Helper to dynamically ensure Tesseract is loaded from CDN/WebAssembly
+    function ensureTesseractLoaded() {
+      return new Promise((resolve, reject) => {
+        if (typeof Tesseract !== 'undefined') return resolve();
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js';
+        script.onload = () => resolve();
+        script.onerror = () => reject(new Error('No se pudo cargar la libreria OCR'));
+        document.head.appendChild(script);
+      });
+    }
+
+    // Advanced client-side computer vision preprocessing for LCD / 7-Segment screens
+    function preprocessLcdCanvas(img, maxDimension = 1000) {
+      const canvas = document.createElement('canvas');
+      let w = img.naturalWidth || img.width;
+      let h = img.naturalHeight || img.height;
+
+      // Rescale down to optimal dimension to guarantee fast mobile processing without memory lag
+      if (w > maxDimension || h > maxDimension) {
+        if (w > h) {
+          h = Math.round((h * maxDimension) / w);
+          w = maxDimension;
+        } else {
+          w = Math.round((w * maxDimension) / h);
+          h = maxDimension;
+        }
+      }
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+
+      // Contrast enhancement and adaptive binarization for 7-segment digital displays
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+      let minLum = 255;
+      let maxLum = 0;
+      let sumLum = 0;
+      const totalPixels = w * h;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const lum = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+        if (lum < minLum) minLum = lum;
+        if (lum > maxLum) maxLum = lum;
+        sumLum += lum;
+      }
+      const avgLum = sumLum / totalPixels;
+      const rangeLum = maxLum - minLum || 1;
+      const isDarkDisplay = avgLum < 110; // e.g. bright LED digits on dark background
+
+      for (let i = 0; i < data.length; i += 4) {
+        const lum = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+        let stretched = Math.round(((lum - minLum) / rangeLum) * 255);
+        if (isDarkDisplay) {
+          stretched = 255 - stretched;
+        }
+        const finalVal = stretched > 128 ? 255 : 0;
+        data[i] = finalVal;
+        data[i+1] = finalVal;
+        data[i+2] = finalVal;
+      }
+      ctx.putImageData(imgData, 0, 0);
+      return canvas;
+    }
+
+    // Biometric device text parser with strict clinical ranges
+    function parseBiometricOcrText(rawText, metric) {
+      if (!rawText) return null;
+      const cleaned = rawText.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+
+      if (metric === 'GLUCOSE') {
+        const unitMatch = cleaned.match(/(\d{2,3})\s*(?:mg|dl|mg\/dl)/i);
+        if (unitMatch) {
+          const val = parseInt(unitMatch[1], 10);
+          if (val >= 35 && val <= 500) return { primary: val };
+        }
+        const cleanNoTime = cleaned.replace(/\b\d{1,2}:\d{2}\b/g, '');
+        const nums = cleanNoTime.match(/\b\d{2,3}\b/g);
+        if (nums) {
+          for (let s of nums) {
+            const v = parseInt(s, 10);
+            if (v >= 35 && v <= 450) return { primary: v };
+          }
+        }
+        return null;
+      }
+
+      if (metric === 'BP') {
+        const slashMatch = cleaned.match(/(\d{2,3})\s*[\/|\\I]\s*(\d{2,3})/);
+        if (slashMatch) {
+          const sys = parseInt(slashMatch[1], 10);
+          const dia = parseInt(slashMatch[2], 10);
+          if (sys >= 70 && sys <= 250 && dia >= 40 && dia <= 150) {
+            return { sys: sys, dia: dia };
+          }
+        }
+        const sysMatch = cleaned.match(/(?:sys|sis|max)\D*(\d{2,3})/i);
+        const diaMatch = cleaned.match(/(?:dia|min)\D*(\d{2,3})/i);
+        if (sysMatch && diaMatch) {
+          const sys = parseInt(sysMatch[1], 10);
+          const dia = parseInt(diaMatch[1], 10);
+          if (sys >= 70 && sys <= 250 && dia >= 40 && dia <= 150) {
+            return { sys: sys, dia: dia };
+          }
+        }
+        const nums = cleaned.match(/\b\d{2,3}\b/g);
+        if (nums && nums.length >= 2) {
+          for (let i = 0; i < nums.length - 1; i++) {
+            const s = parseInt(nums[i], 10);
+            const d = parseInt(nums[i+1], 10);
+            if (s >= 80 && s <= 240 && d >= 45 && d <= 140 && s > d) {
+              return { sys: s, dia: d };
+            }
+          }
+        }
+        return null;
+      }
+
+      if (metric === 'WEIGHT') {
+        const match = cleaned.match(/(\d{2,3}(?:[.,]\d+)?)\s*(?:kg|kilo)?/i);
+        if (match) {
+          const val = parseFloat(match[1].replace(',', '.'));
+          if (val >= 25.0 && val <= 250.0) return { primary: val };
+        }
+        return null;
+      }
+
+      if (metric === 'STEPS') {
+        const match = cleaned.match(/\b(\d{3,6})\b/);
+        if (match) {
+          const val = parseInt(match[1], 10);
+          if (val >= 100 && val <= 60000) return { primary: val };
+        }
+        return null;
+      }
+
+      return null;
+    }
+
+    async function handleOcrPhotoUploadAndFill(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
 
       const statusEl = document.getElementById('ocr-fill-status');
       if (statusEl) {
-        statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Analizando foto y extrayendo números de la pantalla...</span>';
+        statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Cargando lector óptico (OCR)...</span>';
         statusEl.style.display = 'block';
       }
 
-      setTimeout(() => {
-        let extractedVal = '114';
-        if (currentMetric === 'GLUCOSE') {
-          extractedVal = '114';
-          const input = document.getElementById('manual-input-glucose');
-          if (input) input.value = extractedVal;
-          if (statusEl) {
-            statusEl.innerHTML = '<span style="color:#16A34A; font-weight:800;">✓ Glucosa detectada: <strong>114 mg/dL</strong> (Foto procesada y desechada)</span>';
-          }
-        } else if (currentMetric === 'BP') {
-          const inputSys = document.getElementById('manual-input-sys');
-          const inputDia = document.getElementById('manual-input-dia');
-          if (inputSys) inputSys.value = '124';
-          if (inputDia) inputDia.value = '76';
-          if (statusEl) {
-            statusEl.innerHTML = '<span style="color:#16A34A; font-weight:800;">✓ Tensión detectada: <strong>124/76 mmHg</strong> (Foto procesada y desechada)</span>';
-          }
-        } else if (currentMetric === 'WEIGHT') {
-          extractedVal = '71.8';
-          const input = document.getElementById('manual-input-weight');
-          if (input) input.value = extractedVal;
-          if (statusEl) {
-            statusEl.innerHTML = '<span style="color:#16A34A; font-weight:800;">✓ Peso detectado: <strong>71.8 kg</strong> (Foto procesada y desechada)</span>';
-          }
-        } else if (currentMetric === 'STEPS') {
-          extractedVal = '6420';
-          const input = document.getElementById('manual-input-steps');
-          if (input) input.value = extractedVal;
-          if (statusEl) {
-            statusEl.innerHTML = '<span style="color:#16A34A; font-weight:800;">✓ Pasos detectados: <strong>6.420 pasos</strong> (Foto procesada y desechada)</span>';
-          }
+      try {
+        await ensureTesseractLoaded();
+
+        if (statusEl) {
+          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Procesando imagen y filtrando reflejos LCD...</span>';
         }
 
-        // Limpiar el input para desechar la foto por completo
+        const imgUrl = URL.createObjectURL(file);
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('No se pudo cargar la imagen seleccionada'));
+          img.src = imgUrl;
+        });
+
+        // Preprocess image for LCD 7-segment numbers
+        const processedCanvas = preprocessLcdCanvas(img, 1000);
+
+        if (statusEl) {
+          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Leyendo números de la pantalla con IA...</span>';
+        }
+
+        // Pass 1: High-contrast preprocessed canvas
+        let ocrResult = await Tesseract.recognize(processedCanvas, 'eng', {
+          logger: m => {
+            if (m.status === 'recognizing text' && statusEl) {
+              const p = Math.round((m.progress || 0) * 100);
+              statusEl.innerHTML = `<span style="color:#0284C7; font-weight:700;">⏳ Leyendo pantalla (${p}%)...</span>`;
+            }
+          }
+        });
+
+        let parsed = parseBiometricOcrText(ocrResult.data.text, currentMetric);
+
+        // Pass 2: Raw resized image if pass 1 didn't match (for OLED / color screens)
+        if (!parsed) {
+          const rawCanvas = document.createElement('canvas');
+          let rw = img.naturalWidth || img.width;
+          let rh = img.naturalHeight || img.height;
+          if (rw > 1000 || rh > 1000) {
+            if (rw > rh) { rh = Math.round((rh * 1000) / rw); rw = 1000; }
+            else { rw = Math.round((rw * 1000) / rh); rh = 1000; }
+          }
+          rawCanvas.width = rw;
+          rawCanvas.height = rh;
+          rawCanvas.getContext('2d').drawImage(img, 0, 0, rw, rh);
+
+          ocrResult = await Tesseract.recognize(rawCanvas, 'eng');
+          parsed = parseBiometricOcrText(ocrResult.data.text, currentMetric);
+        }
+
+        URL.revokeObjectURL(imgUrl);
+
+        if (parsed) {
+          if (currentMetric === 'GLUCOSE') {
+            const input = document.getElementById('manual-input-glucose');
+            if (input) input.value = parsed.primary;
+            if (statusEl) {
+              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Glucosa detectada: <strong>${parsed.primary} mg/dL</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+            }
+          } else if (currentMetric === 'BP') {
+            const inputSys = document.getElementById('manual-input-sys');
+            const inputDia = document.getElementById('manual-input-dia');
+            if (inputSys) inputSys.value = parsed.sys;
+            if (inputDia) inputDia.value = parsed.dia;
+            if (statusEl) {
+              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Tensión detectada: <strong>${parsed.sys}/${parsed.dia} mmHg</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+            }
+          } else if (currentMetric === 'WEIGHT') {
+            const input = document.getElementById('manual-input-weight');
+            if (input) input.value = parsed.primary;
+            if (statusEl) {
+              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Peso detectado: <strong>${parsed.primary} kg</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+            }
+          } else if (currentMetric === 'STEPS') {
+            const input = document.getElementById('manual-input-steps');
+            if (input) input.value = parsed.primary;
+            if (statusEl) {
+              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Pasos detectados: <strong>${parsed.primary}</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+            }
+          }
+        } else {
+          if (statusEl) {
+            statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se pudo leer el número con claridad (posibles reflejos en el cristal). Por favor, escribe la cifra directamente en la casilla de arriba.</span>';
+          }
+        }
+      } catch (err) {
+        console.warn('Error en OCR:', err);
+        if (statusEl) {
+          statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se pudo procesar la foto automáticamente. Puedes escribir la cifra directamente en la casilla de arriba.</span>';
+        }
+      } finally {
         e.target.value = '';
-      }, 800);
+      }
     }
 
     function setManualQuickVal(id, val) {
