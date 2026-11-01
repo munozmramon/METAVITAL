@@ -2663,6 +2663,15 @@
     window.addEventListener('DOMContentLoaded', () => {
 
       try {
+        const dateEl = document.querySelector('.user-date');
+        if (dateEl) {
+          const now = new Date();
+          const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+          dateEl.textContent = `${now.getDate()} ${months[now.getMonth()]}, ${now.getFullYear()}`;
+        }
+      } catch(e) {}
+
+      try {
 
         const urlParams = new URLSearchParams(window.location.search);
 
@@ -2786,7 +2795,7 @@
 
             <span class="user-greeting" id="hdr-user-greeting">Hola, Neli</span>
 
-            <span class="user-date">31 Octubre, 2026</span>
+            <span class="user-date" id="hdr-user-date">1 Noviembre, 2026</span>
 
           </div>
 
@@ -9907,7 +9916,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.16.0';
+        const CURRENT_VERSION = 'v2.18.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -9919,7 +9928,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.16.0') {
+                if (k !== 'metavital-cache-v2.18.0') {
 
                   caches.delete(k);
 
