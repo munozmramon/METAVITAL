@@ -1,5 +1,5 @@
 // METAVITAL Service Worker (PWA Offline & Fast Cache)
-const CACHE_NAME = 'metavital-cache-v1.0.1';
+const CACHE_NAME = 'metavital-cache-v2.0.0';
 const STATIC_ASSETS = [
   '/',
   '/app',

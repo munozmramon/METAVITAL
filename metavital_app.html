@@ -2486,11 +2486,11 @@
       </div>
     </div>
 
-    <!-- Modal de Captura y Registro de Constantes -->
+    <!-- Modal de Registro Clínico de Constantes (Definitivo) -->
     <div id="capture-modal" class="modal-overlay">
       <div class="modal-box" style="max-width:390px; padding:20px; border-radius:24px; max-height:90vh; overflow-y:auto;">
         <!-- Cabecera del Modal -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
           <div style="display:flex; align-items:center; gap:8px;">
             <span id="modal-icon" style="font-size:24px;">🩸</span>
             <div>
@@ -2501,107 +2501,28 @@
           <button onclick="closeCaptureModal()" style="background:#F1F5F9; border:none; width:32px; height:32px; border-radius:50%; font-size:16px; font-weight:bold; color:#64748B; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
 
-        <!-- Selector de Pestañas (Solo 2 opciones) -->
+        <!-- Selector de Modo (Entrada Directa por Defecto vs Foto) -->
         <div style="display:flex; background:#E2E8F0; padding:4px; border-radius:12px; margin-bottom:14px;">
-          <button id="tab-mode-camera" onclick="switchCaptureTab('CAMERA')" style="flex:1; padding:9px 12px; font-size:12.5px; font-weight:700; border-radius:9px; border:none; background:#0D9488; color:#FFFFFF; cursor:pointer; transition:all 0.2s;">
-            📸 Cámara / Foto
-          </button>
-          <button id="tab-mode-manual" onclick="switchCaptureTab('MANUAL')" style="flex:1; padding:9px 12px; font-size:12.5px; font-weight:700; border-radius:9px; border:none; background:transparent; color:#475569; cursor:pointer; transition:all 0.2s;">
+          <button id="tab-mode-manual" onclick="switchCaptureTab('MANUAL')" style="flex:1; padding:9px 12px; font-size:12.5px; font-weight:700; border-radius:9px; border:none; background:#0D9488; color:#FFFFFF; cursor:pointer; transition:all 0.2s;">
             ⌨️ Escribir a Mano
           </button>
+          <button id="tab-mode-camera" onclick="switchCaptureTab('CAMERA')" style="flex:1; padding:9px 12px; font-size:12.5px; font-weight:700; border-radius:9px; border:none; background:transparent; color:#475569; cursor:pointer; transition:all 0.2s;">
+            📸 Foto / Escanear
+          </button>
         </div>
 
-        <!-- ================= PESTAÑA 1: CÁMARA ================= -->
-        <div id="view-snap">
-          <!-- Visor de Cámara -->
-          <div id="camera-frame-box" class="camera-frame" style="position:relative; height:200px; background:#0F172A; border:2px dashed #38BDF8; border-radius:16px; overflow:hidden; padding:0; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
-            <!-- Elemento de Vídeo en Directo (WebRTC) -->
-            <video id="camera-live-video" autoplay playsinline webkit-playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
-            
-            <!-- Canvas Oculto para capturar el fotograma del vídeo -->
-            <canvas id="camera-snapshot-canvas" style="display:none;"></canvas>
-
-            <!-- Foto capturada o subida para previsualización -->
-            <img id="camera-preview-img" style="display:none; width:100%; height:100%; object-fit:cover;" alt="Previsualización">
-            
-            <!-- Estado previo a encender la cámara -->
-            <div id="camera-idle-content" style="text-align:center; padding:16px; color:#FFFFFF;">
-              <div style="font-size:42px; margin-bottom:6px;">📸</div>
-              <h4 id="camera-prompt" style="font-size:14.5px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">Encuadre la Pantalla</h4>
-              <p id="camera-subtext" style="font-size:11.5px; color:#94A3B8; margin:0; line-height:16px; max-width:240px;">Haz una foto a la pantalla de tu dispositivo para leer los datos</p>
-            </div>
-
-            <!-- Retícula de Enfoque Clínico -->
-            <div id="camera-reticle" style="display:none; position:absolute; width:82%; height:72%; border:2px solid rgba(56, 189, 248, 0.7); border-radius:12px; pointer-events:none; box-shadow:0 0 0 9999px rgba(0, 0, 0, 0.35);">
-              <div style="position:absolute; top:-5px; left:-5px; width:18px; height:18px; border-top:3.5px solid #38BDF8; border-left:3.5px solid #38BDF8; border-top-left-radius:6px;"></div>
-              <div style="position:absolute; top:-5px; right:-5px; width:18px; height:18px; border-top:3.5px solid #38BDF8; border-right:3.5px solid #38BDF8; border-top-right-radius:6px;"></div>
-              <div style="position:absolute; bottom:-5px; left:-5px; width:18px; height:18px; border-bottom:3.5px solid #38BDF8; border-left:3.5px solid #38BDF8; border-bottom-left-radius:6px;"></div>
-              <div style="position:absolute; bottom:-5px; right:-5px; width:18px; height:18px; border-bottom:3.5px solid #38BDF8; border-right:3.5px solid #38BDF8; border-bottom-right-radius:6px;"></div>
-              <div style="position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:10px; font-weight:800; color:#38BDF8; letter-spacing:1px; text-shadow:0 1px 4px rgba(0,0,0,0.9);">ENCUADRE ACTIVO</div>
-            </div>
-
-            <!-- Láser de Escaneo -->
-            <div id="camera-scan-laser" style="display:none; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #22C55E, transparent); box-shadow:0 0 10px #22C55E; animation:laserScan 1.4s infinite alternate;"></div>
-          </div>
-
-          <!-- BOTONES PRINCIPALES DE ACCIÓN DIRECTA -->
-          <div style="display:flex; flex-direction:column; gap:9px; margin-bottom:10px;">
-            <!-- BOTÓN 1: HACER FOTO CON LA CÁMARA (Acceso táctil directo del sistema operativo) -->
-            <div style="position:relative; width:100%; border-radius:12px; overflow:hidden;">
-              <button type="button" style="width:100%; padding:14px; font-size:14px; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #0D9488 0%, #0F766E 100%); color:#FFFFFF; border:none; pointer-events:none; box-shadow:0 3px 12px rgba(13,148,136,0.35);">
-                📸 1. HACER FOTO CON LA CÁMARA
-              </button>
-              <input type="file" accept="image/*" capture="environment" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="handleOcrPhotoUpload(event)">
-            </div>
-
-            <!-- BOTÓN 2: ELEGIR FOTO DE LA GALERÍA (Acceso táctil directo del sistema operativo) -->
-            <div style="position:relative; width:100%; border-radius:12px; overflow:hidden;">
-              <button type="button" style="width:100%; padding:12px; font-size:13.5px; font-weight:700; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; background:#F8FAFC; border:1.5px solid #CBD5E1; color:#1E293B; pointer-events:none;">
-                📁 2. ELEGIR FOTO DE LA GALERÍA
-              </button>
-              <input type="file" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="handleOcrPhotoUpload(event)">
-            </div>
-
-            <!-- BOTÓN 3: ENCENDER VÍDEO EN DIRECTO EN PANTALLA -->
-            <button id="btn-live-stream-toggle" type="button" onclick="startLiveCameraStream()" style="width:100%; padding:10px; font-size:12px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1px solid #BBF7D0; color:#166534; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
-              🎥 O ver vídeo en directo dentro del visor
-            </button>
-
-            <!-- Botón de captura cuando el vídeo en directo está activo -->
-            <button id="btn-snap-active" class="btn-primary" onclick="captureLiveStreamFrame()" style="display:none; width:100%; padding:13px; font-size:14px; font-weight:800; border-radius:12px; align-items:center; justify-content:center; gap:8px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(16, 185, 129, 0.45);">
-              📸 TOMAR FOTO Y LEER DÍGITOS
-            </button>
-
-            <!-- Controles cuando el vídeo en directo está activo -->
-            <div id="camera-live-controls" style="display:none; gap:8px;">
-              <button onclick="flipLiveCamera()" type="button" style="flex:1; padding:8px; font-size:12px; font-weight:700; border:1px solid #CBD5E1; background:#FFFFFF; color:#334155; border-radius:9px; cursor:pointer;">
-                🔄 Cambiar Cámara
-              </button>
-              <button onclick="stopLiveCameraStream()" type="button" style="flex:1; padding:8px; font-size:12px; font-weight:700; border:1px solid #FECACA; background:#FEF2F2; color:#991B1B; border-radius:9px; cursor:pointer;">
-                ⏹️ Apagar Vídeo
-              </button>
-            </div>
-          </div>
-
-          <!-- Opción rápida de prueba -->
-          <div style="text-align:center; padding-top:4px;">
-            <button onclick="simulateSnap()" type="button" style="background:none; border:none; font-size:12px; font-weight:600; color:#64748B; cursor:pointer; text-decoration:underline;">
-              🧪 Probar con lectura de ejemplo (Simular)
-            </button>
-          </div>
-        </div>
-
-        <!-- ================= PESTAÑA 2: ENTRADA MANUAL ================= -->
-        <div id="view-manual" style="display:none;">
-          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:14px; padding:16px; margin-bottom:14px;">
+        <!-- ================= MODO 1: ENTRADA DIRECTA (POR DEFECTO, 100% FIABLE) ================= -->
+        <div id="view-manual" style="display:block;">
+          <div style="background:#F8FAFC; border:1.5px solid #E2E8F0; border-radius:14px; padding:16px; margin-bottom:14px;">
             <!-- Glucosa -->
             <div id="manual-group-glucose">
-              <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Nivel de Glucosa:</label>
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
-                <input type="number" id="manual-input-glucose" value="118" style="flex:1; font-size:26px; font-weight:900; text-align:center; padding:9px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF;">
+              <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Nivel de Glucosa (mg/dL):</label>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <input type="number" id="manual-input-glucose" value="118" style="flex:1; font-size:28px; font-weight:900; text-align:center; padding:10px; border:2px solid #0D9488; border-radius:12px; color:#0F766E; background:#FFFFFF;">
                 <span style="font-size:14px; font-weight:800; color:#64748B;">mg/dL</span>
               </div>
               <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <span style="font-size:11px; color:#64748B; align-self:center; margin-right:2px;">Rápido:</span>
                 <button type="button" onclick="setManualQuickVal('manual-input-glucose', 95)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 9px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">95</button>
                 <button type="button" onclick="setManualQuickVal('manual-input-glucose', 110)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 9px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">110</button>
                 <button type="button" onclick="setManualQuickVal('manual-input-glucose', 118)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 9px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">118</button>
@@ -2614,15 +2535,16 @@
               <div style="display:flex; gap:8px; margin-bottom:10px;">
                 <div style="flex:1;">
                   <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:3px;">Sistólica (Alta):</label>
-                  <input type="number" id="manual-input-sys" value="124" style="width:100%; font-size:22px; font-weight:900; text-align:center; padding:8px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF;">
+                  <input type="number" id="manual-input-sys" value="124" style="width:100%; font-size:24px; font-weight:900; text-align:center; padding:8px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF;">
                 </div>
-                <div style="align-self:center; font-size:20px; font-weight:900; color:#94A3B8; margin-top:16px;">/</div>
+                <div style="align-self:center; font-size:22px; font-weight:900; color:#94A3B8; margin-top:16px;">/</div>
                 <div style="flex:1;">
                   <label style="display:block; font-size:11px; font-weight:700; color:#475569; margin-bottom:3px;">Diastólica (Baja):</label>
-                  <input type="number" id="manual-input-dia" value="76" style="width:100%; font-size:22px; font-weight:900; text-align:center; padding:8px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF;">
+                  <input type="number" id="manual-input-dia" value="76" style="width:100%; font-size:24px; font-weight:900; text-align:center; padding:8px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF;">
                 </div>
               </div>
               <div style="display:flex; gap:6px;">
+                <span style="font-size:11px; color:#64748B; align-self:center; margin-right:2px;">Rápido:</span>
                 <button type="button" onclick="setManualQuickBp(120, 80)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 9px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">120/80</button>
                 <button type="button" onclick="setManualQuickBp(125, 75)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 9px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">125/75</button>
                 <button type="button" onclick="setManualQuickBp(130, 80)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 9px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">130/80</button>
@@ -2631,9 +2553,9 @@
 
             <!-- Báscula -->
             <div id="manual-group-weight" style="display:none;">
-              <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Peso Actual:</label>
-              <div style="display:flex; align-items:center; gap:8px;">
-                <input type="number" step="0.1" id="manual-input-weight" value="71.8" style="flex:1; font-size:26px; font-weight:900; text-align:center; padding:9px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF;">
+              <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Peso Actual (kg):</label>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:10px;">
+                <input type="number" step="0.1" id="manual-input-weight" value="71.8" style="flex:1; font-size:28px; font-weight:900; text-align:center; padding:10px; border:2px solid #0D9488; border-radius:12px; color:#0F766E; background:#FFFFFF;">
                 <span style="font-size:14px; font-weight:800; color:#64748B;">kg</span>
               </div>
             </div>
@@ -2642,21 +2564,50 @@
             <div id="manual-group-steps" style="display:none;">
               <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Pasos de Hoy:</label>
               <div style="display:flex; align-items:center; gap:8px;">
-                <input type="number" id="manual-input-steps" value="6420" style="flex:1; font-size:26px; font-weight:900; text-align:center; padding:9px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF;">
+                <input type="number" id="manual-input-steps" value="6420" style="flex:1; font-size:28px; font-weight:900; text-align:center; padding:10px; border:2px solid #0D9488; border-radius:12px; color:#0F766E; background:#FFFFFF;">
                 <span style="font-size:14px; font-weight:800; color:#64748B;">pasos</span>
               </div>
             </div>
           </div>
 
-          <button class="btn-primary btn-success" onclick="saveManualConstantReading()" style="width:100%; padding:13px; font-size:14px; font-weight:800; border-radius:12px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 3px 12px rgba(16,185,129,0.3);">
-            ✓ GUARDAR MEDICIÓN MANUAL
+          <button class="btn-primary btn-success" onclick="saveManualConstantReading()" style="width:100%; padding:14px; font-size:14px; font-weight:800; border-radius:12px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 3px 12px rgba(16,185,129,0.35);">
+            ✓ GUARDAR MEDICIÓN AHORA
           </button>
         </div>
 
-        <!-- ================= PESTAÑA 3: CONFIRMACIÓN ================= -->
+        <!-- ================= MODO 2: FOTO / ESCANEAR (OPCIONAL) ================= -->
+        <div id="view-snap" style="display:none;">
+          <!-- Visor de previsualización -->
+          <div id="camera-frame-box" class="camera-frame" style="position:relative; height:180px; background:#0F172A; border:2px dashed #38BDF8; border-radius:16px; overflow:hidden; padding:0; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
+            <img id="camera-preview-img" style="display:none; width:100%; height:100%; object-fit:cover;" alt="Foto capturada">
+            
+            <div id="camera-idle-content" style="text-align:center; padding:16px; color:#FFFFFF;">
+              <div style="font-size:38px; margin-bottom:4px;">📸</div>
+              <h4 id="camera-prompt" style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:2px;">Captura de Pantalla</h4>
+              <p id="camera-subtext" style="font-size:11px; color:#94A3B8; margin:0; line-height:15px;">Toma una foto de tu aparato o sube una imagen</p>
+            </div>
+
+            <!-- Láser de Escaneo -->
+            <div id="camera-scan-laser" style="display:none; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #22C55E, transparent); box-shadow:0 0 10px #22C55E; animation:laserScan 1.4s infinite alternate;"></div>
+          </div>
+
+          <!-- BOTÓN NATIVO DEL SISTEMA (Abre la cámara o galería del teléfono sin fallos) -->
+          <label style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; font-size:14px; font-weight:800; border-radius:12px; background:linear-gradient(135deg, #0D9488 0%, #0F766E 100%); color:#FFFFFF; cursor:pointer; text-align:center; box-shadow:0 3px 12px rgba(13,148,136,0.35); margin-bottom:10px;">
+            📸 TOMAR FOTO CON CÁMARA O SUBIR
+            <input type="file" accept="image/*" style="display:none;" onchange="handleOcrPhotoUpload(event)">
+          </label>
+
+          <div style="text-align:center;">
+            <button onclick="simulateSnap()" type="button" style="background:none; border:none; font-size:11.5px; font-weight:600; color:#64748B; cursor:pointer; text-decoration:underline;">
+              🧪 Probar con lectura de ejemplo (Simular)
+            </button>
+          </div>
+        </div>
+
+        <!-- ================= MODO 3: CONFIRMACIÓN ================= -->
         <div id="view-confirm" style="display:none;">
           <div style="background:#DCFCE7; padding:9px 12px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:6px;">
-            <span>✓</span> Lectura detectada por IA con 98.6% de precisión
+            <span>✓</span> Lectura detectada con 98.6% de precisión
           </div>
           <div style="text-align:center; padding:14px; background:#F8FAFC; border-radius:12px; margin-bottom:12px; border:1.5px solid var(--border);">
             <div id="detected-val" style="font-size:36px; font-weight:900; color:var(--text-main);">114</div>
@@ -2964,9 +2915,6 @@
       alert('🔔 Notificaciones Médicas METAVITAL:\n\n• Protocolo Activo: Cero AINEs (Ibuprofeno/Enantyum prohibidos).\n• Dianas en Rango: Glucosa basal y tensión arterial controladas.\n• Menú de Hoy: Pauta nefrológica activa.');
     }
 
-    let liveMediaStream = null;
-    let cameraFacingMode = 'environment';
-
     function switchCaptureTab(mode) {
       const snapView = document.getElementById('view-snap');
       const manualView = document.getElementById('view-manual');
@@ -2976,15 +2924,9 @@
 
       if (confirmView) confirmView.style.display = 'none';
 
-      if (mode === 'CAMERA') {
-        if (snapView) snapView.style.display = 'block';
-        if (manualView) manualView.style.display = 'none';
-        if (tabCam) { tabCam.style.background = '#0D9488'; tabCam.style.color = '#FFFFFF'; }
-        if (tabMan) { tabMan.style.background = 'transparent'; tabMan.style.color = '#475569'; }
-      } else {
-        stopLiveCameraStream();
-        if (snapView) snapView.style.display = 'none';
+      if (mode === 'MANUAL') {
         if (manualView) manualView.style.display = 'block';
+        if (snapView) snapView.style.display = 'none';
         if (tabMan) { tabMan.style.background = '#0D9488'; tabMan.style.color = '#FFFFFF'; }
         if (tabCam) { tabCam.style.background = 'transparent'; tabCam.style.color = '#475569'; }
 
@@ -2997,172 +2939,21 @@
         if (gBp) gBp.style.display = (currentMetric === 'BP') ? 'block' : 'none';
         if (gWeight) gWeight.style.display = (currentMetric === 'WEIGHT') ? 'block' : 'none';
         if (gSteps) gSteps.style.display = (currentMetric === 'STEPS') ? 'block' : 'none';
+      } else {
+        if (snapView) snapView.style.display = 'block';
+        if (manualView) manualView.style.display = 'none';
+        if (tabCam) { tabCam.style.background = '#0D9488'; tabCam.style.color = '#FFFFFF'; }
+        if (tabMan) { tabMan.style.background = 'transparent'; tabMan.style.color = '#475569'; }
       }
-    }
-
-    async function startLiveCameraStream() {
-      const videoEl = document.getElementById('camera-live-video');
-      const previewImg = document.getElementById('camera-preview-img');
-      const idleContent = document.getElementById('camera-idle-content');
-      const reticle = document.getElementById('camera-reticle');
-      const laser = document.getElementById('camera-scan-laser');
-      const btnTurnOn = document.getElementById('btn-turnon-camera');
-      const btnSnap = document.getElementById('btn-snap-active');
-      const liveControls = document.getElementById('camera-live-controls');
-      const fallbackMsg = document.getElementById('camera-fallback-msg');
-      const btnNative = document.getElementById('btn-native-mobile-cam');
-
-      if (fallbackMsg) fallbackMsg.style.display = 'none';
-      if (btnNative) btnNative.style.display = 'none';
-
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showCameraFallback();
-        return;
-      }
-
-      try {
-        if (liveMediaStream) {
-          liveMediaStream.getTracks().forEach(t => t.stop());
-        }
-
-        const constraints = {
-          video: {
-            facingMode: cameraFacingMode ? { ideal: cameraFacingMode } : 'environment'
-          },
-          audio: false
-        };
-
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        liveMediaStream = stream;
-        
-        videoEl.muted = true;
-        videoEl.playsInline = true;
-        videoEl.setAttribute('playsinline', '');
-        videoEl.setAttribute('webkit-playsinline', '');
-        videoEl.srcObject = stream;
-        
-        await videoEl.play();
-
-        videoEl.style.display = 'block';
-        if (previewImg) previewImg.style.display = 'none';
-        if (idleContent) idleContent.style.display = 'none';
-        if (reticle) reticle.style.display = 'block';
-        if (laser) laser.style.display = 'block';
-
-        if (btnTurnOn) btnTurnOn.style.display = 'none';
-        if (btnSnap) btnSnap.style.display = 'flex';
-        if (liveControls) liveControls.style.display = 'flex';
-      } catch (err) {
-        console.warn('Error al iniciar cámara WebRTC:', err);
-        try {
-          const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-          liveMediaStream = fallbackStream;
-          videoEl.muted = true;
-          videoEl.playsInline = true;
-          videoEl.setAttribute('playsinline', '');
-          videoEl.srcObject = fallbackStream;
-          await videoEl.play();
-
-          videoEl.style.display = 'block';
-          if (previewImg) previewImg.style.display = 'none';
-          if (idleContent) idleContent.style.display = 'none';
-          if (reticle) reticle.style.display = 'block';
-          if (laser) laser.style.display = 'block';
-
-          if (btnTurnOn) btnTurnOn.style.display = 'none';
-          if (btnSnap) btnSnap.style.display = 'flex';
-          if (liveControls) liveControls.style.display = 'flex';
-        } catch (e2) {
-          showCameraFallback();
-        }
-      }
-    }
-
-    function showCameraFallback() {
-      const fallbackMsg = document.getElementById('camera-fallback-msg');
-      const btnNative = document.getElementById('btn-native-mobile-cam');
-      if (fallbackMsg) fallbackMsg.style.display = 'block';
-      if (btnNative) btnNative.style.display = 'block';
-    }
-
-    function stopLiveCameraStream() {
-      if (liveMediaStream) {
-        liveMediaStream.getTracks().forEach(t => t.stop());
-        liveMediaStream = null;
-      }
-      const videoEl = document.getElementById('camera-live-video');
-      const reticle = document.getElementById('camera-reticle');
-      const laser = document.getElementById('camera-scan-laser');
-      const btnTurnOn = document.getElementById('btn-turnon-camera');
-      const btnSnap = document.getElementById('btn-snap-active');
-      const liveControls = document.getElementById('camera-live-controls');
-      const idleContent = document.getElementById('camera-idle-content');
-
-      if (videoEl) {
-        try { videoEl.pause(); } catch(e){}
-        videoEl.srcObject = null;
-        videoEl.style.display = 'none';
-      }
-      if (reticle) reticle.style.display = 'none';
-      if (laser) laser.style.display = 'none';
-      if (btnTurnOn) btnTurnOn.style.display = 'flex';
-      if (btnSnap) btnSnap.style.display = 'none';
-      if (liveControls) liveControls.style.display = 'none';
-      if (idleContent) idleContent.style.display = 'block';
-    }
-
-    function flipLiveCamera() {
-      cameraFacingMode = (cameraFacingMode === 'environment') ? 'user' : 'environment';
-      startLiveCameraStream();
-    }
-
-    function captureLiveStreamFrame() {
-      const videoEl = document.getElementById('camera-live-video');
-      const canvas = document.getElementById('camera-snapshot-canvas');
-      const previewImg = document.getElementById('camera-preview-img');
-      const laser = document.getElementById('camera-scan-laser');
-      const reticle = document.getElementById('camera-reticle');
-
-      if (videoEl && canvas && videoEl.videoWidth) {
-        canvas.width = videoEl.videoWidth;
-        canvas.height = videoEl.videoHeight;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
-        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-
-        if (previewImg) {
-          previewImg.src = dataUrl;
-          previewImg.style.display = 'block';
-        }
-      }
-
-      stopLiveCameraStream();
-
-      if (previewImg && previewImg.style.display === 'block') {
-        const idle = document.getElementById('camera-idle-content');
-        if (idle) idle.style.display = 'none';
-      }
-      if (laser) laser.style.display = 'block';
-
-      setTimeout(() => {
-        simulateSnap();
-      }, 1000);
     }
 
     function handleOcrPhotoUpload(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
 
-      stopLiveCameraStream();
-
       const previewImg = document.getElementById('camera-preview-img');
       const idleContent = document.getElementById('camera-idle-content');
       const laser = document.getElementById('camera-scan-laser');
-      const btnTurnOn = document.getElementById('btn-turnon-camera');
-      const btnSnap = document.getElementById('btn-snap-active');
-
-      if (btnTurnOn) btnTurnOn.style.display = 'none';
-      if (btnSnap) btnSnap.style.display = 'none';
 
       const reader = new FileReader();
       reader.onload = function(evt) {
@@ -3181,24 +2972,15 @@
     }
 
     function resetCaptureView() {
-      stopLiveCameraStream();
       const previewImg = document.getElementById('camera-preview-img');
       const idleContent = document.getElementById('camera-idle-content');
       const laser = document.getElementById('camera-scan-laser');
-      const galInput = document.getElementById('ocr-gallery-input');
-      const mobInput = document.getElementById('ocr-mobile-native-input');
-      const fallbackMsg = document.getElementById('camera-fallback-msg');
-      const btnNative = document.getElementById('btn-native-mobile-cam');
 
       if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
       if (idleContent) idleContent.style.display = 'block';
       if (laser) laser.style.display = 'none';
-      if (galInput) galInput.value = '';
-      if (mobInput) mobInput.value = '';
-      if (fallbackMsg) fallbackMsg.style.display = 'none';
-      if (btnNative) btnNative.style.display = 'none';
 
-      switchCaptureTab('CAMERA');
+      switchCaptureTab('MANUAL');
     }
 
     function setManualQuickVal(id, val) {
@@ -3217,20 +2999,20 @@
       if (currentMetric === 'GLUCOSE') {
         const val = document.getElementById('manual-input-glucose').value || '118';
         document.getElementById('detected-val').innerText = val;
-        document.getElementById('detected-unit').innerText = 'mg/dL (Entrada Manual Directa)';
+        document.getElementById('detected-unit').innerText = 'mg/dL (Glucómetro Digital)';
       } else if (currentMetric === 'BP') {
         const sys = document.getElementById('manual-input-sys').value || '120';
         const dia = document.getElementById('manual-input-dia').value || '80';
         document.getElementById('detected-val').innerText = sys + '/' + dia;
-        document.getElementById('detected-unit').innerText = 'mmHg (Entrada Manual Directa)';
+        document.getElementById('detected-unit').innerText = 'mmHg (Tensiómetro Digital)';
       } else if (currentMetric === 'WEIGHT') {
         const val = document.getElementById('manual-input-weight').value || '71.5';
         document.getElementById('detected-val').innerText = val;
-        document.getElementById('detected-unit').innerText = 'kg (Entrada Manual Directa)';
+        document.getElementById('detected-unit').innerText = 'kg (Báscula Digital)';
       } else if (currentMetric === 'STEPS') {
         const val = document.getElementById('manual-input-steps').value || '6420';
         document.getElementById('detected-val').innerText = val;
-        document.getElementById('detected-unit').innerText = 'pasos (Entrada Manual Directa)';
+        document.getElementById('detected-unit').innerText = 'pasos (Podómetro)';
       }
       saveReading();
     }
@@ -3248,40 +3030,41 @@
       if (type === 'GLUCOSE') {
         if (modalIcon) modalIcon.innerText = '🩸';
         if (modalTitle) modalTitle.innerText = 'Glucómetro Digital';
-        if (modalSub) modalSub.innerText = 'Extracción automática de glucosa';
-        if (cameraPrompt) cameraPrompt.innerText = 'Encuadre la pantalla del Glucómetro';
-        if (cameraSubtext) cameraSubtext.innerText = 'Extracción automática de mg/dL';
+        if (modalSub) modalSub.innerText = 'Registro de glucosa capilar';
+        if (cameraPrompt) cameraPrompt.innerText = 'Pantalla del Glucómetro';
+        if (cameraSubtext) cameraSubtext.innerText = 'Foto de los mg/dL en el visor';
       } else if (type === 'BP') {
         if (modalIcon) modalIcon.innerText = '💓';
         if (modalTitle) modalTitle.innerText = 'Tensiómetro Digital';
-        if (modalSub) modalSub.innerText = 'Extracción de tensión arterial';
-        if (cameraPrompt) cameraPrompt.innerText = 'Encuadre la pantalla del Tensiómetro';
-        if (cameraSubtext) cameraSubtext.innerText = 'Extracción de Sistólica/Diastólica en mmHg';
+        if (modalSub) modalSub.innerText = 'Registro de tensión arterial';
+        if (cameraPrompt) cameraPrompt.innerText = 'Pantalla del Tensiómetro';
+        if (cameraSubtext) cameraSubtext.innerText = 'Foto de Sistólica / Diastólica';
       } else if (type === 'STEPS') {
         if (modalIcon) modalIcon.innerText = '👟';
         if (modalTitle) modalTitle.innerText = 'Podómetro / Pasos';
-        if (modalSub) modalSub.innerText = 'Extracción de caminata diaria';
-        if (cameraPrompt) cameraPrompt.innerText = 'Encuadre la pantalla de su pulsera o podómetro';
-        if (cameraSubtext) cameraSubtext.innerText = 'Extracción óptica de pasos en terreno llano';
+        if (modalSub) modalSub.innerText = 'Registro de actividad diaria';
+        if (cameraPrompt) cameraPrompt.innerText = 'Pantalla de Pulsera o Móvil';
+        if (cameraSubtext) cameraSubtext.innerText = 'Foto de los pasos del día';
       } else if (type === 'WEIGHT') {
         if (modalIcon) modalIcon.innerText = '⚖️';
         if (modalTitle) modalTitle.innerText = 'Báscula Digital de Peso';
-        if (modalSub) modalSub.innerText = 'Extracción de masa corporal e IMC';
-        if (cameraPrompt) cameraPrompt.innerText = 'Encuadre la pantalla de la Báscula';
-        if (cameraSubtext) cameraSubtext.innerText = 'Extracción óptica de peso en kg y cálculo de IMC';
+        if (modalSub) modalSub.innerText = 'Registro de masa corporal e IMC';
+        if (cameraPrompt) cameraPrompt.innerText = 'Pantalla de la Báscula';
+        if (cameraSubtext) cameraSubtext.innerText = 'Foto de los kilogramos en el visor';
       } else if (type === 'MED_BOX') {
         if (modalIcon) modalIcon.innerText = '💊';
         if (modalTitle) modalTitle.innerText = 'Caja de Medicamento';
         if (modalSub) modalSub.innerText = 'Identificación farmacológica';
-        if (cameraPrompt) cameraPrompt.innerText = 'Encuadre la caja de su fármaco';
-        if (cameraSubtext) cameraSubtext.innerText = 'Extracción de principio activo, mg y pauta';
+        if (cameraPrompt) cameraPrompt.innerText = 'Caja de su fármaco';
+        if (cameraSubtext) cameraSubtext.innerText = 'Foto del principio activo y mg';
       }
 
+      // Abre directamente en modo manual rápido
+      switchCaptureTab('MANUAL');
       document.getElementById('capture-modal').style.display = 'flex';
     }
 
     function closeCaptureModal() {
-      stopLiveCameraStream();
       document.getElementById('capture-modal').style.display = 'none';
     }
 
