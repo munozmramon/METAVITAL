@@ -2515,30 +2515,77 @@
         <div id="view-snap">
           <input type="file" id="ocr-camera-file" accept="image/*" capture="environment" style="display:none;" onchange="handleOcrPhotoUpload(event)">
 
+          <!-- Mensaje de ayuda / instrucción -->
           <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:8px 10px; margin-bottom:10px; display:flex; gap:8px; align-items:center;">
             <span style="font-size:16px;">💡</span>
             <p style="font-size:11px; color:#166534; line-height:15px; margin:0;">
-              <strong>¿Qué es encuadrar?</strong> Apunta la cámara de tu móvil a la pantallita de tu aparato para que los números salgan en la foto.
+              <strong>¿Cómo funciona?</strong> Activa la cámara en directo para ver y enfocar los números de tu aparato, o sube una foto si lo prefieres.
             </p>
           </div>
 
-          <!-- Visor con marco de enfoque -->
-          <div id="camera-frame-box" class="camera-frame" style="position:relative; height:160px; background:#0F172A; border:2px dashed #38BDF8; border-radius:14px; overflow:hidden; padding:0; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+          <!-- Mensaje de error si falla la cámara -->
+          <div id="camera-error-msg" style="display:none; background:#FEF2F2; border:1px solid #FECACA; border-radius:10px; padding:10px; margin-bottom:10px; font-size:11.5px; color:#991B1B; line-height:16px;"></div>
+
+          <!-- Visor con marco de enfoque y vídeo en directo WebRTC -->
+          <div id="camera-frame-box" class="camera-frame" style="position:relative; height:210px; background:#0F172A; border:2px dashed #38BDF8; border-radius:14px; overflow:hidden; padding:0; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+            <!-- Elemento de Vídeo en Directo (WebRTC) -->
+            <video id="camera-live-video" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
+            
+            <!-- Canvas Oculto para capturar el fotograma -->
+            <canvas id="camera-snapshot-canvas" style="display:none;"></canvas>
+
+            <!-- Foto capturada o subida para previsualización -->
             <img id="camera-preview-img" style="display:none; width:100%; height:100%; object-fit:cover;" alt="Previsualización">
-            <div id="camera-idle-content" style="text-align:center; padding:12px; color:#FFFFFF;">
-              <div style="font-size:32px; margin-bottom:4px;">📸</div>
-              <h4 id="camera-prompt" style="font-size:13.5px; font-weight:700; color:#F8FAFC; margin-bottom:2px;">Encuadre la pantalla aquí</h4>
-              <p id="camera-subtext" style="font-size:11px; color:#94A3B8; margin:0;">La IA leerá los números automáticamente</p>
+            
+            <!-- Estado inicial antes de activar la cámara -->
+            <div id="camera-idle-content" style="text-align:center; padding:16px; color:#FFFFFF;">
+              <div style="font-size:38px; margin-bottom:6px;">📸</div>
+              <h4 id="camera-prompt" style="font-size:14px; font-weight:700; color:#F8FAFC; margin-bottom:3px;">Visor de Cámara</h4>
+              <p id="camera-subtext" style="font-size:11px; color:#94A3B8; margin:0; max-width:240px; line-height:15px;">Pulsa el botón verde para activar la cámara en directo y ver los números a través de la pantalla</p>
             </div>
+
+            <!-- Retícula de Enfoque Clínico -->
+            <div id="camera-reticle" style="display:none; position:absolute; width:82%; height:72%; border:2px solid rgba(56, 189, 248, 0.7); border-radius:10px; pointer-events:none; box-shadow:0 0 0 9999px rgba(0, 0, 0, 0.35);">
+              <div style="position:absolute; top:-5px; left:-5px; width:16px; height:16px; border-top:3px solid #38BDF8; border-left:3px solid #38BDF8;"></div>
+              <div style="position:absolute; top:-5px; right:-5px; width:16px; height:16px; border-top:3px solid #38BDF8; border-right:3px solid #38BDF8;"></div>
+              <div style="position:absolute; bottom:-5px; left:-5px; width:16px; height:16px; border-bottom:3px solid #38BDF8; border-left:3px solid #38BDF8;"></div>
+              <div style="position:absolute; bottom:-5px; right:-5px; width:16px; height:16px; border-bottom:3px solid #38BDF8; border-right:3px solid #38BDF8;"></div>
+              <div style="position:absolute; bottom:6px; left:0; right:0; text-align:center; font-size:10px; font-weight:800; color:#38BDF8; letter-spacing:0.5px; text-shadow:0 1px 3px rgba(0,0,0,0.8);">ENFOQUE ACTIVO</div>
+            </div>
+
+            <!-- Láser de Escaneo -->
             <div id="camera-scan-laser" style="display:none; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #22C55E, transparent); box-shadow:0 0 10px #22C55E; animation:laserScan 1.4s infinite alternate;"></div>
           </div>
 
-          <button class="btn-primary" onclick="triggerNativeCamera()" style="width:100%; padding:11px; font-size:13.5px; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px; background:linear-gradient(135deg, #0D9488 0%, #0F766E 100%);">
-            📸 ABRIR CÁMARA DEL MÓVIL
+          <!-- Botón 1: Activar Cámara en Directo (Cuando está apagada) -->
+          <button id="btn-start-camera" class="btn-primary" onclick="startLiveCamera()" style="width:100%; padding:12px; font-size:14px; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:8px; background:linear-gradient(135deg, #0D9488 0%, #0F766E 100%); color:#FFFFFF; border:none; cursor:pointer;">
+            🎥 1. ACTIVAR CÁMARA EN DIRECTO
           </button>
-          <button onclick="simulateSnap()" style="width:100%; padding:6px; font-size:11px; font-weight:600; color:#64748B; background:transparent; border:none; cursor:pointer; text-decoration:underline;">
-            O simular lectura de prueba (sin cámara)
+
+          <!-- Botón 2: Capturar Foto (Cuando la cámara ya está activa) -->
+          <button id="btn-capture-frame" class="btn-primary" onclick="captureLiveFrame()" style="display:none; width:100%; padding:12px; font-size:14px; font-weight:800; border-radius:12px; align-items:center; justify-content:center; gap:8px; margin-bottom:8px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(16, 185, 129, 0.4);">
+            📸 2. CAPTURAR Y LEER DÍGITOS
           </button>
+
+          <!-- Controles adicionales cuando la cámara está activa -->
+          <div id="camera-active-controls" style="display:none; gap:8px; margin-bottom:8px;">
+            <button onclick="flipCamera()" type="button" style="flex:1; padding:8px; font-size:11.5px; font-weight:700; border:1px solid #CBD5E1; background:#FFFFFF; color:#334155; border-radius:9px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;">
+              🔄 Cambiar Cámara
+            </button>
+            <button onclick="stopLiveCamera()" type="button" style="flex:1; padding:8px; font-size:11.5px; font-weight:700; border:1px solid #FECACA; background:#FEF2F2; color:#991B1B; border-radius:9px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:5px;">
+              ⏹️ Apagar Cámara
+            </button>
+          </div>
+
+          <!-- Opciones secundarias: Subir foto de galería o simular prueba -->
+          <div style="display:flex; justify-content:space-between; align-items:center; padding-top:4px;">
+            <button onclick="triggerFilePicker()" type="button" style="background:none; border:none; font-size:11.5px; font-weight:600; color:#0284C7; cursor:pointer; text-decoration:underline;">
+              📁 Subir foto de galería
+            </button>
+            <button onclick="simulateSnap()" type="button" style="background:none; border:none; font-size:11.5px; font-weight:600; color:#64748B; cursor:pointer; text-decoration:underline;">
+              Simular lectura de prueba
+            </button>
+          </div>
         </div>
 
         <!-- ================= VISTA 2: ENTRADA MANUAL ================= -->
@@ -2915,6 +2962,9 @@
       alert('🔔 Notificaciones Médicas METAVITAL:\n\n• Protocolo Activo: Cero AINEs (Ibuprofeno/Enantyum prohibidos).\n• Dianas en Rango: Glucosa basal y tensión arterial controladas.\n• Menú de Hoy: Pauta nefrológica activa.');
     }
 
+    let activeCameraStream = null;
+    let currentFacingMode = 'environment';
+
     function switchCaptureTab(mode) {
       const snapView = document.getElementById('view-snap');
       const manualView = document.getElementById('view-manual');
@@ -2929,7 +2979,9 @@
         if (manualView) manualView.style.display = 'none';
         if (tabCam) { tabCam.style.background = '#0D9488'; tabCam.style.color = '#FFFFFF'; }
         if (tabMan) { tabMan.style.background = 'transparent'; tabMan.style.color = '#475569'; }
+        startLiveCamera();
       } else {
+        stopLiveCamera();
         if (snapView) snapView.style.display = 'none';
         if (manualView) manualView.style.display = 'block';
         if (tabMan) { tabMan.style.background = '#0D9488'; tabMan.style.color = '#FFFFFF'; }
@@ -2948,7 +3000,147 @@
       }
     }
 
-    function triggerNativeCamera() {
+    async function startLiveCamera() {
+      const videoEl = document.getElementById('camera-live-video');
+      const previewImg = document.getElementById('camera-preview-img');
+      const idleContent = document.getElementById('camera-idle-content');
+      const reticle = document.getElementById('camera-reticle');
+      const laser = document.getElementById('camera-scan-laser');
+      const btnStart = document.getElementById('btn-start-camera');
+      const btnCapture = document.getElementById('btn-capture-frame');
+      const camControls = document.getElementById('camera-active-controls');
+      const camError = document.getElementById('camera-error-msg');
+
+      if (camError) camError.style.display = 'none';
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        if (camError) {
+          camError.innerHTML = '<strong>Aviso de Navegador:</strong> Este navegador no soporta cámara en directo. Puedes <strong>subir una foto</strong> o <strong>escribir el dato a mano</strong>.';
+          camError.style.display = 'block';
+        }
+        return;
+      }
+
+      try {
+        if (activeCameraStream) {
+          activeCameraStream.getTracks().forEach(t => t.stop());
+        }
+
+        const constraints = {
+          video: {
+            facingMode: currentFacingMode ? { ideal: currentFacingMode } : 'environment',
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        activeCameraStream = stream;
+        videoEl.srcObject = stream;
+        await videoEl.play();
+
+        videoEl.style.display = 'block';
+        if (previewImg) previewImg.style.display = 'none';
+        if (idleContent) idleContent.style.display = 'none';
+        if (reticle) reticle.style.display = 'block';
+        if (laser) laser.style.display = 'block';
+
+        if (btnStart) btnStart.style.display = 'none';
+        if (btnCapture) btnCapture.style.display = 'flex';
+        if (camControls) camControls.style.display = 'flex';
+      } catch (err) {
+        console.warn('Error con cámara trasera, probando cámara general:', err);
+        try {
+          const fallbackStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+          activeCameraStream = fallbackStream;
+          videoEl.srcObject = fallbackStream;
+          await videoEl.play();
+
+          videoEl.style.display = 'block';
+          if (previewImg) previewImg.style.display = 'none';
+          if (idleContent) idleContent.style.display = 'none';
+          if (reticle) reticle.style.display = 'block';
+          if (laser) laser.style.display = 'block';
+
+          if (btnStart) btnStart.style.display = 'none';
+          if (btnCapture) btnCapture.style.display = 'flex';
+          if (camControls) camControls.style.display = 'flex';
+        } catch (fallbackErr) {
+          if (camError) {
+            camError.innerHTML = '<strong>No se pudo activar la cámara:</strong> Permiso denegado en el navegador o dispositivo sin cámara activa.<br>💡 Pulsa <strong>"Subir foto de galería"</strong> o usa la pestaña <strong>"Escribir a Mano"</strong>.';
+            camError.style.display = 'block';
+          }
+        }
+      }
+    }
+
+    function stopLiveCamera() {
+      if (activeCameraStream) {
+        activeCameraStream.getTracks().forEach(t => t.stop());
+        activeCameraStream = null;
+      }
+      const videoEl = document.getElementById('camera-live-video');
+      const reticle = document.getElementById('camera-reticle');
+      const laser = document.getElementById('camera-scan-laser');
+      const btnStart = document.getElementById('btn-start-camera');
+      const btnCapture = document.getElementById('btn-capture-frame');
+      const camControls = document.getElementById('camera-active-controls');
+      const idleContent = document.getElementById('camera-idle-content');
+
+      if (videoEl) {
+        try { videoEl.pause(); } catch(e){}
+        videoEl.srcObject = null;
+        videoEl.style.display = 'none';
+      }
+      if (reticle) reticle.style.display = 'none';
+      if (laser) laser.style.display = 'none';
+      if (btnStart) btnStart.style.display = 'flex';
+      if (btnCapture) btnCapture.style.display = 'none';
+      if (camControls) camControls.style.display = 'none';
+      if (idleContent) idleContent.style.display = 'block';
+    }
+
+    function flipCamera() {
+      currentFacingMode = (currentFacingMode === 'environment') ? 'user' : 'environment';
+      startLiveCamera();
+    }
+
+    function captureLiveFrame() {
+      const videoEl = document.getElementById('camera-live-video');
+      const canvas = document.getElementById('camera-snapshot-canvas');
+      const previewImg = document.getElementById('camera-preview-img');
+      const laser = document.getElementById('camera-scan-laser');
+      const reticle = document.getElementById('camera-reticle');
+
+      if (videoEl && canvas && videoEl.videoWidth) {
+        canvas.width = videoEl.videoWidth;
+        canvas.height = videoEl.videoHeight;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(videoEl, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+
+        if (previewImg) {
+          previewImg.src = dataUrl;
+          previewImg.style.display = 'block';
+        }
+      }
+
+      stopLiveCamera();
+
+      if (previewImg && previewImg.style.display === 'block') {
+        const idle = document.getElementById('camera-idle-content');
+        if (idle) idle.style.display = 'none';
+      }
+      if (laser) laser.style.display = 'block';
+
+      setTimeout(() => {
+        simulateSnap();
+      }, 1000);
+    }
+
+    function triggerFilePicker() {
+      stopLiveCamera();
       const fileInput = document.getElementById('ocr-camera-file');
       if (fileInput) fileInput.click();
     }
@@ -2957,9 +3149,16 @@
       const file = e.target.files && e.target.files[0];
       if (!file) return;
 
+      stopLiveCamera();
+
       const previewImg = document.getElementById('camera-preview-img');
       const idleContent = document.getElementById('camera-idle-content');
       const laser = document.getElementById('camera-scan-laser');
+      const btnStart = document.getElementById('btn-start-camera');
+      const btnCapture = document.getElementById('btn-capture-frame');
+
+      if (btnStart) btnStart.style.display = 'none';
+      if (btnCapture) btnCapture.style.display = 'none';
 
       const reader = new FileReader();
       reader.onload = function(evt) {
@@ -2978,15 +3177,18 @@
     }
 
     function resetCaptureView() {
+      stopLiveCamera();
       const previewImg = document.getElementById('camera-preview-img');
       const idleContent = document.getElementById('camera-idle-content');
       const laser = document.getElementById('camera-scan-laser');
       const fileInput = document.getElementById('ocr-camera-file');
+      const camError = document.getElementById('camera-error-msg');
 
       if (previewImg) { previewImg.src = ''; previewImg.style.display = 'none'; }
       if (idleContent) idleContent.style.display = 'block';
       if (laser) laser.style.display = 'none';
       if (fileInput) fileInput.value = '';
+      if (camError) camError.style.display = 'none';
 
       switchCaptureTab('CAMERA');
     }
@@ -3068,9 +3270,12 @@
       }
 
       document.getElementById('capture-modal').style.display = 'flex';
+      // Iniciar cámara en directo automáticamente al abrir
+      startLiveCamera();
     }
 
     function closeCaptureModal() {
+      stopLiveCamera();
       document.getElementById('capture-modal').style.display = 'none';
     }
 
