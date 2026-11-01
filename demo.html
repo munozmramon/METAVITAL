@@ -1624,11 +1624,11 @@
         <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <strong style="color: #16A34A; font-size: 12.5px;">⚖️ Peso Corporal e IMC</strong>
-            <span id="summary-weight-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -4.5 kg Perdidos</span>
+            <span id="summary-weight-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -4.4 kg Perdidos</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
             <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
-              <span style="color: #991B1B; font-size: 9.5px; display: block; font-weight:700;">Inicio (Jaén)</span>
+              <span style="color: #991B1B; font-size: 9.5px; display: block; font-weight:700;">Inicio (Consulta)</span>
               <strong style="color: #B91C1C; font-size: 13px;">75.8 kg</strong>
               <small style="font-size:9px; color:#64748B; display:block;">IMC 28.88</small>
             </div>
@@ -2011,10 +2011,10 @@
         <div class="param-alert-box warning-tone">
           <div class="param-alert-head">
             <strong>⚠️ Peso Actual: 71.4 kg / IMC 27.20</strong>
-            <span class="badge" style="background:#D97706;">Obesidad Gr. II</span>
+            <span class="badge" style="background:#0D9488;">Sobrepeso Leve</span>
           </div>
           <div class="param-alert-body">
-            <strong>Evolución:</strong> Muy positiva (-4.5 kg desde los 106 kg iniciales), pero sigue exigiendo esfuerzo a las articulaciones y al riñón.
+            <strong>Evolución:</strong> Muy positiva (-4.4 kg desde los 75.8 kg iniciales), pero sigue exigiendo esfuerzo a las articulaciones y al riñón.
             <div style="margin-top:6px; font-weight:800; color:#92400E;">Medidas correctoras recomendadas:</div>
             <ul class="param-action-list">
               <li>Caminar diariamente por <strong>terreno llano</strong> (quema glucosa sin traumatizar rodillas ni columna).</li>
@@ -2570,7 +2570,7 @@
           <div id="manual-group-weight" style="display:none; width:100%; box-sizing:border-box;">
             <label style="display:block; font-size:14.5px; font-weight:900; color:#1E293B; margin-bottom:8px; text-align:center;">Peso Actual de la Báscula (kg):</label>
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px; width:100%; box-sizing:border-box;">
-              <input type="number" step="0.1" inputmode="decimal" id="manual-input-weight" value="101.5" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
+              <input type="number" step="0.1" inputmode="decimal" id="manual-input-weight" value="71.4" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
               <span style="font-size:16px; font-weight:900; color:#334155; flex-shrink:0;">kg</span>
             </div>
           </div>
@@ -2808,18 +2808,18 @@
       targetStepsDaily: 4000
     };
 
-    // Historial clínico mensual ordenado (últimos 30 días para Ramón Muñoz Martínez)
+    // Historial clínico mensual ordenado (últimos 30 días para Neli Gómez Serrano)
     let selectedEvolutionPeriod = 7; // 7 o 30
     let selectedChartMetric = 'GLUCOSE'; // 'GLUCOSE', 'BP', 'WEIGHT'
     let selectedHistoryFilter = 'ALL'; // 'ALL', 'GLUCOSE', 'BP', 'WEIGHT'
 
     let measurementHistory = [
       // Hoy (1 de Noviembre 2026)
-      { id: 101, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital (OCR)', value: '102 kg (IMC 37.47)', date: 'Hoy (1 Nov), 10:18', day: 'Hoy, 1 Nov 2026', numVal: 102.0, status: '📉 Registrado', badgeColor: 'var(--primary)' },
+      { id: 101, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital (OCR)', value: '71.4 kg (IMC 27.20)', date: 'Hoy (1 Nov), 10:18', day: 'Hoy, 1 Nov 2026', numVal: 71.4, status: '📉 -4.4 kg', badgeColor: 'var(--primary)' },
       { id: 102, type: 'GLUCOSE', icon: '🩸', label: 'Glucómetro Digital (OCR)', value: '109 mg/dL', date: 'Hoy (1 Nov), 10:17', day: 'Hoy, 1 Nov 2026', numVal: 109, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 103, type: 'BP', icon: '💓', label: 'Tensiómetro Digital', value: '130/74 mmHg (61 lpm)', date: 'Hoy (1 Nov), 08:20', day: 'Hoy, 1 Nov 2026', numVal: 130, numValDia: 74, status: 'Controlada', badgeColor: 'var(--success)' },
-      { id: 104, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '122 mg/dL', date: 'Hoy (1 Nov), 08:15', day: 'Hoy, 1 Nov 2026', numVal: 122, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 105, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital de Peso', value: '101.5 kg (IMC 37.28)', date: 'Hoy (1 Nov), 08:10', day: 'Hoy, 1 Nov 2026', numVal: 101.5, status: '📉 -4.5 kg', badgeColor: 'var(--primary)' },
+      { id: 103, type: 'BP', icon: '💓', label: 'Tensiómetro Digital', value: '124/76 mmHg (61 lpm)', date: 'Hoy (1 Nov), 08:20', day: 'Hoy, 1 Nov 2026', numVal: 124, numValDia: 76, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 104, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '118 mg/dL', date: 'Hoy (1 Nov), 08:15', day: 'Hoy, 1 Nov 2026', numVal: 118, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 105, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital de Peso', value: '71.4 kg (IMC 27.20)', date: 'Hoy (1 Nov), 08:10', day: 'Hoy, 1 Nov 2026', numVal: 71.4, status: '📉 -4.4 kg', badgeColor: 'var(--primary)' },
 
       // Ayer (31 de Octubre 2026)
       { id: 201, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Pre-Cena', value: '114 mg/dL', date: 'Ayer (31 Oct), 21:00', day: 'Ayer, 31 Oct 2026', numVal: 114, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
@@ -2951,12 +2951,11 @@
       const weightItems = measurementHistory.filter(i => i.type === 'WEIGHT');
 
       // Parámetros base del paciente
-      const isNeli = (typeof patient !== 'undefined' && patient && patient.name && patient.name.includes('Neli'));
-      const pName = isNeli ? 'Neli' : ((typeof patient !== 'undefined' && patient && patient.name) ? patient.name.split(' ')[0] : 'Ramón');
-      const baselineGlu = isNeli ? 145 : 138;
-      const startWeight = isNeli ? 76.5 : 106.0;
-      const heightCm = (typeof patient !== 'undefined' && patient && patient.heightCm) ? patient.heightCm : (isNeli ? 160 : 165);
-      const heightM = heightCm / 100.0;
+      const pName = 'Neli';
+      const baselineGlu = 145;
+      const startWeight = 75.8;
+      const heightCm = 162.0;
+      const heightM = 1.62;
 
       // Últimas lecturas reales de la libreta
       const latestGlu = gluItems.length > 0 ? (gluItems[0].numVal || parseInt(gluItems[0].value, 10)) : 109;
@@ -2965,10 +2964,10 @@
       const gluInRange = gluItems.length > 0 ? Math.round((inRangeCount / gluItems.length) * 100) : 90;
 
       const latestBpItem = bpItems.length > 0 ? bpItems[0] : null;
-      const sys = latestBpItem ? (latestBpItem.numVal || 130) : 130;
-      const dia = latestBpItem ? (latestBpItem.numValDia || 74) : 74;
+      const sys = latestBpItem ? (latestBpItem.numVal || 124) : 124;
+      const dia = latestBpItem ? (latestBpItem.numValDia || 76) : 76;
 
-      const latestWeight = weightItems.length > 0 ? (weightItems[0].numVal || parseFloat(weightItems[0].value)) : ((typeof patient !== 'undefined' && patient) ? patient.weightKg : 101.5);
+      const latestWeight = weightItems.length > 0 ? (weightItems[0].numVal || parseFloat(weightItems[0].value)) : 71.4;
       const weightLoss = parseFloat((startWeight - latestWeight).toFixed(1));
       const currentBmi = (latestWeight / (heightM * heightM)).toFixed(2);
       const biomechanicalRelief = (Math.abs(weightLoss) * 4).toFixed(0);
@@ -3274,7 +3273,7 @@
 
       const weightItems = measurementHistory.filter(i => i.type === 'WEIGHT');
       if (weightItems.length > 0) {
-        const wAvg = (weightItems.reduce((acc, curr) => acc + (curr.numVal || parseFloat(curr.value) || 101.5), 0) / weightItems.length).toFixed(1);
+        const wAvg = (weightItems.reduce((acc, curr) => acc + (curr.numVal || parseFloat(curr.value) || 71.4), 0) / weightItems.length).toFixed(1);
         const elW = document.getElementById('stat-avg-weight');
         if (elW) elW.innerHTML = wAvg + ' <span style="font-size:9.5px;">kg</span>';
       }
@@ -4150,7 +4149,7 @@
         'Le remito el balance mensual de seguimiento clínico correspondiente a ' + patient.fullName + ' (' + patient.age + ' años, ' + patient.heightCm + ' cm) del ' + doctor.center + '.',
         '',
         '1. CONSTANTES CLÍNICAS Y BIOMETRÍA:',
-        '- Peso Actual: ' + patient.weightKg + ' kg (Descenso acumulado de -4.5 kg desde 106.0 kg)',
+        '- Peso Actual: ' + patient.weightKg + ' kg (Descenso acumulado de -4.4 kg desde 75.8 kg)',
         '- IMC: ' + patient.bmi + ' (' + patient.bmiCategory + ')',
         '- Glucemia Basal Media: 114 mg/dL (TIR 85% en rango objetivo)',
         '- Presión Arterial: ' + (patient.bpVal || '126/78 mmHg') + ' (FC: 61 lpm)',
@@ -4496,7 +4495,7 @@
         "👨‍⚕️ *Facultativo Asignado:* " + doctor.name,
         "",
         "📊 *1. CONTROL PONDERAL E IMC*",
-        "• Peso Actual: " + patient.weightKg + " kg (📉 Descenso acumulado de -4.5 kg desde 106.0 kg)",
+        "• Peso Actual: " + patient.weightKg + " kg (📉 Descenso acumulado de -4.4 kg desde 75.8 kg)",
         "• IMC: " + patient.bmi + " (" + patient.bmiCategory + ")",
         "• Actividad Física: Paseos diarios en terreno llano (" + steps + " pasos/día)",
         "",
