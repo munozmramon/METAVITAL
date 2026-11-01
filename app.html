@@ -1673,41 +1673,65 @@
       </div>
 
 
-      <!-- SECCIÓN A: DATOS ACUMULADOS DE LA SEMANA ANTERIOR -->
-      <div class="card" style="border-left:4px solid var(--primary);">
-        <div class="card-header">
+            <!-- SECCIÓN A: EVOLUCIÓN Y LIBRETA DE REGISTROS (ÚLTIMO MES Y 7 DÍAS) -->
+      <div class="card" style="border-left:4px solid var(--primary); box-shadow:0 3px 14px rgba(13,148,136,0.12);">
+        <div class="card-header" style="flex-wrap:wrap; gap:8px;">
           <div>
-            <div class="card-title">📅 Acumulado Semanal</div>
-            <div class="card-subtitle">Evolución de mediciones en los últimos 7 días</div>
+            <div class="card-title">📈 Evolución y Libreta de Salud</div>
+            <div class="card-subtitle">Historial ordenado día a día y curvas de tendencia</div>
           </div>
-          <span class="badge" style="background:var(--primary);">7 DÍAS</span>
-        </div>
-
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px; text-align:center;">
-          <div style="background:#F8FAFC; padding:8px; border-radius:8px; border:1px solid #E2E8F0;">
-            <div style="font-size:10.5px; color:var(--text-muted); font-weight:700;">GLUCOSA MED.</div>
-            <div style="font-size:15px; font-weight:900; color:var(--success);">118 <span style="font-size:10px;">mg/dL</span></div>
-            <div style="font-size:9.5px; color:var(--success); font-weight:800;">85% en rango</div>
-          </div>
-          <div style="background:#F8FAFC; padding:8px; border-radius:8px; border:1px solid #E2E8F0;">
-            <div style="font-size:10.5px; color:var(--text-muted); font-weight:700;">TENSIÓN MED.</div>
-            <div style="font-size:15px; font-weight:900; color:var(--success);">126/78</div>
-            <div style="font-size:9.5px; color:var(--text-muted);">Estable</div>
-          </div>
-          <div style="background:#F8FAFC; padding:8px; border-radius:8px; border:1px solid #E2E8F0;">
-            <div style="font-size:10.5px; color:var(--text-muted); font-weight:700;">PESO MEDIO</div>
-            <div style="font-size:15px; font-weight:900; color:var(--primary);">101.5 <span style="font-size:10px;">kg</span></div>
-            <div style="font-size:9.5px; color:var(--success); font-weight:800;">📉 -4.5 kg</div>
+          <!-- Selector de periodo: 7 Días vs 30 Días -->
+          <div style="display:flex; gap:4px; background:#F1F5F9; padding:3px; border-radius:8px; border:1px solid #CBD5E1;">
+            <button id="btn-period-7" type="button" onclick="setEvolutionPeriod(7)" style="background:var(--primary); color:#FFFFFF; border:none; padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">7 Días</button>
+            <button id="btn-period-30" type="button" onclick="setEvolutionPeriod(30)" style="background:transparent; color:#64748B; border:none; padding:4px 9px; border-radius:6px; font-size:11px; font-weight:800; cursor:pointer;">Último Mes (30d)</button>
           </div>
         </div>
 
-        <!-- Libreta Cronológica de Registros -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-          <strong style="font-size:12.5px; color:var(--text-main);">📋 Registros guardados según se toman:</strong>
-          <span id="badge-history-count" class="badge" style="background:var(--primary);">3 registros</span>
+        <!-- Selector de Métrica para la Gráfica -->
+        <div style="display:flex; gap:6px; margin-bottom:10px; overflow-x:auto; padding-bottom:2px;">
+          <button id="btn-chart-glu" type="button" onclick="setChartMetric('GLUCOSE')" style="flex:1; background:#F0FDF4; border:1.5px solid #16A34A; color:#15803D; padding:6px 4px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer; text-align:center;">🩸 Glucosa</button>
+          <button id="btn-chart-bp" type="button" onclick="setChartMetric('BP')" style="flex:1; background:#F8FAFC; border:1px solid #CBD5E1; color:#64748B; padding:6px 4px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer; text-align:center;">💓 Tensión</button>
+          <button id="btn-chart-weight" type="button" onclick="setChartMetric('WEIGHT')" style="flex:1; background:#F8FAFC; border:1px solid #CBD5E1; color:#64748B; padding:6px 4px; border-radius:8px; font-size:11.5px; font-weight:800; cursor:pointer; text-align:center;">⚖️ Peso</button>
         </div>
-        <div id="history-list-container">
-          <!-- Dynamically populated by renderMeasurementHistory() -->
+
+        <!-- Contenedor de la Gráfica SVG Dinámica -->
+        <div id="evolution-chart-container" style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:10px 8px; margin-bottom:12px; box-shadow:inset 0 1px 3px rgba(0,0,0,0.03);">
+          <!-- Generado dinámicamente por renderEvolutionChart() -->
+        </div>
+
+        <!-- Medias del periodo seleccionado -->
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-bottom:12px; text-align:center;">
+          <div style="background:#F8FAFC; padding:8px 4px; border-radius:8px; border:1px solid #E2E8F0;">
+            <div style="font-size:10px; color:var(--text-muted); font-weight:700;">GLUCOSA MED.</div>
+            <div id="stat-avg-glucose" style="font-size:14.5px; font-weight:900; color:var(--success);">116 <span style="font-size:9.5px;">mg/dL</span></div>
+            <div id="stat-range-glucose" style="font-size:9px; color:var(--success); font-weight:800;">92% en rango</div>
+          </div>
+          <div style="background:#F8FAFC; padding:8px 4px; border-radius:8px; border:1px solid #E2E8F0;">
+            <div style="font-size:10px; color:var(--text-muted); font-weight:700;">TENSIÓN MED.</div>
+            <div id="stat-avg-bp" style="font-size:14.5px; font-weight:900; color:var(--success);">126/77</div>
+            <div style="font-size:9px; color:var(--text-muted);">Estable</div>
+          </div>
+          <div style="background:#F8FAFC; padding:8px 4px; border-radius:8px; border:1px solid #E2E8F0;">
+            <div style="font-size:10px; color:var(--text-muted); font-weight:700;">PESO MEDIO</div>
+            <div id="stat-avg-weight" style="font-size:14.5px; font-weight:900; color:var(--primary);">101.8 <span style="font-size:9.5px;">kg</span></div>
+            <div style="font-size:9px; color:var(--success); font-weight:800;">📉 -4.2 kg</div>
+          </div>
+        </div>
+
+        <!-- Filtros de la Libreta Diaria -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; flex-wrap:wrap; gap:6px;">
+          <strong style="font-size:12px; color:var(--text-main);">📋 Libreta ordenada por días:</strong>
+          <!-- Filtro de tipo en libreta -->
+          <div style="display:flex; gap:4px;">
+            <button class="filter-pill-hist active" onclick="filterHistoryBy('ALL', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid var(--primary); background:var(--primary); color:#FFF; cursor:pointer; font-weight:700;">Todos</button>
+            <button class="filter-pill-hist" onclick="filterHistoryBy('GLUCOSE', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid #CBD5E1; background:#FFF; color:#64748B; cursor:pointer; font-weight:700;">🩸</button>
+            <button class="filter-pill-hist" onclick="filterHistoryBy('BP', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid #CBD5E1; background:#FFF; color:#64748B; cursor:pointer; font-weight:700;">💓</button>
+            <button class="filter-pill-hist" onclick="filterHistoryBy('WEIGHT', this)" style="padding:2px 7px; font-size:10.5px; border-radius:6px; border:1px solid #CBD5E1; background:#FFF; color:#64748B; cursor:pointer; font-weight:700;">⚖️</button>
+          </div>
+        </div>
+
+        <div id="history-list-container" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Generado dinámicamente agrupado por día -->
         </div>
       </div>
 
@@ -2775,30 +2799,343 @@
       targetStepsDaily: 4000
     };
 
-    // Chronological Measurement History (Azúcar, Tensión y Peso según se toman)
+    // Historial clínico mensual ordenado (últimos 30 días para Ramón Muñoz Martínez)
+    let selectedEvolutionPeriod = 7; // 7 o 30
+    let selectedChartMetric = 'GLUCOSE'; // 'GLUCOSE', 'BP', 'WEIGHT'
+    let selectedHistoryFilter = 'ALL'; // 'ALL', 'GLUCOSE', 'BP', 'WEIGHT'
+
     let measurementHistory = [
-      { id: 1, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas (Glucómetro)', value: '122 mg/dL', date: 'Hoy, 08:15', status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 2, type: 'BP', icon: '💓', label: 'Tensión Arterial (Tensiómetro)', value: '130/74 mmHg (61 lpm)', date: 'Hoy, 08:20', status: 'Controlada', badgeColor: 'var(--success)' },
-      { id: 3, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital de Peso', value: '101.5 kg (IMC 37.28)', date: 'Hoy, 08:10', status: '📉 -4.5 kg', badgeColor: 'var(--primary)' }
+      // Hoy (1 de Noviembre 2026)
+      { id: 101, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital (OCR)', value: '102 kg (IMC 37.47)', date: 'Hoy (1 Nov), 10:18', day: 'Hoy, 1 Nov 2026', numVal: 102.0, status: '📉 Registrado', badgeColor: 'var(--primary)' },
+      { id: 102, type: 'GLUCOSE', icon: '🩸', label: 'Glucómetro Digital (OCR)', value: '109 mg/dL', date: 'Hoy (1 Nov), 10:17', day: 'Hoy, 1 Nov 2026', numVal: 109, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 103, type: 'BP', icon: '💓', label: 'Tensiómetro Digital', value: '130/74 mmHg (61 lpm)', date: 'Hoy (1 Nov), 08:20', day: 'Hoy, 1 Nov 2026', numVal: 130, numValDia: 74, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 104, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '122 mg/dL', date: 'Hoy (1 Nov), 08:15', day: 'Hoy, 1 Nov 2026', numVal: 122, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 105, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital de Peso', value: '101.5 kg (IMC 37.28)', date: 'Hoy (1 Nov), 08:10', day: 'Hoy, 1 Nov 2026', numVal: 101.5, status: '📉 -4.5 kg', badgeColor: 'var(--primary)' },
+
+      // Ayer (31 de Octubre 2026)
+      { id: 201, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Pre-Cena', value: '114 mg/dL', date: 'Ayer (31 Oct), 21:00', day: 'Ayer, 31 Oct 2026', numVal: 114, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 202, type: 'BP', icon: '💓', label: 'Tensión Arterial Noche', value: '126/76 mmHg', date: 'Ayer (31 Oct), 20:30', day: 'Ayer, 31 Oct 2026', numVal: 126, numValDia: 76, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 203, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '118 mg/dL', date: 'Ayer (31 Oct), 08:30', day: 'Ayer, 31 Oct 2026', numVal: 118, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 204, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '101.8 kg', date: 'Ayer (31 Oct), 08:15', day: 'Ayer, 31 Oct 2026', numVal: 101.8, status: 'Estable', badgeColor: 'var(--primary)' },
+
+      // 30 de Octubre 2026
+      { id: 301, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '115 mg/dL', date: '30 Oct, 08:20', day: '30 Octubre 2026', numVal: 115, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 302, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '125/78 mmHg', date: '30 Oct, 08:25', day: '30 Octubre 2026', numVal: 125, numValDia: 78, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 303, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.0 kg', date: '30 Oct, 08:10', day: '30 Octubre 2026', numVal: 102.0, status: 'Estable', badgeColor: 'var(--primary)' },
+
+      // 29 de Octubre 2026
+      { id: 401, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '120 mg/dL', date: '29 Oct, 08:15', day: '29 Octubre 2026', numVal: 120, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 402, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '128/77 mmHg', date: '29 Oct, 08:20', day: '29 Octubre 2026', numVal: 128, numValDia: 77, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 403, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.2 kg', date: '29 Oct, 08:05', day: '29 Octubre 2026', numVal: 102.2, status: 'Estable', badgeColor: 'var(--primary)' },
+
+      // 28 de Octubre 2026
+      { id: 501, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '116 mg/dL', date: '28 Oct, 08:20', day: '28 Octubre 2026', numVal: 116, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 502, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '124/75 mmHg', date: '28 Oct, 08:25', day: '28 Octubre 2026', numVal: 124, numValDia: 75, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 503, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.4 kg', date: '28 Oct, 08:10', day: '28 Octubre 2026', numVal: 102.4, status: 'Estable', badgeColor: 'var(--primary)' },
+
+      // 27 de Octubre 2026
+      { id: 601, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '124 mg/dL', date: '27 Oct, 08:15', day: '27 Octubre 2026', numVal: 124, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 602, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '130/80 mmHg', date: '27 Oct, 08:22', day: '27 Octubre 2026', numVal: 130, numValDia: 80, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 603, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.6 kg', date: '27 Oct, 08:10', day: '27 Octubre 2026', numVal: 102.6, status: 'Estable', badgeColor: 'var(--primary)' },
+
+      // 26 de Octubre 2026
+      { id: 701, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '119 mg/dL', date: '26 Oct, 08:30', day: '26 Octubre 2026', numVal: 119, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 702, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '127/76 mmHg', date: '26 Oct, 08:35', day: '26 Octubre 2026', numVal: 127, numValDia: 76, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 703, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.9 kg', date: '26 Oct, 08:15', day: '26 Octubre 2026', numVal: 102.9, status: 'Estable', badgeColor: 'var(--primary)' },
+
+      // Histórico adicional del mes (Días 25 a 5 de Octubre)
+      { id: 801, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '121 mg/dL', date: '25 Oct, 08:20', day: '25 Octubre 2026', numVal: 121, status: 'En Rango', badgeColor: 'var(--success)' },
+      { id: 802, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '103.1 kg', date: '25 Oct, 08:10', day: '25 Octubre 2026', numVal: 103.1, status: 'Control', badgeColor: 'var(--primary)' },
+      { id: 803, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '129/78 mmHg', date: '25 Oct, 08:25', day: '25 Octubre 2026', numVal: 129, numValDia: 78, status: 'Controlada', badgeColor: 'var(--success)' },
+
+      { id: 901, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '123 mg/dL', date: '20 Oct, 08:15', day: '20 Octubre 2026', numVal: 123, status: 'En Rango', badgeColor: 'var(--success)' },
+      { id: 902, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '103.8 kg', date: '20 Oct, 08:10', day: '20 Octubre 2026', numVal: 103.8, status: 'Control', badgeColor: 'var(--primary)' },
+      { id: 903, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '128/77 mmHg', date: '20 Oct, 08:20', day: '20 Octubre 2026', numVal: 128, numValDia: 77, status: 'Controlada', badgeColor: 'var(--success)' },
+
+      { id: 1001, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '126 mg/dL', date: '15 Oct, 08:30', day: '15 Octubre 2026', numVal: 126, status: 'En Rango', badgeColor: 'var(--success)' },
+      { id: 1002, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '104.5 kg', date: '15 Oct, 08:15', day: '15 Octubre 2026', numVal: 104.5, status: 'Inicio Dieta', badgeColor: 'var(--primary)' },
+      { id: 1003, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '132/81 mmHg', date: '15 Oct, 08:35', day: '15 Octubre 2026', numVal: 132, numValDia: 81, status: 'Controlada', badgeColor: 'var(--success)' },
+
+      { id: 1101, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '128 mg/dL', date: '10 Oct, 08:20', day: '10 Octubre 2026', numVal: 128, status: 'En Rango', badgeColor: 'var(--success)' },
+      { id: 1102, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '105.2 kg', date: '10 Oct, 08:10', day: '10 Octubre 2026', numVal: 105.2, status: 'Control', badgeColor: 'var(--primary)' },
+      { id: 1103, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '134/82 mmHg', date: '10 Oct, 08:25', day: '10 Octubre 2026', numVal: 134, numValDia: 82, status: 'Controlada', badgeColor: 'var(--success)' }
     ];
 
+    // Cargar historial de localStorage si existe
+    try {
+      const savedHist = localStorage.getItem('metavital_history');
+      if (savedHist) {
+        const parsedHist = JSON.parse(savedHist);
+        if (Array.isArray(parsedHist) && parsedHist.length > 0) {
+          measurementHistory = parsedHist;
+        }
+      }
+    } catch(e) {}
+
+    function setEvolutionPeriod(days) {
+      selectedEvolutionPeriod = days;
+      const btn7 = document.getElementById('btn-period-7');
+      const btn30 = document.getElementById('btn-period-30');
+      if (btn7 && btn30) {
+        if (days === 7) {
+          btn7.style.background = 'var(--primary)';
+          btn7.style.color = '#FFFFFF';
+          btn30.style.background = 'transparent';
+          btn30.style.color = '#64748B';
+        } else {
+          btn30.style.background = 'var(--primary)';
+          btn30.style.color = '#FFFFFF';
+          btn7.style.background = 'transparent';
+          btn7.style.color = '#64748B';
+        }
+      }
+      renderEvolutionChart();
+      renderMeasurementHistory();
+    }
+
+    function setChartMetric(metric) {
+      selectedChartMetric = metric;
+      const bGlu = document.getElementById('btn-chart-glu');
+      const bBp = document.getElementById('btn-chart-bp');
+      const bWeight = document.getElementById('btn-chart-weight');
+      const buttons = [
+        { el: bGlu, type: 'GLUCOSE', activeBg: '#F0FDF4', activeBorder: '#16A34A', activeCol: '#15803D' },
+        { el: bBp, type: 'BP', activeBg: '#EFF6FF', activeBorder: '#2563EB', activeCol: '#1D4ED8' },
+        { el: bWeight, type: 'WEIGHT', activeBg: '#FDF4FF', activeBorder: '#A855F7', activeCol: '#7E22CE' }
+      ];
+      buttons.forEach(b => {
+        if (!b.el) return;
+        if (b.type === metric) {
+          b.el.style.background = b.activeBg;
+          b.el.style.border = '1.5px solid ' + b.activeBorder;
+          b.el.style.color = b.activeCol;
+        } else {
+          b.el.style.background = '#F8FAFC';
+          b.el.style.border = '1px solid #CBD5E1';
+          b.el.style.color = '#64748B';
+        }
+      });
+      renderEvolutionChart();
+    }
+
+    function filterHistoryBy(type, btnEl) {
+      selectedHistoryFilter = type;
+      document.querySelectorAll('.filter-pill-hist').forEach(b => {
+        b.style.background = '#FFF';
+        b.style.color = '#64748B';
+        b.style.borderColor = '#CBD5E1';
+      });
+      if (btnEl) {
+        btnEl.style.background = 'var(--primary)';
+        btnEl.style.color = '#FFF';
+        btnEl.style.borderColor = 'var(--primary)';
+      }
+      renderMeasurementHistory();
+    }
+
+    // Renderiza la gráfica SVG responsive según la métrica y periodo seleccionados
+    function renderEvolutionChart() {
+      const container = document.getElementById('evolution-chart-container');
+      if (!container) return;
+
+      // Filtrar puntos por métrica y periodo (7 o 30 días)
+      const filtered = measurementHistory.filter(item => item.type === selectedChartMetric);
+      // Tomar hasta 7 o 15 puntos para que el gráfico sea muy legible en pantalla móvil
+      const limit = selectedEvolutionPeriod === 7 ? 7 : 14;
+      const chartData = filtered.slice(0, limit).reverse();
+
+      if (chartData.length === 0) {
+        container.innerHTML = '<div style="padding:20px; text-align:center; color:#94A3B8; font-size:12px;">Sin mediciones en este periodo. Guarda una medición para ver la curva.</div>';
+        return;
+      }
+
+      const svgW = 320;
+      const svgH = 150;
+      const padLeft = 36;
+      const padRight = 14;
+      const padTop = 22;
+      const padBottom = 26;
+      const plotW = svgW - padLeft - padRight;
+      const plotH = svgH - padTop - padBottom;
+
+      let vals = chartData.map(d => (d.numVal || parseFloat(d.value) || 100));
+      let minVal = Math.min(...vals);
+      let maxVal = Math.max(...vals);
+
+      if (selectedChartMetric === 'GLUCOSE') {
+        minVal = Math.min(minVal, 65);
+        maxVal = Math.max(maxVal, 145);
+      } else if (selectedChartMetric === 'BP') {
+        minVal = Math.min(minVal, 60);
+        maxVal = Math.max(maxVal, 150);
+      } else if (selectedChartMetric === 'WEIGHT') {
+        minVal = Math.floor(minVal - 2);
+        maxVal = Math.ceil(maxVal + 2);
+      }
+      const valRange = (maxVal - minVal) || 1;
+
+      // Calcular coordenadas X, Y
+      const points = chartData.map((d, i) => {
+        const x = chartData.length === 1 ? (padLeft + plotW / 2) : (padLeft + (i / (chartData.length - 1)) * plotW);
+        const y = padTop + plotH - ((vals[i] - minVal) / valRange) * plotH;
+        // Etiqueta de fecha corta
+        const labelDate = d.date.includes('Hoy') ? 'Hoy' : (d.date.includes('Ayer') ? 'Ayer' : d.date.split(',')[0].replace(' Oct', 'O').replace(' Nov', 'N'));
+        return { x: Math.round(x), y: Math.round(y), val: vals[i], date: labelDate, raw: d };
+      });
+
+      // Color temático
+      let strokeCol = '#0D9488';
+      let fillCol = 'rgba(13,148,136,0.12)';
+      let targetLabel = 'Diana: 70-130 mg/dL';
+      if (selectedChartMetric === 'GLUCOSE') {
+        strokeCol = '#10B981';
+        fillCol = 'rgba(16,185,129,0.14)';
+        targetLabel = 'Rango diana: 70-130 mg/dL';
+      } else if (selectedChartMetric === 'BP') {
+        strokeCol = '#2563EB';
+        fillCol = 'rgba(37,99,235,0.10)';
+        targetLabel = 'Control: <130/80 mmHg';
+      } else if (selectedChartMetric === 'WEIGHT') {
+        strokeCol = '#0D9488';
+        fillCol = 'rgba(13,148,136,0.12)';
+        targetLabel = 'Meta: Descenso progresivo';
+      }
+
+      // Generar path SVG
+      let pathD = `M ${points[0].x} ${points[0].y}`;
+      for (let i = 1; i < points.length; i++) {
+        pathD += ` L ${points[i].x} ${points[i].y}`;
+      }
+      // Área de relleno degradado
+      const areaD = `${pathD} L ${points[points.length-1].x} ${padTop + plotH} L ${points[0].x} ${padTop + plotH} Z`;
+
+      // Franja verde de diana para glucosa (70 a 130)
+      let targetBandSvg = '';
+      if (selectedChartMetric === 'GLUCOSE') {
+        const y70 = Math.round(padTop + plotH - ((70 - minVal) / valRange) * plotH);
+        const y130 = Math.round(padTop + plotH - ((130 - minVal) / valRange) * plotH);
+        const bandH = Math.max(2, y70 - y130);
+        targetBandSvg = `
+          <rect x="${padLeft}" y="${y130}" width="${plotW}" height="${bandH}" fill="#DCFCE7" opacity="0.6"/>
+          <line x1="${padLeft}" y1="${y130}" x2="${padLeft + plotW}" y2="${y130}" stroke="#86EFAC" stroke-dasharray="3,3" stroke-width="1"/>
+          <text x="${padLeft + 4}" y="${y130 - 3}" font-size="8.5" fill="#15803D" font-weight="bold">Límite 130 mg/dL</text>
+        `;
+      }
+
+      // Puntos y etiquetas
+      const circlesSvg = points.map((p, idx) => `
+        <circle cx="${p.x}" cy="${p.y}" r="3.5" fill="${strokeCol}" stroke="#FFFFFF" stroke-width="1.5"/>
+        <text x="${p.x}" y="${p.y - 7}" font-size="9" font-weight="900" fill="${strokeCol}" text-anchor="middle">${p.val}</text>
+        <text x="${p.x}" y="${padTop + plotH + 13}" font-size="8" font-weight="600" fill="#64748B" text-anchor="middle">${p.date}</text>
+      `).join('');
+
+      // Grid horizontal
+      const gridSvg = `
+        <line x1="${padLeft}" y1="${padTop}" x2="${padLeft + plotW}" y2="${padTop}" stroke="#F1F5F9" stroke-width="1"/>
+        <line x1="${padLeft}" y1="${padTop + plotH / 2}" x2="${padLeft + plotW}" y2="${padTop + plotH / 2}" stroke="#F1F5F9" stroke-width="1"/>
+        <line x1="${padLeft}" y1="${padTop + plotH}" x2="${padLeft + plotW}" y2="${padTop + plotH}" stroke="#CBD5E1" stroke-width="1"/>
+        <text x="${padLeft - 5}" y="${padTop + 4}" font-size="8.5" fill="#94A3B8" text-anchor="end">${Math.round(maxVal)}</text>
+        <text x="${padLeft - 5}" y="${padTop + plotH / 2 + 3}" font-size="8.5" fill="#94A3B8" text-anchor="end">${Math.round((maxVal+minVal)/2)}</text>
+        <text x="${padLeft - 5}" y="${padTop + plotH}" font-size="8.5" fill="#94A3B8" text-anchor="end">${Math.round(minVal)}</text>
+      `;
+
+      container.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+          <span style="font-size:11px; font-weight:800; color:${strokeCol};">
+            ${selectedChartMetric === 'GLUCOSE' ? 'Evolución Glucémica (mg/dL)' : (selectedChartMetric === 'BP' ? 'Evolución Tensional (mmHg)' : 'Curva de Peso Corporal (kg)')}
+          </span>
+          <span style="font-size:10px; color:#64748B; font-weight:700; background:#F8FAFC; padding:2px 6px; border-radius:4px; border:1px solid #E2E8F0;">
+            ${targetLabel}
+          </span>
+        </div>
+        <svg viewBox="0 0 ${svgW} ${svgH}" style="width:100%; height:auto; display:block;">
+          ${gridSvg}
+          ${targetBandSvg}
+          <path d="${areaD}" fill="${fillCol}"/>
+          <path d="${pathD}" fill="none" stroke="${strokeCol}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          ${circlesSvg}
+        </svg>
+      `;
+    }
+
+    // Renderiza la libreta diaria AGRUPADA DÍA A DÍA
     function renderMeasurementHistory() {
       const container = document.getElementById('history-list-container');
       if (!container) return;
+
+      // Filtrar por tipo (Todas, Glucosa, Tensión, Peso)
+      let filtered = measurementHistory;
+      if (selectedHistoryFilter !== 'ALL') {
+        filtered = measurementHistory.filter(i => i.type === selectedHistoryFilter);
+      }
+
+      // Actualizar contador
       const badge = document.getElementById('badge-history-count');
-      if (badge) badge.innerText = measurementHistory.length + ' registros';
-      container.innerHTML = measurementHistory.map(item => `
-        <div class="history-item">
-          <div class="history-left">
-            <span class="history-icon">${item.icon}</span>
-            <div>
-              <div class="history-val">${item.value}</div>
-              <div class="history-sub">${item.label} • <strong>${item.date}</strong></div>
+      if (badge) badge.innerText = measurementHistory.length + ' tomas';
+
+      // Actualizar tarjetas de promedios estadísticos en tiempo real
+      const gluItems = measurementHistory.filter(i => i.type === 'GLUCOSE');
+      if (gluItems.length > 0) {
+        const gluAvg = Math.round(gluItems.reduce((acc, curr) => acc + (curr.numVal || parseInt(curr.value, 10) || 115), 0) / gluItems.length);
+        const inRangeCount = gluItems.filter(i => (i.numVal || parseInt(i.value, 10)) <= 130).length;
+        const inRangePct = Math.round((inRangeCount / gluItems.length) * 100);
+        const elAvg = document.getElementById('stat-avg-glucose');
+        const elPct = document.getElementById('stat-range-glucose');
+        if (elAvg) elAvg.innerHTML = gluAvg + ' <span style="font-size:9.5px;">mg/dL</span>';
+        if (elPct) elPct.innerText = inRangePct + '% en rango';
+      }
+
+      const weightItems = measurementHistory.filter(i => i.type === 'WEIGHT');
+      if (weightItems.length > 0) {
+        const wAvg = (weightItems.reduce((acc, curr) => acc + (curr.numVal || parseFloat(curr.value) || 101.5), 0) / weightItems.length).toFixed(1);
+        const elW = document.getElementById('stat-avg-weight');
+        if (elW) elW.innerHTML = wAvg + ' <span style="font-size:9.5px;">kg</span>';
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="padding:15px; text-align:center; color:#94A3B8; font-size:12px;">No hay registros para este filtro.</div>';
+        return;
+      }
+
+      // Agrupar por Día (Hoy, Ayer, 30 Oct, etc.)
+      const groups = {};
+      filtered.forEach(item => {
+        let groupTitle = item.day || '1 Noviembre 2026';
+        if (item.date.includes('Hoy')) groupTitle = '📅 Hoy (1 de Noviembre 2026)';
+        else if (item.date.includes('Ayer')) groupTitle = '📅 Ayer (31 de Octubre 2026)';
+        else if (!groupTitle.startsWith('📅')) groupTitle = '📅 ' + groupTitle;
+
+        if (!groups[groupTitle]) groups[groupTitle] = [];
+        groups[groupTitle].push(item);
+      });
+
+      // Construir HTML ordenado con cabeceras de día
+      let html = '';
+      for (const [dayTitle, items] of Object.entries(groups)) {
+        html += `
+          <div style="margin-top:4px; margin-bottom:2px;">
+            <div style="font-size:11.5px; font-weight:800; color:#0F766E; background:#F0FDFA; padding:4px 8px; border-radius:6px; border:1px solid #CCFBF1; display:inline-block; margin-bottom:4px;">
+              ${dayTitle}
+            </div>
+            <div style="display:flex; flex-direction:column; gap:4px;">
+              ${items.map(item => `
+                <div class="history-item" style="padding:8px 10px; margin-bottom:0; background:#FFFFFF; border:1px solid #E2E8F0; border-radius:8px;">
+                  <div class="history-left">
+                    <span class="history-icon" style="font-size:18px;">${item.icon}</span>
+                    <div>
+                      <div class="history-val" style="font-size:13.5px; font-weight:900;">${item.value}</div>
+                      <div class="history-sub" style="font-size:10.5px; color:#64748B;">${item.label} • <strong>${item.date.replace(/.*,\s*/, '')}</strong></div>
+                    </div>
+                  </div>
+                  <span class="badge" style="background:${item.badgeColor}; font-size:10px; padding:3px 7px;">${item.status}</span>
+                </div>
+              `).join('')}
             </div>
           </div>
-          <span class="badge" style="background:${item.badgeColor}; font-size:10.5px;">${item.status}</span>
-        </div>
-      `).join('');
+        `;
+      }
+
+      container.innerHTML = html;
     }
 
     let currentMetric = 'GLUCOSE';
@@ -3198,7 +3535,7 @@
           icon: '🩸',
           label: 'Glucómetro Digital (OCR)',
           value: val + ' mg/dL',
-          date: timeStr,
+          date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
           status: numVal <= 130 ? 'En Rango (70-130)' : 'Elevada',
           badgeColor: numVal <= 130 ? 'var(--success)' : 'var(--warning)'
         });
@@ -3218,7 +3555,7 @@
           icon: '💓',
           label: 'Tensiómetro Digital (OCR)',
           value: val + ' mmHg',
-          date: timeStr,
+          date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
           status: 'Controlada',
           badgeColor: 'var(--success)'
         });
@@ -3234,7 +3571,7 @@
           icon: '⚖️',
           label: 'Báscula Digital (OCR)',
           value: val + ' kg (IMC ' + patient.bmi + ')',
-          date: timeStr,
+          date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
           status: '📉 Registrado',
           badgeColor: 'var(--primary)'
         });
@@ -3251,7 +3588,7 @@
           icon: '👟',
           label: 'Podómetro (Pasos)',
           value: parseInt(val, 10).toLocaleString('es-ES') + ' pasos',
-          date: timeStr,
+          date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
           status: '🎯 Meta diaria',
           badgeColor: 'var(--success)'
         });
@@ -3437,7 +3774,7 @@
           icon: '🩸',
           label: 'Glucómetro Digital (OCR)',
           value: val + ' mg/dL',
-          date: timeStr,
+          date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
           status: numVal <= 130 ? 'En Rango (70-130)' : 'Elevada',
           badgeColor: numVal <= 130 ? 'var(--success)' : 'var(--warning)'
         });
@@ -3450,7 +3787,7 @@
           icon: '💓',
           label: 'Tensiómetro Digital (OCR)',
           value: val + ' mmHg',
-          date: timeStr,
+          date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
           status: 'Controlada',
           badgeColor: 'var(--success)'
         });
@@ -3464,7 +3801,7 @@
           icon: '⚖️',
           label: 'Báscula Digital (OCR)',
           value: val + ' kg (IMC ' + patient.bmi + ')',
-          date: timeStr,
+          date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
           status: '📉 Registrado',
           badgeColor: 'var(--primary)'
         });
@@ -3980,6 +4317,7 @@
     // Initialize UI on load
     updateDoctorUI();
     updateProfileUI();
+    renderEvolutionChart();
     renderMeasurementHistory();
   
     // ==========================================
