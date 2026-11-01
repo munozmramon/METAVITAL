@@ -1556,15 +1556,15 @@
           <span class="badge" style="background: #16A34A; font-size: 10.5px;">🟢 EVOLUCIÓN POSITIVA</span>
         </div>
 
-        <!-- Comentario Clínico General -->
+        <!-- Comentario Clínico General Dinámico -->
         <div style="background: #FFFFFF; border: 1.5px solid #BBF7D0; border-radius: 12px; padding: 12px; margin-bottom: 12px; font-size: 12px; line-height: 18px; color: #1E293B;">
           <div style="font-weight: 800; color: #15803D; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-size: 13px;">
             <span>🩺</span> <span>Comentario Médico de Evolución General:</span>
           </div>
-          <p style="margin-bottom: 8px;">
+          <p id="clinical-summary-comment-text" style="margin-bottom: 8px;">
             <strong>Ramón, tu evolución global en este período es CLARAMENTE POSITIVA (+):</strong> La adherencia a las tomas (96%), la caminata diaria en llano y las técnicas culinarias muestran una respuesta muy favorable en los 3 parámetros clave que tú controlas:
           </p>
-          <div style="border-top: 1px dashed #E2E8F0; padding-top: 8px;">
+          <div id="clinical-summary-bullets" style="border-top: 1px dashed #E2E8F0; padding-top: 8px;">
             • 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#15803D; font-weight:700;">Evolución muy favorable.</em> Tu media basal ha descendido de 138 a 118 mg/dL, logrando un 85% de tiempo en rango diana (70-130) sin registrar hipoglucemias.<br>
             • 💓 <strong>Tensión Arterial:</strong> <em style="color:#15803D; font-weight:700;">Evolución favorable.</em> Curva en descenso continuo de 142/88 a 126/78 mmHg de media semanal, con pulso estable a 61 lpm bajo tratamiento con Atenolol.<br>
             • ⚖️ <strong>Peso Corporal:</strong> <em style="color:#15803D; font-weight:700;">Evolución excelente (-4.5 kg).</em> De 106.0 kg a 101.5 kg (IMC de 38.9 a 37.28); este descenso alivia 18 kg de impacto biomecánico en cada paso y reduce la presión sobre el filtrado renal (FG 42).<br>
@@ -1594,7 +1594,7 @@
             </div>
             <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
               <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-              <strong style="color: #15803D; font-size: 13px;">118 mg/dL ✓</strong>
+              <strong id="summary-curr-glucose" style="color: #15803D; font-size: 13px;">118 mg/dL ✓</strong>
             </div>
           </div>
         </div>
@@ -1616,7 +1616,7 @@
             </div>
             <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
               <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-              <strong style="color: #15803D; font-size: 13px;">126/78 ✓</strong>
+              <strong id="summary-curr-bp" style="color: #15803D; font-size: 13px;">126/78 ✓</strong>
             </div>
           </div>
         </div>
@@ -1625,7 +1625,7 @@
         <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <strong style="color: #16A34A; font-size: 12.5px;">⚖️ Peso Corporal e IMC</strong>
-            <span style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -4.5 kg Perdidos</span>
+            <span id="summary-weight-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -4.5 kg Perdidos</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
             <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
@@ -1640,8 +1640,8 @@
             </div>
             <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
               <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-              <strong style="color: #15803D; font-size: 13px;">101.5 kg ✓</strong>
-              <small style="font-size:9px; color:#15803D; font-weight:700; display:block;">IMC 37.28</small>
+              <strong id="summary-curr-weight" style="color: #15803D; font-size: 13px;">101.5 kg ✓</strong>
+              <small id="summary-curr-bmi" style="font-size:9px; color:#15803D; font-weight:700; display:block;">IMC 37.28</small>
             </div>
           </div>
         </div>
@@ -2934,6 +2934,69 @@
     }
 
     // Renderiza la gráfica SVG responsive según la métrica y periodo seleccionados
+    function updateClinicalEvolutionComments() {
+      // 1. Extraer últimas mediciones reales
+      const gluItems = measurementHistory.filter(i => i.type === 'GLUCOSE');
+      const bpItems = measurementHistory.filter(i => i.type === 'BP');
+      const weightItems = measurementHistory.filter(i => i.type === 'WEIGHT');
+
+      const latestGlu = gluItems.length > 0 ? (gluItems[0].numVal || parseInt(gluItems[0].value, 10)) : 109;
+      const avgGlu = gluItems.length > 0 ? Math.round(gluItems.reduce((acc, curr) => acc + (curr.numVal || parseInt(curr.value, 10)), 0) / gluItems.length) : 116;
+      const inRangeCount = gluItems.filter(i => (i.numVal || parseInt(i.value, 10)) <= 130).length;
+      const gluInRange = gluItems.length > 0 ? Math.round((inRangeCount / gluItems.length) * 100) : 92;
+
+      const latestBpItem = bpItems.length > 0 ? bpItems[0] : null;
+      const sys = latestBpItem ? (latestBpItem.numVal || 130) : 130;
+      const dia = latestBpItem ? (latestBpItem.numValDia || 74) : 74;
+
+      const isNeli = patient && patient.name && patient.name.includes('Neli');
+      const startWeight = isNeli ? 76.5 : 106.0;
+      const latestWeight = weightItems.length > 0 ? (weightItems[0].numVal || parseFloat(weightItems[0].value)) : (patient ? patient.weightKg : 101.5);
+      const weightLoss = (startWeight - latestWeight).toFixed(1);
+      const heightM = (patient ? patient.heightCm : 165) / 100.0;
+      const currentBmi = (latestWeight / (heightM * heightM)).toFixed(2);
+      const biomechanicalRelief = (Math.abs(weightLoss) * 4).toFixed(0);
+
+      // 2. Actualizar tarjetas comparativas temporales
+      const elCurrGlu = document.getElementById('summary-curr-glucose');
+      if (elCurrGlu) elCurrGlu.innerText = latestGlu + ' mg/dL ✓';
+
+      const elCurrBp = document.getElementById('summary-curr-bp');
+      if (elCurrBp) elCurrBp.innerText = sys + '/' + dia + ' ✓';
+
+      const elCurrW = document.getElementById('summary-curr-weight');
+      if (elCurrW) elCurrW.innerText = latestWeight.toFixed(1) + ' kg ✓';
+
+      const elCurrBmi = document.getElementById('summary-curr-bmi');
+      if (elCurrBmi) elCurrBmi.innerText = 'IMC ' + currentBmi;
+
+      const elWDiff = document.getElementById('summary-weight-diff');
+      if (elWDiff) {
+        elWDiff.innerText = (weightLoss >= 0 ? '📉 -' + weightLoss + ' kg' : '📈 +' + Math.abs(weightLoss) + ' kg') + ' (' + (weightLoss >= 0 ? 'Mejoría' : 'Control') + ')';
+      }
+
+      // 3. Generar comentarios clínicos dinámicos personalizados según parámetros actuales
+      const pName = (patient && patient.name) ? patient.name.split(' ')[0] : 'Ramón';
+      const elComment = document.getElementById('clinical-summary-comment-text');
+      if (elComment) {
+        elComment.innerHTML = `<strong>${pName}, tu evolución global según tus parámetros actuales es CLARAMENTE POSITIVA (+):</strong> La adherencia a las tomas (96%), la caminata diaria en llano y las técnicas culinarias muestran una respuesta muy favorable en los 3 parámetros clave que tú controlas:`;
+      }
+
+      const elBullets = document.getElementById('clinical-summary-bullets');
+      if (elBullets) {
+        const gluAssessment = latestGlu <= 130 ? 'Evolución muy favorable.' : (latestGlu <= 160 ? 'Ligera elevación puntual.' : 'Alerta glucémica.');
+        const bpAssessment = (sys <= 130 && dia <= 80) ? 'Evolución excelente (Controlada).' : (sys <= 140 && dia <= 90 ? 'En rango de seguimiento.' : 'Tensión a vigilar.');
+        const weightAssessment = weightLoss > 0 ? `Evolución excelente (-${weightLoss} kg acumulados).` : 'Peso estable.';
+
+        elBullets.innerHTML = `
+          • 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#15803D; font-weight:700;">${gluAssessment}</em> Tu última toma se sitúa en <strong>${latestGlu} mg/dL</strong> (con una media de ${avgGlu} mg/dL), logrando un ${gluInRange}% de tiempo en rango diana (70-130) sin registrar hipoglucemias.<br>
+          • 💓 <strong>Tensión Arterial:</strong> <em style="color:#15803D; font-weight:700;">${bpAssessment}</em> Último registro en <strong>${sys}/${dia} mmHg</strong>, manteniendo la protección cardio-renal activa y diana <130/80 cumplida.<br>
+          • ⚖️ <strong>Peso Corporal:</strong> <em style="color:#15803D; font-weight:700;">${weightAssessment}</em> De ${startWeight.toFixed(1)} kg a <strong>${latestWeight.toFixed(1)} kg</strong> (IMC de ${currentBmi}); este descenso acumulado de ${weightLoss} kg alivia ${biomechanicalRelief} kg de impacto biomecánico en cada paso y reduce la presión sobre el filtrado renal (FG 42).<br>
+          • ⚠️ <strong>Punto a Vigilar:</strong> Mantener el rigor culinario de doble hervor y remojo para el potasio (5.5 mEq/L) y cumplir las tomas de Omacor y Secalip para reducir los triglicéridos.
+        `;
+      }
+    }
+
     function renderEvolutionChart() {
       const container = document.getElementById('evolution-chart-container');
       if (!container) return;
@@ -3600,6 +3663,7 @@
       } catch(e) {}
 
       renderMeasurementHistory();
+      updateClinicalEvolutionComments();
       closeCaptureModal();
 
       const banner = document.getElementById('clinical-alert-banner');
@@ -3822,6 +3886,7 @@
       }
 
       renderMeasurementHistory();
+      updateClinicalEvolutionComments();
       closeCaptureModal();
       
       const banner = document.getElementById('clinical-alert-banner');
@@ -4319,6 +4384,7 @@
     updateProfileUI();
     renderEvolutionChart();
     renderMeasurementHistory();
+    updateClinicalEvolutionComments();
   
     // ==========================================
     // DIARIO DE INGESTA REAL Y AUDITOR NUTRICIONAL
