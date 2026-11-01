@@ -1351,6 +1351,11 @@
                 planBanner.style.border = '1.5px solid #3B82F6';
                 planBanner.style.color = '#1E40AF';
                 planBanner.innerHTML = '👑 <strong>Plan Seleccionado:</strong> Salud Integral (9,99 €/mes)';
+              } else if (plan === 'free') {
+                planBanner.style.background = '#F0FDF4';
+                planBanner.style.border = '1.5px solid #22C55E';
+                planBanner.style.color = '#15803D';
+                planBanner.innerHTML = '🟢 <strong>Plan Seleccionado:</strong> Plan Gratuito (0 € • Registro Manual & Menú 7 días)';
               }
             }
           }, 350);
@@ -2396,7 +2401,13 @@
             👤
           </div>
           <h4 id="auth-user-display-name" style="margin:0 0 4px 0; color:#0F172A; font-size:15px;">Usuario</h4>
-          <p id="auth-user-display-email" style="margin:0 0 12px 0; color:#64748B; font-size:12px;">email@ejemplo.com</p>
+          <p id="auth-user-display-email" style="margin:0 0 8px 0; color:#64748B; font-size:12px;">email@ejemplo.com</p>
+          <div id="auth-user-display-plan" style="margin-bottom:10px; font-size:11.5px; font-weight:800; color:#15803D; background:#F0FDF4; border:1px solid #BBF7D0; padding:6px 10px; border-radius:8px;">
+            Plan Activo: 🟢 Plan Gratuito (0 €)
+          </div>
+          <div id="auth-upgrade-prompt" style="margin-bottom:12px;">
+            <a href="/#precios" style="font-size:11px; font-weight:800; color:#0D9488; text-decoration:none;">⭐ Mejorar Plan a Control Esencial (4,99 €) ➔</a>
+          </div>
           <div style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:8px; padding:8px; font-size:11.5px; color:#166534; margin-bottom:14px;">
             🟢 <strong>Conectado a Supabase Cloud:</strong> Tus mediciones, fármacos y comidas se sincronizan en tu base de datos privada.
           </div>
@@ -2475,7 +2486,40 @@
 
 
         <!-- Modal de Portada Oficial de METAVITAL -->
-    <div id="cover-modal" class="modal-overlay">
+    
+    <!-- MODAL DE LIMITACIÓN / MEJORA DE PLAN (PLAN UPGRADE MODAL) -->
+    <div id="plan-upgrade-modal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:10000; position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(4px);">
+      <div class="modal-box" style="max-width:390px; padding:24px 20px; border-radius:20px; text-align:center; background:#FFFFFF; box-shadow:0 20px 40px rgba(0,0,0,0.3); position:relative;">
+        <span style="position:absolute; top:12px; right:14px; font-size:20px; font-weight:bold; color:#64748B; cursor:pointer;" onclick="closePlanUpgradeModal()">✕</span>
+        <div style="width:56px; height:56px; border-radius:50%; background:#FEF3C7; color:#D97706; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 12px auto; border:2px solid #FCD34D;">
+          <span id="upgrade-modal-icon">🔒</span>
+        </div>
+        <div style="font-size:10.5px; font-weight:800; text-transform:uppercase; letter-spacing:0.5px; color:#D97706; margin-bottom:4px;">
+          Característica de Plan Superior
+        </div>
+        <h3 id="upgrade-modal-title" style="margin:0 0 10px 0; color:#0F172A; font-size:17px; font-weight:800;">
+          Escaneo Fotográfico (OCR)
+        </h3>
+        <p id="upgrade-modal-desc" style="font-size:12.5px; color:#475569; line-height:1.5; margin:0 0 14px 0;">
+          El escaneo automático de pantallas con la cámara forma parte del <strong>Plan Control Esencial (4,99 €/mes)</strong>.
+        </p>
+
+        <div id="upgrade-modal-free-note" style="background:#F0FDF4; border:1px solid #BBF7D0; border-radius:10px; padding:9px 12px; font-size:12px; color:#166534; font-weight:600; margin-bottom:16px; text-align:left;">
+          ✓ En tu <strong>Plan Gratuito</strong> puedes seguir registrando todas tus constantes de forma manual sin límite.
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <a href="/#precios" id="upgrade-modal-cta" class="btn-primary" style="background:linear-gradient(135deg, #0D9488, #0284C7); color:#FFFFFF; text-decoration:none; padding:12px; border-radius:12px; font-weight:800; font-size:13px; display:block; box-shadow:0 4px 12px rgba(13,148,136,0.25);">
+            ⭐ Ver Planes y Mejorar a Control Esencial (4,99 €)
+          </a>
+          <button type="button" id="upgrade-modal-dismiss-btn" onclick="closePlanUpgradeModal()" style="background:#F1F5F9; color:#475569; border:none; padding:10px; border-radius:12px; font-weight:700; font-size:12.5px; cursor:pointer;">
+            <span id="upgrade-modal-dismiss-text">Continuar con Plan Gratuito</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  <div id="cover-modal" class="modal-overlay">
       <div class="modal-box" style="text-align:center; padding:24px 20px; border-radius:24px; max-width:390px; background:#FFFFFF; border:1.5px solid rgba(13,148,136,0.3); box-shadow:0 20px 45px rgba(15,23,42,0.25);">
         <div style="display:flex; justify-content:flex-end; margin-bottom:-8px;">
           <span style="cursor:pointer; font-size:22px; font-weight:bold; color:#64748B; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#F1F5F9;" onclick="closeCoverModal()">✕</span>
@@ -2813,6 +2857,82 @@
 
   <script>
     // Global Patient State with Clinical Targets
+    
+    // ==========================================
+    // SISTEMA DE PLANES & GATING (GRATUITO, ESENCIAL, INTEGRAL)
+    // ==========================================
+    function getUserPlan() {
+      if (typeof currentUserSession !== 'undefined' && currentUserSession && currentUserSession.email === 'munozmramon@gmail.com') {
+        return 'integral';
+      }
+      const saved = localStorage.getItem('metavital_user_plan');
+      if (saved) return saved;
+      const urlParams = new URLSearchParams(window.location.search);
+      const p = urlParams.get('plan');
+      if (p) {
+        localStorage.setItem('metavital_user_plan', p);
+        return p;
+      }
+      return 'free'; // Por defecto Plan Gratuito
+    }
+
+    function openPlanUpgradeModal(feature) {
+      const modal = document.getElementById('plan-upgrade-modal');
+      const icon = document.getElementById('upgrade-modal-icon');
+      const title = document.getElementById('upgrade-modal-title');
+      const desc = document.getElementById('upgrade-modal-desc');
+      const freeNote = document.getElementById('upgrade-modal-free-note');
+      const cta = document.getElementById('upgrade-modal-cta');
+      const dismissText = document.getElementById('upgrade-modal-dismiss-text');
+      const dismissBtn = document.getElementById('upgrade-modal-dismiss-btn');
+
+      if (!modal) return;
+
+      if (feature === 'ocr') {
+        icon.textContent = '📸';
+        title.textContent = 'Escaneo Fotográfico con Cámara (OCR)';
+        desc.innerHTML = 'El escaneo automático de la pantalla de glucómetros, tensiómetros y básculas está disponible a partir del <strong>Plan Control Esencial (4,99 €/mes)</strong>.';
+        freeNote.innerHTML = '✓ En tu <strong>Plan Gratuito</strong> puedes introducir tus cifras pulsando <strong>"A MANO ✏️"</strong> de forma 100% ilimitada.';
+        cta.innerHTML = '⭐ Mejorar a Control Esencial (4,99 €/mes)';
+        cta.href = '/#precios';
+        dismissText.textContent = '✏️ Escribir Cifra A Mano (Gratis)';
+        dismissBtn.onclick = function() {
+          closePlanUpgradeModal();
+          if (typeof activateManualInputMode === 'function') activateManualInputMode();
+        };
+      } else if (feature === 'menu') {
+        icon.textContent = '🥗';
+        title.textContent = 'Menú de 28 Días (Semanas 2, 3 y 4)';
+        desc.innerHTML = 'El ciclo completo de 28 días rotativos con listas de la compra adaptadas forma parte del <strong>Plan Control Esencial (4,99 €/mes)</strong>.';
+        freeNote.innerHTML = '✓ Tu <strong>Plan Gratuito</strong> incluye acceso ilimitado a los <strong>primeros 7 días (Semana 1: Cardioprotección & Omega-3)</strong>.';
+        cta.innerHTML = '⭐ Desbloquear Menú de 28 Días (4,99 €/mes)';
+        cta.href = '/#precios';
+        dismissText.textContent = 'Volver a Semana 1 (Gratis)';
+        dismissBtn.onclick = function() {
+          closePlanUpgradeModal();
+          if (typeof selectMonthWeek === 'function') selectMonthWeek(1, document.getElementById('m-week-btn-1'));
+        };
+      } else if (feature === 'pdf') {
+        icon.textContent = '📄';
+        title.textContent = 'Informe Clínico Oficial en PDF A4';
+        desc.innerHTML = 'La compilación y descarga del documento oficial de 1 página A4 para entregar a tu médico en consulta está reservada para el <strong>Plan Salud Integral (9,99 €/mes)</strong> o Control Esencial.';
+        freeNote.innerHTML = '✓ En tu <strong>Plan Gratuito</strong> puedes consultar todas tus constantes, evolución y medias clínicas directamente en pantalla.';
+        cta.innerHTML = '👑 Desbloquear Informes PDF A4 (9,99 €/mes)';
+        cta.href = '/#precios';
+        dismissText.textContent = 'Cerrar y Ver en Pantalla';
+        dismissBtn.onclick = function() {
+          closePlanUpgradeModal();
+        };
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closePlanUpgradeModal() {
+      const modal = document.getElementById('plan-upgrade-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
     let patient = {
       firstName: "Ramón",
       lastName: "Muñoz Martínez",
@@ -3435,6 +3555,10 @@
 
     // Helper to dynamically ensure Tesseract is loaded from CDN/WebAssembly
         function triggerGalleryPicker() {
+      if (getUserPlan() === 'free') {
+        openPlanUpgradeModal('ocr');
+        return;
+      }
       const input = document.getElementById('native-input-gallery');
       if (input) {
         input.value = '';
@@ -4202,6 +4326,10 @@
 
     // High-fidelity client-side PDF Generator conforming to A4 Medical Standard
     function generateOfficialClinicalPDF() {
+      if (getUserPlan() === 'free') {
+        openPlanUpgradeModal('pdf');
+        return;
+      }
       try {
         if (typeof window.jspdf !== 'undefined' && window.jspdf.jsPDF) {
           const { jsPDF } = window.jspdf;
@@ -4915,6 +5043,10 @@
     let isShoppingListOpen = false;
 
     function selectMonthWeek(weekNum, btn) {
+      if (getUserPlan() === 'free' && weekNum > 1) {
+        openPlanUpgradeModal('menu');
+        return;
+      }
       currentMonthWeek = weekNum;
       document.querySelectorAll('.month-week-btn').forEach((b, idx) => {
         if (idx + 1 === weekNum) {
@@ -5179,6 +5311,40 @@
       document.getElementById('auth-user-display-name').textContent = name;
       document.getElementById('auth-user-display-email').textContent = user.email;
 
+      // Actualizar plan del usuario
+      if (user.user_metadata && user.user_metadata.plan) {
+        localStorage.setItem('metavital_user_plan', user.user_metadata.plan);
+      } else if (user.email === 'munozmramon@gmail.com') {
+        localStorage.setItem('metavital_user_plan', 'integral');
+      } else if (!localStorage.getItem('metavital_user_plan')) {
+        localStorage.setItem('metavital_user_plan', 'free');
+      }
+
+      const planBadge = document.getElementById('auth-user-display-plan');
+      const upgradePrompt = document.getElementById('auth-upgrade-prompt');
+      const uPlan = getUserPlan();
+      if (planBadge) {
+        if (uPlan === 'integral') {
+          planBadge.style.background = '#EFF6FF';
+          planBadge.style.borderColor = '#93C5FD';
+          planBadge.style.color = '#1E40AF';
+          planBadge.innerHTML = '👑 <strong>Plan Activo:</strong> Salud Integral';
+          if (upgradePrompt) upgradePrompt.style.display = 'none';
+        } else if (uPlan === 'essential') {
+          planBadge.style.background = '#F0FDFA';
+          planBadge.style.borderColor = '#99F6E4';
+          planBadge.style.color = '#0F766E';
+          planBadge.innerHTML = '📋 <strong>Plan Activo:</strong> Control Esencial';
+          if (upgradePrompt) upgradePrompt.innerHTML = '<a href="/#precios" style="font-size:11px; font-weight:800; color:#1E40AF; text-decoration:none;">👑 Mejorar a Salud Integral (9,99 €) ➔</a>';
+        } else {
+          planBadge.style.background = '#F0FDF4';
+          planBadge.style.borderColor = '#BBF7D0';
+          planBadge.style.color = '#15803D';
+          planBadge.innerHTML = '🟢 <strong>Plan Activo:</strong> Plan Gratuito (4 constantes & Menú 7 días)';
+          if (upgradePrompt) upgradePrompt.style.display = 'block';
+        }
+      }
+
       // Hydrate user profile from Cloud
       loadCloudUserData(user);
     }
@@ -5289,11 +5455,15 @@
       msg.style.display = 'none';
 
       try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const chosenPlan = urlParams.get('plan') || localStorage.getItem('metavital_user_plan') || 'free';
+        localStorage.setItem('metavital_user_plan', chosenPlan);
+
         const { data, error } = await sbClient.auth.signUp({
           email,
           password,
           options: {
-            data: { full_name: fullName }
+            data: { full_name: fullName, plan: chosenPlan }
           }
         });
 
@@ -5606,13 +5776,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.11.0';
+        const CURRENT_VERSION = 'v2.17.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.11.0') {
+                if (k !== 'metavital-cache-v2.17.0') {
                   caches.delete(k);
                 }
               });
