@@ -2885,7 +2885,10 @@
       if (el) el.click();
     }
 
+    let currentOcrExtractedVal = null;
+
     function clearOcrPhotoPreview() {
+      currentOcrExtractedVal = null;
       const wrap = document.getElementById('ocr-photo-preview-wrap');
       const img = document.getElementById('ocr-photo-preview-img');
       if (wrap) wrap.style.display = 'none';
@@ -2944,7 +2947,6 @@
         const imgData = ctx.getImageData(0, 0, w, h);
         const data = imgData.data;
         for (let i = 0; i < data.length; i += 4) {
-          // Convert to grayscale and invert (turns white digits on black screen into black on white)
           const gray = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
           const inv = 255 - gray;
           data[i] = inv;
@@ -2960,57 +2962,38 @@
     function extractBestBiometricValue(ocrData, metric) {
       if (!ocrData) return null;
       const fullText = (ocrData.text || '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
-      const words = ocrData.words || [];
 
       if (metric === 'GLUCOSE') {
-        const candidates = [];
-
-        // 1. Inspect words with bounding boxes (prioritize largest font size on screen)
-        for (let w of words) {
-          const raw = (w.text || '').trim();
-          const match = raw.match(/\b(\d{2,3})\b/);
-          if (match) {
-            const val = parseInt(match[1], 10);
-            if (val >= 35 && val <= 500) {
-              const height = (w.bbox && w.bbox.y1 && w.bbox.y0) ? (w.bbox.y1 - w.bbox.y0) : 12;
-              const width = (w.bbox && w.bbox.x1 && w.bbox.x0) ? (w.bbox.x1 - w.bbox.x0) : 12;
-              const fontArea = height * width;
-              let score = fontArea * 15 + height * 80;
-
-              // Priority for standard target glucose range (70-250)
-              if (val >= 70 && val <= 250) score += 10000;
-              // Strong penalty for small footnotes or clock minutes (<60)
-              if (val < 65) score -= 8000;
-              // Bonus if word has mg/dl
-              if (/mg|dl/i.test(raw)) score += 5000;
-
-              candidates.push({ val: val, score: score, height: height });
-            }
-          }
+        // 1. Direct unit match (e.g. "109 mg/dl" or "109 mg")
+        const unitMatch = fullText.match(/(\d{2,3})\s*(?:mg|dl|mg\/dl)/i);
+        if (unitMatch) {
+          const val = parseInt(unitMatch[1], 10);
+          if (val >= 35 && val <= 500) return { primary: val, method: 'unitMatch' };
         }
 
-        // 2. Also inspect raw string numbers (excluding explicit HH:MM timestamps)
-        const cleanNoTime = fullText.replace(/\b\d{1,2}:\d{2}\b/g, ' ');
-        const allNums = cleanNoTime.match(/\b(\d{2,3})\b/g) || [];
-        for (let s of allNums) {
+        // 2. Remove timestamps like 10:53, 10.53, 10-53
+        const noTime = fullText.replace(/\b\d{1,2}[:.-]\d{2}\b/g, ' ');
+        const matches = noTime.match(/\b\d{2,3}\b/g) || [];
+
+        const candidates = matches.map(s => {
           const val = parseInt(s, 10);
-          if (val >= 35 && val <= 500) {
-            let score = 200;
-            if (val >= 70 && val <= 250) score += 10000;
-            if (val < 65) score -= 8000;
-            candidates.push({ val: val, score: score, height: 12 });
-          }
-        }
+          let score = 0;
+          // Normal target glucose range gets top priority
+          if (val >= 70 && val <= 250) score += 500;
+          else if (val >= 35 && val <= 500) score += 100;
+          // Heavily penalize minute digits of clocks (e.g. 53 from 10:53)
+          if (val < 65) score -= 400;
+          return { val: val, score: score };
+        }).filter(c => c.val >= 35 && c.val <= 500);
 
-        if (candidates.length > 0) {
-          candidates.sort((a, b) => b.score - a.score);
-          return { primary: candidates[0].val };
+        candidates.sort((a, b) => b.score - a.score);
+        if (candidates.length > 0 && candidates[0].score > 0) {
+          return { primary: candidates[0].val, method: 'rankedMatch' };
         }
         return null;
       }
 
       if (metric === 'BP') {
-        // 1. Slash pattern
         const slashMatch = fullText.match(/(\d{2,3})\s*[\/|\\I]\s*(\d{2,3})/);
         if (slashMatch) {
           const sys = parseInt(slashMatch[1], 10);
@@ -3019,7 +3002,6 @@
             return { sys: sys, dia: dia };
           }
         }
-        // 2. Labels SYS / DIA
         const sysMatch = fullText.match(/(?:sys|sis|max)\D*(\d{2,3})/i);
         const diaMatch = fullText.match(/(?:dia|min)\D*(\d{2,3})/i);
         if (sysMatch && diaMatch) {
@@ -3029,7 +3011,6 @@
             return { sys: sys, dia: dia };
           }
         }
-        // 3. Fallback to pairs
         const nums = fullText.match(/\b\d{2,3}\b/g);
         if (nums && nums.length >= 2) {
           for (let i = 0; i < nums.length - 1; i++) {
@@ -3128,20 +3109,21 @@
 
         let parsed = extractBestBiometricValue(ocrResult.data, currentMetric);
 
-        // Pass 2: Inverted canvas (crucial for white digits on dark OLED/LCD screens like OneTouch)
-        if (!parsed || (currentMetric === 'GLUCOSE' && parsed.primary < 65)) {
+        // Pass 2: Inverted canvas (for white digits on dark OLED/LCD screens like OneTouch)
+        if (!parsed) {
           if (statusEl) {
             statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Ajustando contraste para pantalla oscura...</span>';
           }
           const invCanvas = preprocessLcdCanvas(img, true, 1000);
           const ocrResultInv = await Tesseract.recognize(invCanvas, 'eng');
           const parsedInv = extractBestBiometricValue(ocrResultInv.data, currentMetric);
-          if (parsedInv && (parsedInv.primary >= 65 || !parsed)) {
+          if (parsedInv) {
             parsed = parsedInv;
           }
         }
 
         if (parsed) {
+          currentOcrExtractedVal = parsed.primary;
           if (currentMetric === 'GLUCOSE') {
             const input = document.getElementById('manual-input-glucose');
             if (input) input.value = parsed.primary;
@@ -3170,12 +3152,14 @@
             }
           }
         } else {
+          currentOcrExtractedVal = null;
           if (statusEl) {
-            statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se pudo leer el número con claridad (posibles reflejos en el cristal). Por favor, escribe la cifra directamente en la casilla de arriba.</span>';
+            statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se ha podido reconocer la lectura de la pantalla. Por favor, escribe la cifra directamente en la casilla de arriba.</span>';
           }
         }
       } catch (err) {
         console.warn('Error en OCR:', err);
+        currentOcrExtractedVal = null;
         if (statusEl) {
           statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se pudo procesar la foto automáticamente. Puedes escribir la cifra directamente en la casilla de arriba.</span>';
         }
