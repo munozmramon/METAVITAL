@@ -4652,6 +4652,57 @@
       }
     }
 
+        // Algoritmo de coincidencia fonética y tolerancia a erratas tipográficas (Fuzzy Matching)
+    function levenshteinDist(a, b) {
+      const m = a.length, n = b.length;
+      const dp = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+      for (let i = 0; i <= m; i++) dp[i][0] = i;
+      for (let j = 0; j <= n; j++) dp[0][j] = j;
+      for (let i = 1; i <= m; i++) {
+        for (let j = 1; j <= n; j++) {
+          const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+          dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + cost);
+          if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+            dp[i][j] = Math.min(dp[i][j], dp[i - 2][j - 2] + cost);
+          }
+        }
+      }
+      return dp[m][n];
+    }
+
+    function cleanNormalizeText(str) {
+      return (str || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9\s]/g, ' ');
+    }
+
+    function matchesDietWord(fullText, targetWord) {
+      const normFull = cleanNormalizeText(fullText);
+      const normTarget = cleanNormalizeText(targetWord).trim();
+      if (!normTarget || !normFull) return false;
+
+      // 1. Coincidencia directa de subcadena
+      if (normFull.includes(normTarget)) return true;
+
+      // 2. Si el objetivo tiene varias palabras (ej: 'frutos secos', 'patatas fritas')
+      if (normTarget.includes(' ')) {
+        const targetParts = normTarget.split(/\s+/);
+        // Si contiene todas las palabras clave
+        return targetParts.every(part => normFull.includes(part));
+      }
+
+      // 3. Coincidencia token a token con tolerancia a erratas (ej: 'cocholate' -> 'chocolate')
+      const tokens = normFull.split(/\s+/).filter(t => t.length >= 3);
+      for (let token of tokens) {
+        if (token === normTarget) return true;
+        // Para palabras largas (>=6 letras), permitir transposición de letras o 1-2 erratas
+        if (normTarget.length >= 6 && Math.abs(token.length - normTarget.length) <= 2) {
+          const dist = levenshteinDist(token, normTarget);
+          const maxAllowed = normTarget.length >= 8 ? 2 : 1;
+          if (dist <= maxAllowed) return true;
+        }
+      }
+      return false;
+    }
+
     function analyzeDailyDiet() {
       const des = (document.getElementById('diet-real-desayuno').value || '').trim();
       const com = (document.getElementById('diet-real-comida').value || '').trim();
@@ -4735,16 +4786,16 @@
       let detectedGood = [];
 
       potassiumRisks.forEach(item => {
-        if (allText.includes(item.word) && !detectedK.some(d => d.name === item.name)) detectedK.push(item);
+        if (matchesDietWord(allText, item.word) && !detectedK.some(d => d.name === item.name)) detectedK.push(item);
       });
       sugarTriglycerideRisks.forEach(item => {
-        if (allText.includes(item.word) && !detectedSugar.some(d => d.name === item.name)) detectedSugar.push(item);
+        if (matchesDietWord(allText, item.word) && !detectedSugar.some(d => d.name === item.name)) detectedSugar.push(item);
       });
       sodiumBloodPressureRisks.forEach(item => {
-        if (allText.includes(item.word) && !detectedSalt.some(d => d.name === item.name)) detectedSalt.push(item);
+        if (matchesDietWord(allText, item.word) && !detectedSalt.some(d => d.name === item.name)) detectedSalt.push(item);
       });
       healthyProtectors.forEach(item => {
-        if (allText.includes(item.word) && !detectedGood.some(d => d.name === item.name)) detectedGood.push(item);
+        if (matchesDietWord(allText, item.word) && !detectedGood.some(d => d.name === item.name)) detectedGood.push(item);
       });
 
       const totalAlerts = detectedK.length + detectedSugar.length + detectedSalt.length;
