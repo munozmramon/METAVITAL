@@ -2807,6 +2807,9 @@
 
       <div class="header-btn-group">
 
+                <button class="hdr-circle-btn" onclick="openShareWhatsAppModal()" style="background:#25D366; color:#FFFFFF; border:1px solid #16A34A; box-shadow:0 2px 8px rgba(37,211,102,0.35);" title="Viralizar / Compartir en WhatsApp">
+          💬
+        </button>
         <button class="hdr-circle-btn" onclick="openReportUploadModal()" title="Subir / Escanear Informe">
 
           📄
@@ -2865,6 +2868,24 @@
         <p style="font-size:11.5px; line-height:16px; margin:0; color:#E6FFFA;">
           En menos de 60 segundos registras azúcar, tensión, peso y pasos. Puedes teclear el valor o apuntar la cámara a la pantalla de tus aparatos para que anote los números sin teclear.
         </p>
+      </div>
+
+            <!-- BOTÓN DESTACADO DE VIRALIZACIÓN POR WHATSAPP (ACCESO DIRECTO DESDE EL INICIO) -->
+      <div style="margin-bottom:12px;">
+        <button type="button" onclick="openShareWhatsAppModal()" style="width:100%; background:linear-gradient(135deg, #25D366, #128C7E); color:#FFFFFF; border:none; border-radius:14px; padding:11px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; box-shadow:0 3px 12px rgba(37,211,102,0.3); text-align:left; -webkit-tap-highlight-color:transparent;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="background:rgba(255,255,255,0.22); width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+              📲
+            </div>
+            <div>
+              <div style="font-size:13.5px; font-weight:900; letter-spacing:-0.2px;">Recomendar App por WhatsApp</div>
+              <div style="font-size:11px; opacity:0.95; font-weight:600;">Comparte con familiares o amigos para que la usen gratis</div>
+            </div>
+          </div>
+          <span style="background:#FFFFFF; color:#128C7E; font-size:11.5px; font-weight:900; padding:5px 12px; border-radius:999px; flex-shrink:0; box-shadow:0 1px 4px rgba(0,0,0,0.12);">
+            Compartir ➔
+          </span>
+        </button>
       </div>
 
       <!-- Clinical Alert Container -->
@@ -9916,7 +9937,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.18.0';
+        const CURRENT_VERSION = 'v2.19.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -9928,7 +9949,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.18.0') {
+                if (k !== 'metavital-cache-v2.19.0') {
 
                   caches.delete(k);
 
@@ -10125,6 +10146,56 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 </script>
+
+
+    <!-- MODAL DE VIRALIZACIÓN Y COMPARTIR POR WHATSAPP -->
+    <div id="whatsapp-share-modal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:10001; position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(4px);">
+      <div class="modal-box" style="max-width:400px; padding:22px 18px; border-radius:20px; text-align:center; background:#FFFFFF; box-shadow:0 20px 40px rgba(0,0,0,0.3); position:relative;">
+        <span style="position:absolute; top:12px; right:14px; font-size:20px; font-weight:bold; color:#64748B; cursor:pointer;" onclick="closeShareWhatsAppModal()">✕</span>
+
+        <div style="width:54px; height:54px; border-radius:50%; background:#DCFCE7; color:#16A34A; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 10px auto; border:2px solid #86EFAC;">
+          💬
+        </div>
+
+        <h3 style="margin:0 0 6px 0; color:#0F172A; font-size:17px; font-weight:900;">
+          Viralizar & Compartir en WhatsApp
+        </h3>
+        <p style="font-size:12px; color:#64748B; line-height:1.4; margin:0 0 16px 0;">
+          Elige qué quieres enviar a tus familiares o amigos:
+        </p>
+
+        <!-- OPCIÓN 1: VIRALIZAR LA APP (RECOMENDAR REGISTRO GRATUITO) -->
+        <div style="background:#F0FDF4; border:1.5px solid #86EFAC; border-radius:14px; padding:14px; margin-bottom:12px; text-align:left;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:900; color:#15803D; text-transform:uppercase; letter-spacing:0.4px;">🚀 Recomendación Oficial</span>
+            <span style="background:#22C55E; color:#FFFFFF; font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px;">GRATIS</span>
+          </div>
+          <div style="font-size:13px; font-weight:800; color:#0F172A; margin-bottom:4px;">Invitar a un Familiar o Amigo</div>
+          <div style="font-size:11.5px; color:#475569; line-height:1.4; margin-bottom:10px;">
+            Envía una recomendación para que controlen su azúcar, tensión y comidas gratis en su móvil con https://metavital.fans.
+          </div>
+          <button type="button" onclick="sendWhatsAppRecommendation()" style="width:100%; background:#25D366; color:#FFFFFF; border:none; padding:10px; border-radius:10px; font-size:12.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(37,211,102,0.3);">
+            <span>📲</span> <span>Enviar Invitación por WhatsApp</span>
+          </button>
+        </div>
+
+        <!-- OPCIÓN 2: ENVIAR RESUMEN CLÍNICO DEL DÍA A LA FAMILIA -->
+        <div style="background:#EFF6FF; border:1.5px solid #BFDBFE; border-radius:14px; padding:14px; margin-bottom:16px; text-align:left;">
+          <div style="font-size:11px; font-weight:900; color:#1E40AF; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px;">📊 Tranquilidad Familiar</div>
+          <div style="font-size:13px; font-weight:800; color:#0F172A; margin-bottom:4px;">Enviar Mis Tomas de Hoy</div>
+          <div style="font-size:11.5px; color:#475569; line-height:1.4; margin-bottom:10px;">
+            Informa a tus hijos de que tus cifras de glucosa, tensión y peso están bajo control médico y tomaste la medicación.
+          </div>
+          <button type="button" onclick="sendWhatsAppDailySummary()" style="width:100%; background:#0284C7; color:#FFFFFF; border:none; padding:10px; border-radius:10px; font-size:12.5px; font-weight:800; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(2,132,199,0.3);">
+            <span>💬</span> <span>Enviar Mis Tomas a la Familia</span>
+          </button>
+        </div>
+
+        <button type="button" onclick="closeShareWhatsAppModal()" style="background:#F1F5F9; color:#64748B; border:none; padding:9px 18px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; width:100%;">
+          Cerrar
+        </button>
+      </div>
+    </div>
 
 </body>
 
