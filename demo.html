@@ -2559,16 +2559,16 @@
           </div>
         </div>
 
-                        <!-- BOTONES DE AUTOCOMPLETAR CON FOTO (Camara o Galeria -> OCR y desechar foto) -->
+                                <!-- BOTONES DE AUTOCOMPLETAR CON FOTO (Camara o Galeria -> OCR y desechar foto) -->
         <div style="display:flex; gap:8px; width:100%; margin-bottom:10px; box-sizing:border-box;">
-          <div onclick="triggerPhotoCapture('camera')" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
+          <label for="native-input-camera" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
             📸 Tomar Foto
-            <input type="file" id="native-input-camera" accept="image/*" capture="environment" onchange="handleOcrPhotoUploadAndFill(event)" onclick="event.stopPropagation()" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
-          </div>
-          <div onclick="triggerPhotoCapture('gallery')" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
+            <input type="file" id="native-input-camera" accept="image/*" capture="environment" onchange="handleOcrPhotoUploadAndFill(event)" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
+          </label>
+          <label for="native-input-gallery" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
             📁 De Galería
-            <input type="file" id="native-input-gallery" accept="image/*" onchange="handleOcrPhotoUploadAndFill(event)" onclick="event.stopPropagation()" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
-          </div>
+            <input type="file" id="native-input-gallery" accept="image/*" onchange="handleOcrPhotoUploadAndFill(event)" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
+          </label>
         </div>
 
         <!-- Vista previa de la foto capturada o seleccionada -->
@@ -2920,13 +2920,12 @@
       });
     }
 
-    // Advanced client-side computer vision preprocessing for LCD / 7-Segment screens
-    function preprocessLcdCanvas(img, maxDimension = 1000) {
+    // Preprocess image for OCR (Grayscale + Contrast + Inversion for dark displays like OneTouch)
+    function preprocessLcdCanvas(img, invert = false, maxDimension = 1000) {
       const canvas = document.createElement('canvas');
       let w = img.naturalWidth || img.width;
       let h = img.naturalHeight || img.height;
 
-      // Rescale down to optimal dimension to guarantee fast mobile processing without memory lag
       if (w > maxDimension || h > maxDimension) {
         if (w > h) {
           h = Math.round((h * maxDimension) / w);
@@ -2941,63 +2940,78 @@
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, w, h);
 
-      // Contrast enhancement and adaptive binarization for 7-segment digital displays
-      const imgData = ctx.getImageData(0, 0, w, h);
-      const data = imgData.data;
-      let minLum = 255;
-      let maxLum = 0;
-      let sumLum = 0;
-      const totalPixels = w * h;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const lum = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
-        if (lum < minLum) minLum = lum;
-        if (lum > maxLum) maxLum = lum;
-        sumLum += lum;
-      }
-      const avgLum = sumLum / totalPixels;
-      const rangeLum = maxLum - minLum || 1;
-      const isDarkDisplay = avgLum < 110; // e.g. bright LED digits on dark background
-
-      for (let i = 0; i < data.length; i += 4) {
-        const lum = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
-        let stretched = Math.round(((lum - minLum) / rangeLum) * 255);
-        if (isDarkDisplay) {
-          stretched = 255 - stretched;
+      if (invert) {
+        const imgData = ctx.getImageData(0, 0, w, h);
+        const data = imgData.data;
+        for (let i = 0; i < data.length; i += 4) {
+          // Convert to grayscale and invert (turns white digits on black screen into black on white)
+          const gray = Math.round(0.299 * data[i] + 0.587 * data[i+1] + 0.114 * data[i+2]);
+          const inv = 255 - gray;
+          data[i] = inv;
+          data[i+1] = inv;
+          data[i+2] = inv;
         }
-        const finalVal = stretched > 128 ? 255 : 0;
-        data[i] = finalVal;
-        data[i+1] = finalVal;
-        data[i+2] = finalVal;
+        ctx.putImageData(imgData, 0, 0);
       }
-      ctx.putImageData(imgData, 0, 0);
       return canvas;
     }
 
-    // Biometric device text parser with strict clinical ranges
-    function parseBiometricOcrText(rawText, metric) {
-      if (!rawText) return null;
-      const cleaned = rawText.replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+    // Smart Biometric Extractor with Font-Size & Clinical Priority Ranking
+    function extractBestBiometricValue(ocrData, metric) {
+      if (!ocrData) return null;
+      const fullText = (ocrData.text || '').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+      const words = ocrData.words || [];
 
       if (metric === 'GLUCOSE') {
-        const unitMatch = cleaned.match(/(\d{2,3})\s*(?:mg|dl|mg\/dl)/i);
-        if (unitMatch) {
-          const val = parseInt(unitMatch[1], 10);
-          if (val >= 35 && val <= 500) return { primary: val };
-        }
-        const cleanNoTime = cleaned.replace(/\b\d{1,2}:\d{2}\b/g, '');
-        const nums = cleanNoTime.match(/\b\d{2,3}\b/g);
-        if (nums) {
-          for (let s of nums) {
-            const v = parseInt(s, 10);
-            if (v >= 35 && v <= 450) return { primary: v };
+        const candidates = [];
+
+        // 1. Inspect words with bounding boxes (prioritize largest font size on screen)
+        for (let w of words) {
+          const raw = (w.text || '').trim();
+          const match = raw.match(/\b(\d{2,3})\b/);
+          if (match) {
+            const val = parseInt(match[1], 10);
+            if (val >= 35 && val <= 500) {
+              const height = (w.bbox && w.bbox.y1 && w.bbox.y0) ? (w.bbox.y1 - w.bbox.y0) : 12;
+              const width = (w.bbox && w.bbox.x1 && w.bbox.x0) ? (w.bbox.x1 - w.bbox.x0) : 12;
+              const fontArea = height * width;
+              let score = fontArea * 15 + height * 80;
+
+              // Priority for standard target glucose range (70-250)
+              if (val >= 70 && val <= 250) score += 10000;
+              // Strong penalty for small footnotes or clock minutes (<60)
+              if (val < 65) score -= 8000;
+              // Bonus if word has mg/dl
+              if (/mg|dl/i.test(raw)) score += 5000;
+
+              candidates.push({ val: val, score: score, height: height });
+            }
           }
+        }
+
+        // 2. Also inspect raw string numbers (excluding explicit HH:MM timestamps)
+        const cleanNoTime = fullText.replace(/\b\d{1,2}:\d{2}\b/g, ' ');
+        const allNums = cleanNoTime.match(/\b(\d{2,3})\b/g) || [];
+        for (let s of allNums) {
+          const val = parseInt(s, 10);
+          if (val >= 35 && val <= 500) {
+            let score = 200;
+            if (val >= 70 && val <= 250) score += 10000;
+            if (val < 65) score -= 8000;
+            candidates.push({ val: val, score: score, height: 12 });
+          }
+        }
+
+        if (candidates.length > 0) {
+          candidates.sort((a, b) => b.score - a.score);
+          return { primary: candidates[0].val };
         }
         return null;
       }
 
       if (metric === 'BP') {
-        const slashMatch = cleaned.match(/(\d{2,3})\s*[\/|\\I]\s*(\d{2,3})/);
+        // 1. Slash pattern
+        const slashMatch = fullText.match(/(\d{2,3})\s*[\/|\\I]\s*(\d{2,3})/);
         if (slashMatch) {
           const sys = parseInt(slashMatch[1], 10);
           const dia = parseInt(slashMatch[2], 10);
@@ -3005,8 +3019,9 @@
             return { sys: sys, dia: dia };
           }
         }
-        const sysMatch = cleaned.match(/(?:sys|sis|max)\D*(\d{2,3})/i);
-        const diaMatch = cleaned.match(/(?:dia|min)\D*(\d{2,3})/i);
+        // 2. Labels SYS / DIA
+        const sysMatch = fullText.match(/(?:sys|sis|max)\D*(\d{2,3})/i);
+        const diaMatch = fullText.match(/(?:dia|min)\D*(\d{2,3})/i);
         if (sysMatch && diaMatch) {
           const sys = parseInt(sysMatch[1], 10);
           const dia = parseInt(diaMatch[1], 10);
@@ -3014,7 +3029,8 @@
             return { sys: sys, dia: dia };
           }
         }
-        const nums = cleaned.match(/\b\d{2,3}\b/g);
+        // 3. Fallback to pairs
+        const nums = fullText.match(/\b\d{2,3}\b/g);
         if (nums && nums.length >= 2) {
           for (let i = 0; i < nums.length - 1; i++) {
             const s = parseInt(nums[i], 10);
@@ -3028,22 +3044,19 @@
       }
 
       if (metric === 'WEIGHT') {
-        // 1. Con etiqueta kg o kilo
-        const mKg = cleaned.match(/(\d{2,3}(?:[.,]\d+)?)\s*(?:kg|kilo)\b/i);
+        const mKg = fullText.match(/(\d{2,3}(?:[.,]\d+)?)\s*(?:kg|kilo)\b/i);
         if (mKg) {
           const val = parseFloat(mKg[1].replace(',', '.'));
           if (val >= 25.0 && val <= 250.0) return { primary: val };
         }
-        // 2. Numero decimal aislado entre 30 y 220
-        const mDec = cleaned.match(/\b(\d{2,3}[.,]\d+)\b/g);
+        const mDec = fullText.match(/\b(\d{2,3}[.,]\d+)\b/g);
         if (mDec) {
           for (let s of mDec) {
             const v = parseFloat(s.replace(',', '.'));
             if (v >= 30.0 && v <= 220.0) return { primary: v };
           }
         }
-        // 3. Numero entero aislado entre 35 y 200
-        const mInt = cleaned.match(/\b(\d{2,3})\b/g);
+        const mInt = fullText.match(/\b(\d{2,3})\b/g);
         if (mInt) {
           for (let s of mInt) {
             const v = parseFloat(s);
@@ -3054,7 +3067,7 @@
       }
 
       if (metric === 'STEPS') {
-        const match = cleaned.match(/\b(\d{3,6})\b/);
+        const match = fullText.match(/\b(\d{3,6})\b/);
         if (match) {
           const val = parseInt(match[1], 10);
           if (val >= 100 && val <= 60000) return { primary: val };
@@ -3069,7 +3082,6 @@
       const file = e.target.files && e.target.files[0];
       if (!file) return;
 
-      // Validate image format
       if (!file.type.startsWith('image/')) {
         alert('Por favor selecciona un archivo de imagen valido (.jpg, .png, etc.).');
         e.target.value = '';
@@ -3093,7 +3105,7 @@
         await ensureTesseractLoaded();
 
         if (statusEl) {
-          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Procesando imagen y filtrando reflejos...</span>';
+          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Analizando pantalla del aparato con IA...</span>';
         }
 
         const img = new Image();
@@ -3103,15 +3115,9 @@
           img.src = imgUrl;
         });
 
-        // Preprocess image for LCD 7-segment numbers
-        const processedCanvas = preprocessLcdCanvas(img, 1000);
-
-        if (statusEl) {
-          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Leyendo pantalla del aparato con IA...</span>';
-        }
-
-        // Pass 1: High-contrast preprocessed canvas
-        let ocrResult = await Tesseract.recognize(processedCanvas, 'eng', {
+        // Pass 1: Raw scaled canvas
+        const rawCanvas = preprocessLcdCanvas(img, false, 1000);
+        let ocrResult = await Tesseract.recognize(rawCanvas, 'eng', {
           logger: m => {
             if (m.status === 'recognizing text' && statusEl) {
               const p = Math.round((m.progress || 0) * 100);
@@ -3120,23 +3126,19 @@
           }
         });
 
-        let parsed = parseBiometricOcrText(ocrResult.data.text, currentMetric);
+        let parsed = extractBestBiometricValue(ocrResult.data, currentMetric);
 
-        // Pass 2: Raw resized image if pass 1 didn't match (for OLED / color screens)
-        if (!parsed) {
-          const rawCanvas = document.createElement('canvas');
-          let rw = img.naturalWidth || img.width;
-          let rh = img.naturalHeight || img.height;
-          if (rw > 1000 || rh > 1000) {
-            if (rw > rh) { rh = Math.round((rh * 1000) / rw); rw = 1000; }
-            else { rw = Math.round((rw * 1000) / rh); rh = 1000; }
+        // Pass 2: Inverted canvas (crucial for white digits on dark OLED/LCD screens like OneTouch)
+        if (!parsed || (currentMetric === 'GLUCOSE' && parsed.primary < 65)) {
+          if (statusEl) {
+            statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Ajustando contraste para pantalla oscura...</span>';
           }
-          rawCanvas.width = rw;
-          rawCanvas.height = rh;
-          rawCanvas.getContext('2d').drawImage(img, 0, 0, rw, rh);
-
-          ocrResult = await Tesseract.recognize(rawCanvas, 'eng');
-          parsed = parseBiometricOcrText(ocrResult.data.text, currentMetric);
+          const invCanvas = preprocessLcdCanvas(img, true, 1000);
+          const ocrResultInv = await Tesseract.recognize(invCanvas, 'eng');
+          const parsedInv = extractBestBiometricValue(ocrResultInv.data, currentMetric);
+          if (parsedInv && (parsedInv.primary >= 65 || !parsed)) {
+            parsed = parsedInv;
+          }
         }
 
         if (parsed) {
