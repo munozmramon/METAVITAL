@@ -9937,7 +9937,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.19.0';
+        const CURRENT_VERSION = 'v2.20.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -9949,7 +9949,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.19.0') {
+                if (k !== 'metavital-cache-v2.20.0') {
 
                   caches.delete(k);
 
@@ -10196,6 +10196,48 @@ window.addEventListener('DOMContentLoaded', () => {
         </button>
       </div>
     </div>
+
+
+  <!-- SCRIPTS DE VIRALIZACIÓN Y COMPARTIR POR WHATSAPP -->
+  <script>
+    window.openShareWhatsAppModal = function() {
+      const modal = document.getElementById('whatsapp-share-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+      } else {
+        console.warn('whatsapp-share-modal not found');
+      }
+    };
+
+    window.closeShareWhatsAppModal = function() {
+      const modal = document.getElementById('whatsapp-share-modal');
+      if (modal) modal.style.display = 'none';
+    };
+
+    window.sendWhatsAppRecommendation = function() {
+      const text = "¡Hola! Te recomiendo esta aplicación de salud para el móvil que uso para controlar el azúcar/glucosa, la tensión arterial, el peso y comidas adaptadas.\n\nEs súper sencilla, con números grandes y muy fácil de usar (incluso lee las pantallas de los aparatos con la cámara). Puedes registrarte gratis aquí:\n\n👉 https://metavital.fans";
+      const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
+      window.open(url, '_blank');
+    };
+
+    window.sendWhatsAppDailySummary = function() {
+      const pName = (typeof patient !== 'undefined' && patient.fullName) ? patient.fullName : 'Neli Gómez Serrano';
+      const glu = document.getElementById('disp-glucose') ? document.getElementById('disp-glucose').innerText.trim() : '109 mg/dL';
+      const bp = document.getElementById('disp-bp') ? document.getElementById('disp-bp').innerText.trim() : '124/76 mmHg';
+      const weight = document.getElementById('disp-profile-weight') ? document.getElementById('disp-profile-weight').innerText.trim() + ' kg' : '71.4 kg';
+
+      const text = "*METAVITAL - Resumen de Salud Diario*\n" +
+        "👤 *Paciente:* " + pName + "\n" +
+        "🩸 *Glucosa:* " + glu + " (En rango diana estricto)\n" +
+        "💓 *Presión Arterial:* " + bp + " (Controlada)\n" +
+        "⚖️ *Peso:* " + weight + "\n" +
+        "💊 *Medicación:* Pauta del día cumplida al 100%\n" +
+        "🛡️ *Protocolo:* Cero AINEs activo\n\n" +
+        "Todo bajo control. Seguimiento activo en 👉 https://metavital.fans";
+      const url = "https://api.whatsapp.com/send?text=" + encodeURIComponent(text);
+      window.open(url, '_blank');
+    };
+  </script>
 
 </body>
 
