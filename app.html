@@ -1411,6 +1411,7 @@
             ⋮
           </button>
           <div id="header-dropdown-menu" class="hdr-dropdown-menu" style="display:none;">
+            <a href="javascript:void(0)" onclick="forceAppUpdate()" class="hdr-dropdown-item" style="color:#0D9488; font-weight:900;">🔄 Actualizar App Ahora</a>
             <a href="/" class="hdr-dropdown-item">🌐 Portada Web</a>
             <a href="javascript:void(0)" onclick="openAuthModal()" class="hdr-dropdown-item">👤 Mi Cuenta Cloud</a>
             <a href="javascript:void(0)" onclick="openCoverModal()" class="hdr-dropdown-item">🌟 Ver Portada Oficial</a>
@@ -5529,16 +5530,71 @@
   </script>
 
 
-  <!-- Service Worker Registration -->
+  <!-- Service Worker Registration & Inmediate Cache Purge -->
   <script>
+    // 1. Purgado forzoso de cachés antiguas en clientes locales
+    (function autoPurgeOldCaches() {
+      try {
+        const CURRENT_VERSION = 'v2.11.0';
+        if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
+          localStorage.setItem('metavital_last_version', CURRENT_VERSION);
+          if ('caches' in window) {
+            caches.keys().then(keys => {
+              keys.forEach(k => {
+                if (k !== 'metavital-cache-v2.11.0') {
+                  caches.delete(k);
+                }
+              });
+            });
+          }
+        }
+      } catch(e) {}
+    })();
+
+    // 2. Registro con bypass de caché y auto-recarga reactiva
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then((reg) => {
-          console.log('METAVITAL PWA Service Worker activo:', reg.scope);
+        navigator.serviceWorker.register('/sw.js?v=2.11.0', { updateViaCache: 'none' }).then((reg) => {
+          try { reg.update(); } catch(e) {}
+          reg.onupdatefound = () => {
+            const installing = reg.installing;
+            if (installing) {
+              installing.onstatechange = () => {
+                if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+                  window.location.reload();
+                }
+              };
+            }
+          };
         }).catch((err) => {
-          console.log('Error registrando Service Worker:', err);
+          console.log('SW Error:', err);
         });
       });
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+    }
+
+    // 3. Función para forzar actualización manual desde el menú si el móvil mantiene datos en caché
+    function forceAppUpdate() {
+      if ('caches' in window) {
+        caches.keys().then(names => Promise.all(names.map(name => caches.delete(name)))).then(() => {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(regs => {
+              regs.forEach(r => r.unregister());
+              window.location.reload(true);
+            });
+          } else {
+            window.location.reload(true);
+          }
+        });
+      } else {
+        window.location.reload(true);
+      }
     }
   </script>
 
