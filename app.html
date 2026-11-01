@@ -3181,25 +3181,107 @@
     }
 
     function saveManualConstantReading() {
+      const now = new Date();
+      const timeStr = 'Hoy, ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+
       if (currentMetric === 'GLUCOSE') {
-        const val = document.getElementById('manual-input-glucose').value || '118';
-        document.getElementById('detected-val').innerText = val;
-        document.getElementById('detected-unit').innerText = 'mg/dL (Glucómetro Digital)';
+        const input = document.getElementById('manual-input-glucose');
+        const val = (input && input.value) ? input.value : '109';
+        const numVal = parseInt(val, 10);
+        
+        const disp = document.getElementById('disp-glucose');
+        if (disp) disp.innerText = val + ' mg/dL';
+        
+        measurementHistory.unshift({
+          id: Date.now(),
+          type: 'GLUCOSE',
+          icon: '🩸',
+          label: 'Glucómetro Digital (OCR)',
+          value: val + ' mg/dL',
+          date: timeStr,
+          status: numVal <= 130 ? 'En Rango (70-130)' : 'Elevada',
+          badgeColor: numVal <= 130 ? 'var(--success)' : 'var(--warning)'
+        });
       } else if (currentMetric === 'BP') {
-        const sys = document.getElementById('manual-input-sys').value || '120';
-        const dia = document.getElementById('manual-input-dia').value || '80';
-        document.getElementById('detected-val').innerText = sys + '/' + dia;
-        document.getElementById('detected-unit').innerText = 'mmHg (Tensiómetro Digital)';
+        const sInput = document.getElementById('manual-input-sys');
+        const dInput = document.getElementById('manual-input-dia');
+        const sys = (sInput && sInput.value) ? sInput.value : '120';
+        const dia = (dInput && dInput.value) ? dInput.value : '80';
+        const val = sys + '/' + dia;
+
+        const disp = document.getElementById('disp-bp');
+        if (disp) disp.innerText = val + ' mmHg';
+
+        measurementHistory.unshift({
+          id: Date.now(),
+          type: 'BP',
+          icon: '💓',
+          label: 'Tensiómetro Digital (OCR)',
+          value: val + ' mmHg',
+          date: timeStr,
+          status: 'Controlada',
+          badgeColor: 'var(--success)'
+        });
       } else if (currentMetric === 'WEIGHT') {
-        const val = document.getElementById('manual-input-weight').value || '71.5';
-        document.getElementById('detected-val').innerText = val;
-        document.getElementById('detected-unit').innerText = 'kg (Báscula Digital)';
+        const input = document.getElementById('manual-input-weight');
+        const val = (input && input.value) ? parseFloat(input.value) : 71.8;
+        patient.weightKg = val;
+        updateProfileUI();
+
+        measurementHistory.unshift({
+          id: Date.now(),
+          type: 'WEIGHT',
+          icon: '⚖️',
+          label: 'Báscula Digital (OCR)',
+          value: val + ' kg (IMC ' + patient.bmi + ')',
+          date: timeStr,
+          status: '📉 Registrado',
+          badgeColor: 'var(--primary)'
+        });
       } else if (currentMetric === 'STEPS') {
-        const val = document.getElementById('manual-input-steps').value || '6420';
-        document.getElementById('detected-val').innerText = val;
-        document.getElementById('detected-unit').innerText = 'pasos (Podómetro)';
+        const input = document.getElementById('manual-input-steps');
+        const val = (input && input.value) ? input.value : '6420';
+
+        const disp = document.getElementById('disp-steps');
+        if (disp) disp.innerText = parseInt(val, 10).toLocaleString('es-ES');
+
+        measurementHistory.unshift({
+          id: Date.now(),
+          type: 'STEPS',
+          icon: '👟',
+          label: 'Podómetro (Pasos)',
+          value: parseInt(val, 10).toLocaleString('es-ES') + ' pasos',
+          date: timeStr,
+          status: '🎯 Meta diaria',
+          badgeColor: 'var(--success)'
+        });
       }
-      saveReading();
+
+      // Persist to localStorage
+      try {
+        localStorage.setItem('metavital_history', JSON.stringify(measurementHistory));
+      } catch(e) {}
+
+      renderMeasurementHistory();
+      closeCaptureModal();
+
+      const banner = document.getElementById('clinical-alert-banner');
+      if (banner) {
+        banner.classList.add('show');
+        const aTitle = document.getElementById('alert-title');
+        const aMsg = document.getElementById('alert-msg');
+        if (aTitle) aTitle.innerText = '✓ REGISTRO GUARDADO EN LA LIBRETA';
+        if (aMsg) {
+          aMsg.innerText = currentMetric === 'GLUCOSE' 
+            ? 'Glucosa anotada en su libreta acumulada con éxito.'
+            : (currentMetric === 'WEIGHT' ? 'Peso guardado en su libreta acumulada. IMC recalculado a ' + patient.bmi + '.' : 'Medición guardada correctamente.');
+        }
+        setTimeout(() => banner.classList.remove('show'), 3500);
+      }
+    }
+
+    function saveReading() {
+      saveManualConstantReading();
     }
 
     function openCaptureModal(type) {
