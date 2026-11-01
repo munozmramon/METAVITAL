@@ -2559,16 +2559,23 @@
           </div>
         </div>
 
-                <!-- BOTONES DE AUTOCOMPLETAR CON FOTO (Camara o Galeria -> OCR y desechar foto) -->
+                        <!-- BOTONES DE AUTOCOMPLETAR CON FOTO (Camara o Galeria -> OCR y desechar foto) -->
         <div style="display:flex; gap:8px; width:100%; margin-bottom:10px; box-sizing:border-box;">
-          <div style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box;">
+          <div onclick="triggerPhotoCapture('camera')" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
             📸 Tomar Foto
-            <input type="file" accept="image/*" capture="environment" onchange="handleOcrPhotoUploadAndFill(event)" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
+            <input type="file" id="native-input-camera" accept="image/*" capture="environment" onchange="handleOcrPhotoUploadAndFill(event)" onclick="event.stopPropagation()" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
           </div>
-          <div style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box;">
+          <div onclick="triggerPhotoCapture('gallery')" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
             📁 De Galería
-            <input type="file" accept="image/*" onchange="handleOcrPhotoUploadAndFill(event)" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
+            <input type="file" id="native-input-gallery" accept="image/*" onchange="handleOcrPhotoUploadAndFill(event)" onclick="event.stopPropagation()" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
           </div>
+        </div>
+
+        <!-- Vista previa de la foto capturada o seleccionada -->
+        <div id="ocr-photo-preview-wrap" style="display:none; position:relative; width:100%; max-width:240px; margin:0 auto 10px auto; border-radius:10px; overflow:hidden; border:1.5px solid #0D9488; background:#0F172A; text-align:center;">
+          <img id="ocr-photo-preview-img" src="" alt="Foto capturada" style="width:100%; max-height:140px; object-fit:contain; display:block; margin:0 auto;">
+          <button type="button" onclick="clearOcrPhotoPreview()" title="Quitar foto" style="position:absolute; top:5px; right:5px; background:rgba(0,0,0,0.7); color:#FFF; border:none; border-radius:50%; width:24px; height:24px; font-size:12px; font-weight:bold; cursor:pointer; line-height:24px; text-align:center; padding:0;">✕</button>
+          <div style="font-size:10.5px; color:#94A3B8; padding:3px 6px; background:#1E293B;">Foto recibida • Analizando pantalla</div>
         </div>
 
         <!-- Estado de reconocimiento de la foto -->
@@ -2872,6 +2879,32 @@
     }
 
     // Helper to dynamically ensure Tesseract is loaded from CDN/WebAssembly
+    function triggerPhotoCapture(type) {
+      const inputId = type === 'camera' ? 'native-input-camera' : 'native-input-gallery';
+      const el = document.getElementById(inputId);
+      if (el) el.click();
+    }
+
+    function clearOcrPhotoPreview() {
+      const wrap = document.getElementById('ocr-photo-preview-wrap');
+      const img = document.getElementById('ocr-photo-preview-img');
+      if (wrap) wrap.style.display = 'none';
+      if (img) {
+        if (img.src && img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
+        img.src = '';
+      }
+      const cam = document.getElementById('native-input-camera');
+      if (cam) cam.value = '';
+      const gal = document.getElementById('native-input-gallery');
+      if (gal) gal.value = '';
+      const statusEl = document.getElementById('ocr-fill-status');
+      if (statusEl) {
+        statusEl.innerHTML = '';
+        statusEl.style.display = 'none';
+      }
+    }
+
+    // Helper to dynamically ensure Tesseract is loaded from CDN/WebAssembly
     function ensureTesseractLoaded() {
       return new Promise((resolve, reject) => {
         if (typeof Tesseract !== 'undefined') return resolve();
@@ -2880,6 +2913,10 @@
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('No se pudo cargar la libreria OCR'));
         document.head.appendChild(script);
+        setTimeout(() => {
+          if (typeof Tesseract !== 'undefined') resolve();
+          else reject(new Error('Tiempo de espera agotado al cargar OCR'));
+        }, 12000);
       });
     }
 
@@ -2991,10 +3028,27 @@
       }
 
       if (metric === 'WEIGHT') {
-        const match = cleaned.match(/(\d{2,3}(?:[.,]\d+)?)\s*(?:kg|kilo)?/i);
-        if (match) {
-          const val = parseFloat(match[1].replace(',', '.'));
+        // 1. Con etiqueta kg o kilo
+        const mKg = cleaned.match(/(\d{2,3}(?:[.,]\d+)?)\s*(?:kg|kilo)\b/i);
+        if (mKg) {
+          const val = parseFloat(mKg[1].replace(',', '.'));
           if (val >= 25.0 && val <= 250.0) return { primary: val };
+        }
+        // 2. Numero decimal aislado entre 30 y 220
+        const mDec = cleaned.match(/\b(\d{2,3}[.,]\d+)\b/g);
+        if (mDec) {
+          for (let s of mDec) {
+            const v = parseFloat(s.replace(',', '.'));
+            if (v >= 30.0 && v <= 220.0) return { primary: v };
+          }
+        }
+        // 3. Numero entero aislado entre 35 y 200
+        const mInt = cleaned.match(/\b(\d{2,3})\b/g);
+        if (mInt) {
+          for (let s of mInt) {
+            const v = parseFloat(s);
+            if (v >= 35.0 && v <= 200.0) return { primary: v };
+          }
         }
         return null;
       }
@@ -3015,6 +3069,20 @@
       const file = e.target.files && e.target.files[0];
       if (!file) return;
 
+      // Validate image format
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor selecciona un archivo de imagen valido (.jpg, .png, etc.).');
+        e.target.value = '';
+        return;
+      }
+
+      // Display preview thumbnail immediately
+      const previewWrap = document.getElementById('ocr-photo-preview-wrap');
+      const previewImg = document.getElementById('ocr-photo-preview-img');
+      const imgUrl = URL.createObjectURL(file);
+      if (previewImg) previewImg.src = imgUrl;
+      if (previewWrap) previewWrap.style.display = 'block';
+
       const statusEl = document.getElementById('ocr-fill-status');
       if (statusEl) {
         statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Cargando lector óptico (OCR)...</span>';
@@ -3025,14 +3093,13 @@
         await ensureTesseractLoaded();
 
         if (statusEl) {
-          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Procesando imagen y filtrando reflejos LCD...</span>';
+          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Procesando imagen y filtrando reflejos...</span>';
         }
 
-        const imgUrl = URL.createObjectURL(file);
         const img = new Image();
         await new Promise((resolve, reject) => {
           img.onload = () => resolve();
-          img.onerror = () => reject(new Error('No se pudo cargar la imagen seleccionada'));
+          img.onerror = () => reject(new Error('No se pudo decodificar la imagen'));
           img.src = imgUrl;
         });
 
@@ -3040,7 +3107,7 @@
         const processedCanvas = preprocessLcdCanvas(img, 1000);
 
         if (statusEl) {
-          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Leyendo números de la pantalla con IA...</span>';
+          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Leyendo pantalla del aparato con IA...</span>';
         }
 
         // Pass 1: High-contrast preprocessed canvas
@@ -3071,8 +3138,6 @@
           ocrResult = await Tesseract.recognize(rawCanvas, 'eng');
           parsed = parseBiometricOcrText(ocrResult.data.text, currentMetric);
         }
-
-        URL.revokeObjectURL(imgUrl);
 
         if (parsed) {
           if (currentMetric === 'GLUCOSE') {
@@ -3112,8 +3177,6 @@
         if (statusEl) {
           statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se pudo procesar la foto automáticamente. Puedes escribir la cifra directamente en la casilla de arriba.</span>';
         }
-      } finally {
-        e.target.value = '';
       }
     }
 
@@ -3153,6 +3216,7 @@
 
     function openCaptureModal(type) {
       currentMetric = type;
+      clearOcrPhotoPreview();
       
       const modalIcon = document.getElementById('modal-icon');
       const modalTitle = document.getElementById('modal-title');
