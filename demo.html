@@ -1551,7 +1551,7 @@
             <div class="card-title" style="color: #166534; font-size: 15.5px;">📈 Evolución Global de Salud</div>
             <div class="card-subtitle">Balance clínico acumulado a lo largo del tiempo</div>
           </div>
-          <span class="badge" style="background: #16A34A; font-size: 10.5px;">🟢 EVOLUCIÓN POSITIVA</span>
+          <span id="clinical-evolution-status-badge" class="badge" style="background: #16A34A; font-size: 10.5px;">🟢 EVOLUCIÓN POSITIVA</span>
         </div>
 
         <!-- Comentario Clínico General -->
@@ -1579,7 +1579,7 @@
         <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <strong style="color: #0284C7; font-size: 12.5px;">🩸 Glucemia en Ayunas (Azúcar)</strong>
-            <span style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -20 mg/dL (Mejoría)</span>
+            <span id="summary-glu-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 -20 mg/dL (Mejoría)</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
             <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
@@ -1601,7 +1601,7 @@
         <div style="background: #FFFFFF; border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 8px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
             <strong style="color: #DC2626; font-size: 12.5px;">💓 Tensión Arterial & Pulso</strong>
-            <span style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 Normalizada</span>
+            <span id="summary-bp-diff" style="font-size: 11px; font-weight: 800; color: #16A34A;">📉 Normalizada</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; font-size: 11px; margin-top: 6px;">
             <div style="background: #FEF2F2; padding: 6px; border-radius: 6px; border: 1px solid #FECACA;">
@@ -2509,109 +2509,119 @@
       </div>
     </div>
 
-    <!-- Modal de Registro Clínico de Constantes (Unificado con Autocompletar por Foto) -->
+        <!-- Modal de Registro Clínico Adaptado a Personas Mayores (Accesible, Teclas Grandes, De Galería y Entrada Manual) -->
     <div id="capture-modal" class="modal-overlay">
-      <div class="modal-box" style="width:calc(100% - 24px); max-width:380px; padding:18px; border-radius:22px; max-height:90vh; overflow-y:auto; box-sizing:border-box;">
-        <!-- Cabecera del Modal -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-          <div style="display:flex; align-items:center; gap:8px;">
-            <span id="modal-icon" style="font-size:24px;">🩸</span>
+      <div class="modal-box" style="width:calc(100% - 20px); max-width:400px; padding:20px; border-radius:24px; max-height:92vh; overflow-y:auto; box-sizing:border-box;">
+        
+        <!-- Cabecera del Modal (Grande y muy legible) -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span id="modal-icon" style="font-size:32px;">🩸</span>
             <div>
-              <h3 id="modal-title" style="font-size:16.5px; font-weight:800; color:var(--text-main); margin:0;">Glucómetro Digital</h3>
-              <span id="modal-subtitle" style="font-size:11px; color:var(--text-muted); font-weight:600;">Registro Clínico Oficial</span>
+              <h3 id="modal-title" style="font-size:18.5px; font-weight:900; color:var(--text-main); margin:0; line-height:1.2;">Glucómetro Digital</h3>
+              <span id="modal-subtitle" style="font-size:12.5px; color:#475569; font-weight:700;">Registro Clínico Oficial</span>
             </div>
           </div>
-          <button onclick="closeCaptureModal()" style="background:#F1F5F9; border:none; width:32px; height:32px; border-radius:50%; font-size:16px; font-weight:bold; color:#64748B; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
+          <button type="button" onclick="closeCaptureModal()" title="Cerrar ventana" style="background:#F1F5F9; border:2px solid #CBD5E1; width:40px; height:40px; border-radius:50%; font-size:20px; font-weight:900; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation;">✕</button>
         </div>
 
-        <!-- Área de Registro Numérico (Ajustado al 100% sin salirse de la pantalla) -->
-        <div style="background:#F8FAFC; border:1.5px solid #E2E8F0; border-radius:14px; padding:14px; margin-bottom:12px; box-sizing:border-box; width:100%;">
+        <!-- Área de Registro Numérico (Números gigantes de 34px y alto contraste para personas mayores) -->
+        <div style="background:#F8FAFC; border:2.5px solid #E2E8F0; border-radius:18px; padding:16px; margin-bottom:14px; box-sizing:border-box; width:100%;">
           
           <!-- Glucosa -->
           <div id="manual-group-glucose" style="width:100%; box-sizing:border-box;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Nivel de Glucosa (mg/dL):</label>
-            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; width:100%; box-sizing:border-box;">
-              <input type="number" id="manual-input-glucose" value="118" style="width:100%; max-width:140px; min-width:0; font-size:26px; font-weight:900; text-align:center; padding:8px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
-              <span style="font-size:13px; font-weight:800; color:#64748B; flex-shrink:0;">mg/dL</span>
+            <label style="display:block; font-size:14.5px; font-weight:900; color:#1E293B; margin-bottom:8px; text-align:center;">Nivel de Glucosa (Azúcar):</label>
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px; width:100%; box-sizing:border-box;">
+              <input type="number" inputmode="numeric" id="manual-input-glucose" value="118" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
+              <span style="font-size:16px; font-weight:900; color:#334155; flex-shrink:0;">mg/dL</span>
             </div>
-            <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:center;">
-              <span style="font-size:11px; color:#64748B; align-self:center; margin-right:2px;">Rápido:</span>
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 95)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">95</button>
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 110)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">110</button>
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 118)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">118</button>
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 130)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">130</button>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center;">
+              <span style="font-size:13px; font-weight:900; color:#475569; margin-right:4px;">Cifras:</span>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 95)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">95</button>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 110)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">110</button>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 118)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">118</button>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 130)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">130</button>
             </div>
           </div>
 
           <!-- Tensión Arterial -->
           <div id="manual-group-bp" style="display:none; width:100%; box-sizing:border-box;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Tensión Arterial (mmHg):</label>
-            <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-bottom:10px; width:100%; box-sizing:border-box;">
-              <div style="flex:1; max-width:90px; min-width:0; box-sizing:border-box;">
-                <input type="number" id="manual-input-sys" value="124" title="Sistólica (Alta)" style="width:100%; min-width:0; font-size:22px; font-weight:900; text-align:center; padding:7px 4px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
+            <label style="display:block; font-size:14.5px; font-weight:900; color:#1E293B; margin-bottom:8px; text-align:center;">Tensión Arterial (Alta / Baja):</label>
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px; width:100%; box-sizing:border-box;">
+              <div style="flex:1; max-width:95px; min-width:0; box-sizing:border-box;">
+                <input type="number" inputmode="numeric" id="manual-input-sys" value="124" title="Sistólica (Alta)" style="width:100%; min-height:60px; font-size:28px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
               </div>
-              <span style="font-size:20px; font-weight:900; color:#94A3B8; flex-shrink:0;">/</span>
-              <div style="flex:1; max-width:90px; min-width:0; box-sizing:border-box;">
-                <input type="number" id="manual-input-dia" value="76" title="Diastólica (Baja)" style="width:100%; min-width:0; font-size:22px; font-weight:900; text-align:center; padding:7px 4px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
+              <span style="font-size:28px; font-weight:900; color:#94A3B8; flex-shrink:0;">/</span>
+              <div style="flex:1; max-width:95px; min-width:0; box-sizing:border-box;">
+                <input type="number" inputmode="numeric" id="manual-input-dia" value="76" title="Diastólica (Baja)" style="width:100%; min-height:60px; font-size:28px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
               </div>
-              <span style="font-size:12.5px; font-weight:800; color:#64748B; flex-shrink:0;">mmHg</span>
+              <span style="font-size:15px; font-weight:900; color:#334155; flex-shrink:0;">mmHg</span>
             </div>
-            <div style="display:flex; gap:5px; justify-content:center;">
-              <span style="font-size:11px; color:#64748B; align-self:center; margin-right:2px;">Rápido:</span>
-              <button type="button" onclick="setManualQuickBp(120, 80)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">120/80</button>
-              <button type="button" onclick="setManualQuickBp(125, 75)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">125/75</button>
-              <button type="button" onclick="setManualQuickBp(130, 80)" style="background:#FFFFFF; border:1px solid #CBD5E1; padding:4px 8px; border-radius:6px; font-size:11.5px; font-weight:700; cursor:pointer;">130/80</button>
+            <div style="display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
+              <span style="font-size:13px; font-weight:900; color:#475569; margin-right:4px;">Cifras:</span>
+              <button type="button" onclick="setManualQuickBp(120, 80)" style="min-height:46px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">120/80</button>
+              <button type="button" onclick="setManualQuickBp(125, 75)" style="min-height:46px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">125/75</button>
+              <button type="button" onclick="setManualQuickBp(130, 80)" style="min-height:46px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">130/80</button>
             </div>
           </div>
 
           <!-- Báscula -->
           <div id="manual-group-weight" style="display:none; width:100%; box-sizing:border-box;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Peso Actual (kg):</label>
-            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:10px; width:100%; box-sizing:border-box;">
-              <input type="number" step="0.1" id="manual-input-weight" value="71.8" style="width:100%; max-width:140px; min-width:0; font-size:26px; font-weight:900; text-align:center; padding:8px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
-              <span style="font-size:13px; font-weight:800; color:#64748B; flex-shrink:0;">kg</span>
+            <label style="display:block; font-size:14.5px; font-weight:900; color:#1E293B; margin-bottom:8px; text-align:center;">Peso Actual de la Báscula (kg):</label>
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px; width:100%; box-sizing:border-box;">
+              <input type="number" step="0.1" inputmode="decimal" id="manual-input-weight" value="101.5" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
+              <span style="font-size:16px; font-weight:900; color:#334155; flex-shrink:0;">kg</span>
             </div>
           </div>
 
           <!-- Podómetro -->
           <div id="manual-group-steps" style="display:none; width:100%; box-sizing:border-box;">
-            <label style="display:block; font-size:12px; font-weight:700; color:#475569; margin-bottom:6px;">Pasos de Hoy:</label>
+            <label style="display:block; font-size:14.5px; font-weight:900; color:#1E293B; margin-bottom:8px; text-align:center;">Pasos Andados de Hoy:</label>
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; box-sizing:border-box;">
-              <input type="number" id="manual-input-steps" value="6420" style="width:100%; max-width:140px; min-width:0; font-size:26px; font-weight:900; text-align:center; padding:8px; border:2px solid #0D9488; border-radius:10px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
-              <span style="font-size:13px; font-weight:800; color:#64748B; flex-shrink:0;">pasos</span>
+              <input type="number" inputmode="numeric" id="manual-input-steps" value="6420" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
+              <span style="font-size:16px; font-weight:900; color:#334155; flex-shrink:0;">pasos</span>
             </div>
           </div>
         </div>
 
-                                <!-- BOTONES DE AUTOCOMPLETAR CON FOTO (Camara o Galeria -> OCR y desechar foto) -->
-        <div style="display:flex; gap:8px; width:100%; margin-bottom:10px; box-sizing:border-box;">
-          <label for="native-input-camera" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
-            📸 Tomar Foto
-            <input type="file" id="native-input-camera" accept="image/*" capture="environment" onchange="handleOcrPhotoUploadAndFill(event)" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
-          </label>
-          <label for="native-input-gallery" style="position:relative; flex:1; overflow:hidden; display:flex; align-items:center; justify-content:center; gap:6px; padding:13px 4px; font-size:12.5px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1.5px dashed #16A34A; color:#15803D; cursor:pointer; text-align:center; box-sizing:border-box; user-select:none;">
-            📁 De Galería
-            <input type="file" id="native-input-gallery" accept="image/*" onchange="handleOcrPhotoUploadAndFill(event)" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; z-index:99; cursor:pointer; display:block; margin:0; padding:0; font-size:100px;">
-          </label>
+        <!-- DOS BOTONES GRANDES Y ACCESIBLES: DE GALERÍA Y A MANO (SIN BOTÓN DE CÁMARA) -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; margin-bottom:14px; box-sizing:border-box;">
+          
+          <!-- BOTÓN 1: DE GALERÍA (Elegir foto del aparato guardada en el móvil) -->
+          <button type="button" id="btn-action-gallery" onclick="triggerGalleryPicker()" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:66px; padding:10px 6px; border-radius:14px; background:#F0FDF4; border:2.5px solid #16A34A; color:#14532D; cursor:pointer; text-align:center; box-sizing:border-box; touch-action:manipulation; box-shadow:0 2px 6px rgba(22,163,74,0.15); -webkit-tap-highlight-color:transparent;">
+            <span style="font-size:26px; line-height:1;">📁</span>
+            <span style="font-size:14px; font-weight:900; letter-spacing:0.2px;">DE GALERÍA</span>
+            <span style="font-size:11.5px; font-weight:700; color:#166534;">Foto del aparato</span>
+          </button>
+
+          <!-- BOTÓN 2: A MANO (Escribir o corregir cifra directamente) -->
+          <button type="button" id="btn-action-manual" onclick="activateManualInputMode()" style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; min-height:66px; padding:10px 6px; border-radius:14px; background:#EFF6FF; border:2.5px solid #2563EB; color:#1E3A8A; cursor:pointer; text-align:center; box-sizing:border-box; touch-action:manipulation; box-shadow:0 2px 6px rgba(37,99,235,0.15); -webkit-tap-highlight-color:transparent;">
+            <span style="font-size:26px; line-height:1;">✏️</span>
+            <span style="font-size:14px; font-weight:900; letter-spacing:0.2px;">A MANO</span>
+            <span style="font-size:11.5px; font-weight:700; color:#1D4ED8;">Escribir cifra</span>
+          </button>
         </div>
 
-        <!-- Vista previa de la foto capturada o seleccionada -->
-        <div id="ocr-photo-preview-wrap" style="display:none; position:relative; width:100%; max-width:240px; margin:0 auto 10px auto; border-radius:10px; overflow:hidden; border:1.5px solid #0D9488; background:#0F172A; text-align:center;">
-          <img id="ocr-photo-preview-img" src="" alt="Foto capturada" style="width:100%; max-height:140px; object-fit:contain; display:block; margin:0 auto;">
-          <button type="button" onclick="clearOcrPhotoPreview()" title="Quitar foto" style="position:absolute; top:5px; right:5px; background:rgba(0,0,0,0.7); color:#FFF; border:none; border-radius:50%; width:24px; height:24px; font-size:12px; font-weight:bold; cursor:pointer; line-height:24px; text-align:center; padding:0;">✕</button>
-          <div style="font-size:10.5px; color:#94A3B8; padding:3px 6px; background:#1E293B;">Foto recibida • Analizando pantalla</div>
+        <!-- Selector de archivos nativo e independiente (Sin labels anidados para máxima compatibilidad móvil) -->
+        <input type="file" id="native-input-gallery" accept="image/*" onchange="handleOcrPhotoUploadAndFill(event)" style="position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; opacity:0; pointer-events:none;">
+
+        <!-- Vista previa de la foto seleccionada -->
+        <div id="ocr-photo-preview-wrap" style="display:none; position:relative; width:100%; max-width:260px; margin:0 auto 12px auto; border-radius:12px; overflow:hidden; border:2px solid #0D9488; background:#0F172A; text-align:center;">
+          <img id="ocr-photo-preview-img" src="" alt="Foto seleccionada" style="width:100%; max-height:150px; object-fit:contain; display:block; margin:0 auto;">
+          <button type="button" onclick="clearOcrPhotoPreview()" title="Quitar foto" style="position:absolute; top:6px; right:6px; background:rgba(0,0,0,0.75); color:#FFF; border:2px solid #FFF; border-radius:50%; width:28px; height:28px; font-size:14px; font-weight:bold; cursor:pointer; line-height:24px; text-align:center; padding:0; touch-action:manipulation;">✕</button>
+          <div style="font-size:11.5px; color:#E2E8F0; font-weight:700; padding:5px 8px; background:#1E293B;">Foto recibida • Analizando pantalla</div>
         </div>
 
-        <!-- Estado de reconocimiento de la foto -->
-        <div id="ocr-fill-status" style="display:none; font-size:12px; padding:8px 10px; border-radius:8px; background:#ECFDF5; border:1px solid #A7F3D0; margin-bottom:12px; text-align:center;"></div>
+        <!-- Estado de reconocimiento de la foto (Texto grande y claro para personas mayores) -->
+        <div id="ocr-fill-status" style="display:none; font-size:13.5px; line-height:1.4; padding:12px 14px; border-radius:12px; margin-bottom:14px; text-align:center; box-sizing:border-box;"></div>
 
-        <!-- BOTÓN PRINCIPAL DE GUARDAR -->
-        <button class="btn-primary btn-success" onclick="saveManualConstantReading()" style="width:100%; padding:13px; font-size:14px; font-weight:800; border-radius:12px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 3px 12px rgba(16,185,129,0.35); box-sizing:border-box;">
+        <!-- BOTÓN PRINCIPAL DE GUARDAR MEDICIÓN (Grande, verde y muy visible) -->
+        <button type="button" class="btn-primary btn-success" onclick="saveManualConstantReading()" style="width:100%; min-height:58px; padding:14px; font-size:17px; font-weight:900; letter-spacing:0.5px; border-radius:16px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 16px rgba(16,185,129,0.4); box-sizing:border-box; touch-action:manipulation;">
           ✓ GUARDAR MEDICIÓN
         </button>
       </div>
     </div>
-<!-- Modal para Configurar Datos y WhatsApp del Médico de Cabecera -->
+    <!-- Modal para Configurar Datos y WhatsApp del Médico de Cabecera -->
     <div id="doctor-modal" class="modal-overlay">
       <div class="modal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -2889,6 +2899,7 @@
       }
       renderEvolutionChart();
       renderMeasurementHistory();
+      updateClinicalEvolutionComments();
     }
 
     function setChartMetric(metric) {
@@ -2933,34 +2944,76 @@
 
     // Renderiza la gráfica SVG responsive según la métrica y periodo seleccionados
     function updateClinicalEvolutionComments() {
-      // 1. Extraer últimas mediciones reales
+      // 1. Extraer todas las mediciones de la libreta según tipo
       const gluItems = measurementHistory.filter(i => i.type === 'GLUCOSE');
       const bpItems = measurementHistory.filter(i => i.type === 'BP');
       const weightItems = measurementHistory.filter(i => i.type === 'WEIGHT');
 
+      // Parámetros base del paciente
+      const isNeli = (typeof patient !== 'undefined' && patient && patient.name && patient.name.includes('Neli'));
+      const pName = isNeli ? 'Neli' : ((typeof patient !== 'undefined' && patient && patient.name) ? patient.name.split(' ')[0] : 'Ramón');
+      const baselineGlu = isNeli ? 145 : 138;
+      const startWeight = isNeli ? 76.5 : 106.0;
+      const heightCm = (typeof patient !== 'undefined' && patient && patient.heightCm) ? patient.heightCm : (isNeli ? 160 : 165);
+      const heightM = heightCm / 100.0;
+
+      // Últimas lecturas reales de la libreta
       const latestGlu = gluItems.length > 0 ? (gluItems[0].numVal || parseInt(gluItems[0].value, 10)) : 109;
-      const avgGlu = gluItems.length > 0 ? Math.round(gluItems.reduce((acc, curr) => acc + (curr.numVal || parseInt(curr.value, 10)), 0) / gluItems.length) : 116;
-      const inRangeCount = gluItems.filter(i => (i.numVal || parseInt(i.value, 10)) <= 130).length;
-      const gluInRange = gluItems.length > 0 ? Math.round((inRangeCount / gluItems.length) * 100) : 92;
+      const avgGlu = gluItems.length > 0 ? Math.round(gluItems.reduce((acc, curr) => acc + (curr.numVal || parseInt(curr.value, 10)), 0) / gluItems.length) : latestGlu;
+      const inRangeCount = gluItems.filter(i => (i.numVal || parseInt(i.value, 10)) >= 70 && (i.numVal || parseInt(i.value, 10)) <= 130).length;
+      const gluInRange = gluItems.length > 0 ? Math.round((inRangeCount / gluItems.length) * 100) : 90;
 
       const latestBpItem = bpItems.length > 0 ? bpItems[0] : null;
       const sys = latestBpItem ? (latestBpItem.numVal || 130) : 130;
       const dia = latestBpItem ? (latestBpItem.numValDia || 74) : 74;
 
-      const isNeli = patient && patient.name && patient.name.includes('Neli');
-      const startWeight = isNeli ? 76.5 : 106.0;
-      const latestWeight = weightItems.length > 0 ? (weightItems[0].numVal || parseFloat(weightItems[0].value)) : (patient ? patient.weightKg : 101.5);
-      const weightLoss = (startWeight - latestWeight).toFixed(1);
-      const heightM = (patient ? patient.heightCm : 165) / 100.0;
+      const latestWeight = weightItems.length > 0 ? (weightItems[0].numVal || parseFloat(weightItems[0].value)) : ((typeof patient !== 'undefined' && patient) ? patient.weightKg : 101.5);
+      const weightLoss = parseFloat((startWeight - latestWeight).toFixed(1));
       const currentBmi = (latestWeight / (heightM * heightM)).toFixed(2);
       const biomechanicalRelief = (Math.abs(weightLoss) * 4).toFixed(0);
 
-      // 2. Actualizar tarjetas comparativas temporales
+      // Sincronizar objeto patient si existe
+      if (typeof patient !== 'undefined' && patient) {
+        patient.weightKg = latestWeight;
+        patient.bmi = currentBmi;
+        if (typeof updateProfileUI === 'function') updateProfileUI();
+      }
+
+      // 2. Actualizar tarjetas comparativas temporales (Inicio vs Hace 15 Días vs Hoy)
       const elCurrGlu = document.getElementById('summary-curr-glucose');
       if (elCurrGlu) elCurrGlu.innerText = latestGlu + ' mg/dL ✓';
 
+      const elGluDiff = document.getElementById('summary-glu-diff');
+      if (elGluDiff) {
+        const gluDiffVal = baselineGlu - latestGlu;
+        if (gluDiffVal > 0) {
+          elGluDiff.innerText = '📉 -' + gluDiffVal + ' mg/dL (Mejoría)';
+          elGluDiff.style.color = '#16A34A';
+        } else if (gluDiffVal === 0) {
+          elGluDiff.innerText = 'Estable (' + latestGlu + ' mg/dL)';
+          elGluDiff.style.color = '#0284C7';
+        } else {
+          elGluDiff.innerText = '📈 +' + Math.abs(gluDiffVal) + ' mg/dL (Elevación)';
+          elGluDiff.style.color = '#DC2626';
+        }
+      }
+
       const elCurrBp = document.getElementById('summary-curr-bp');
       if (elCurrBp) elCurrBp.innerText = sys + '/' + dia + ' ✓';
+
+      const elBpDiff = document.getElementById('summary-bp-diff');
+      if (elBpDiff) {
+        if (sys <= 130 && dia <= 80) {
+          elBpDiff.innerText = '📉 Controlada (<130/80)';
+          elBpDiff.style.color = '#16A34A';
+        } else if (sys <= 140 && dia <= 85) {
+          elBpDiff.innerText = '⚠️ Limítrofe (' + sys + '/' + dia + ')';
+          elBpDiff.style.color = '#D97706';
+        } else {
+          elBpDiff.innerText = '📈 Elevada (' + sys + '/' + dia + ')';
+          elBpDiff.style.color = '#DC2626';
+        }
+      }
 
       const elCurrW = document.getElementById('summary-curr-weight');
       if (elCurrW) elCurrW.innerText = latestWeight.toFixed(1) + ' kg ✓';
@@ -2970,28 +3023,100 @@
 
       const elWDiff = document.getElementById('summary-weight-diff');
       if (elWDiff) {
-        elWDiff.innerText = (weightLoss >= 0 ? '📉 -' + weightLoss + ' kg' : '📈 +' + Math.abs(weightLoss) + ' kg') + ' (' + (weightLoss >= 0 ? 'Mejoría' : 'Control') + ')';
+        if (weightLoss > 0) {
+          elWDiff.innerText = '📉 -' + weightLoss + ' kg Perdidos';
+          elWDiff.style.color = '#16A34A';
+        } else if (weightLoss === 0) {
+          elWDiff.innerText = 'Estable (' + latestWeight.toFixed(1) + ' kg)';
+          elWDiff.style.color = '#0284C7';
+        } else {
+          elWDiff.innerText = '📈 +' + Math.abs(weightLoss) + ' kg (Incremento)';
+          elWDiff.style.color = '#DC2626';
+        }
       }
 
-      // 3. Generar comentarios clínicos dinámicos personalizados según parámetros actuales
-      const pName = (patient && patient.name) ? patient.name.split(' ')[0] : 'Ramón';
+      // 3. Evaluar Estado Global de Salud y Badge
+      const isGluOk = (latestGlu >= 70 && latestGlu <= 130);
+      const isBpOk = (sys <= 130 && dia <= 80);
+      const isWeightOk = (weightLoss >= 0);
+
+      const elBadge = document.getElementById('clinical-evolution-status-badge');
       const elComment = document.getElementById('clinical-summary-comment-text');
-      if (elComment) {
-        elComment.innerHTML = `<strong>${pName}, tu evolución global según tus parámetros actuales es CLARAMENTE POSITIVA (+):</strong> La adherencia a las tomas (96%), la caminata diaria en llano y las técnicas culinarias muestran una respuesta muy favorable en los 3 parámetros clave que tú controlas:`;
+
+      if (isGluOk && isBpOk && isWeightOk) {
+        if (elBadge) {
+          elBadge.innerText = '🟢 EVOLUCIÓN POSITIVA';
+          elBadge.style.background = '#16A34A';
+        }
+        if (elComment) {
+          elComment.innerHTML = `<strong>${pName}, tu evolución global según tus parámetros actuales es CLARAMENTE POSITIVA (+):</strong> La adherencia a las tomas, la actividad en llano y tus registros biométricos reflejan un excelente control simultáneo de glucosa, tensión y peso:`;
+        }
+      } else if (!isGluOk && !isBpOk) {
+        if (elBadge) {
+          elBadge.innerText = '🔴 ATENCIÓN Y SEGUIMIENTO PRIORITARIO';
+          elBadge.style.background = '#DC2626';
+        }
+        if (elComment) {
+          elComment.innerHTML = `<strong>${pName}, tus últimos registros requieren REVISIÓN Y SEGUIMIENTO PRIORITARIO:</strong> Tanto la glucemia como la tensión arterial se encuentran por encima de los límites de seguridad renal y cardiovascular:`;
+        }
+      } else {
+        if (elBadge) {
+          elBadge.innerText = '🟡 CONTROL CON ATENCIÓN PUNTUAL';
+          elBadge.style.background = '#D97706';
+        }
+        if (elComment) {
+          elComment.innerHTML = `<strong>${pName}, tu evolución global se mantiene CONTROLADA con un punto de atención puntual:</strong> Observa las recomendaciones específicas para ajustar el parámetro que muestra ligera desviación:`;
+        }
       }
 
+      // 4. Generar comentarios clínicos dinámicos para cada viñeta
       const elBullets = document.getElementById('clinical-summary-bullets');
       if (elBullets) {
-        const gluAssessment = latestGlu <= 130 ? 'Evolución muy favorable.' : (latestGlu <= 160 ? 'Ligera elevación puntual.' : 'Alerta glucémica.');
-        const bpAssessment = (sys <= 130 && dia <= 80) ? 'Evolución excelente (Controlada).' : (sys <= 140 && dia <= 90 ? 'En rango de seguimiento.' : 'Tensión a vigilar.');
-        const weightAssessment = weightLoss > 0 ? `Evolución excelente (-${weightLoss} kg acumulados).` : 'Peso estable.';
+        // Viñeta Glucosa
+        let gluText = '';
+        if (latestGlu < 70) {
+          gluText = `• 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#DC2626; font-weight:700;">Alerta de Hipoglucemia (${latestGlu} mg/dL).</em> Cifra por debajo del umbral de seguridad. Tomar 15g de hidratos de absorción rápida y revaluar en 15 min. Media del periodo: ${avgGlu} mg/dL.`;
+        } else if (latestGlu <= 130) {
+          gluText = `• 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#15803D; font-weight:700;">Evolución muy favorable (${latestGlu} mg/dL).</em> Tu última toma se encuentra en rango diana estricto. Media acumulada en <strong>${avgGlu} mg/dL</strong> con un <strong>${gluInRange}%</strong> de tiempo en diana terapéutica (70-130) sin hipoglucemias.`;
+        } else if (latestGlu <= 160) {
+          gluText = `• 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#D97706; font-weight:700;">Ligera elevación puntual (${latestGlu} mg/dL).</em> Se sitúa ligeramente sobre la diana basal (<130). Media en <strong>${avgGlu} mg/dL</strong> (${gluInRange}% en rango). Reforzar fibra e hidratos complejos en la próxima toma.`;
+        } else {
+          gluText = `• 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#DC2626; font-weight:700;">Hiperglucemia a vigilar (${latestGlu} mg/dL).</em> Registro elevado respecto al objetivo clínico. Media acumulada en <strong>${avgGlu} mg/dL</strong>. Asegurar hidratación adecuada y controlar carbohidratos.`;
+        }
 
-        elBullets.innerHTML = `
-          • 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#15803D; font-weight:700;">${gluAssessment}</em> Tu última toma se sitúa en <strong>${latestGlu} mg/dL</strong> (con una media de ${avgGlu} mg/dL), logrando un ${gluInRange}% de tiempo en rango diana (70-130) sin registrar hipoglucemias.<br>
-          • 💓 <strong>Tensión Arterial:</strong> <em style="color:#15803D; font-weight:700;">${bpAssessment}</em> Último registro en <strong>${sys}/${dia} mmHg</strong>, manteniendo la protección cardio-renal activa y diana <130/80 cumplida.<br>
-          • ⚖️ <strong>Peso Corporal:</strong> <em style="color:#15803D; font-weight:700;">${weightAssessment}</em> De ${startWeight.toFixed(1)} kg a <strong>${latestWeight.toFixed(1)} kg</strong> (IMC de ${currentBmi}); este descenso acumulado de ${weightLoss} kg alivia ${biomechanicalRelief} kg de impacto biomecánico en cada paso y reduce la presión sobre el filtrado renal (FG 42).<br>
-          • ⚠️ <strong>Punto a Vigilar:</strong> Mantener el rigor culinario de doble hervor y remojo para el potasio (5.5 mEq/L) y cumplir las tomas de Omacor y Secalip para reducir los triglicéridos.
-        `;
+        // Viñeta Tensión
+        let bpText = '';
+        if (sys <= 130 && dia <= 80) {
+          bpText = `• 💓 <strong>Tensión Arterial:</strong> <em style="color:#15803D; font-weight:700;">Evolución excelente (${sys}/${dia} mmHg).</em> Registrada en diana de estricta protección cardio-renal (<130/80 mmHg), previniendo la sobrecarga sobre el filtrado glomerular y protegiendo el miocardio.`;
+        } else if (sys <= 140 && dia <= 85) {
+          bpText = `• 💓 <strong>Tensión Arterial:</strong> <em style="color:#D97706; font-weight:700;">En seguimiento limítrofe (${sys}/${dia} mmHg).</em> Ligera elevación sobre el objetivo renal <130/80. Verificar toma matinal de medicación y vigilar el aporte de sodio.`;
+        } else {
+          bpText = `• 💓 <strong>Tensión Arterial:</strong> <em style="color:#DC2626; font-weight:700;">Tensión arterial elevada (${sys}/${dia} mmHg).</em> Supera el umbral de seguridad. Reposar 10 minutos y repetir la toma; consultar con el equipo médico si se mantiene elevada.`;
+        }
+
+        // Viñeta Peso
+        let weightText = '';
+        if (weightLoss > 0) {
+          weightText = `• ⚖️ <strong>Peso Corporal:</strong> <em style="color:#15803D; font-weight:700;">Evolución excelente (-${weightLoss} kg).</em> De ${startWeight.toFixed(1)} kg iniciales a <strong>${latestWeight.toFixed(1)} kg</strong> (IMC: ${currentBmi}); este descenso alivia ${biomechanicalRelief} kg de impacto biomecánico en rodillas y columna en cada paso y reduce la presión sobre el filtrado renal.`;
+        } else if (weightLoss === 0) {
+          weightText = `• ⚖️ <strong>Peso Corporal:</strong> <em style="color:#0284C7; font-weight:700;">Mantenimiento estable (${latestWeight.toFixed(1)} kg).</em> Peso controlado en ${latestWeight.toFixed(1)} kg (IMC: ${currentBmi}). Mantener ritmo de caminata activa en terreno llano.`;
+        } else {
+          weightText = `• ⚖️ <strong>Peso Corporal:</strong> <em style="color:#D97706; font-weight:700;">Ligero incremento (+${Math.abs(weightLoss)} kg).</em> Registro actual en <strong>${latestWeight.toFixed(1)} kg</strong> (IMC: ${currentBmi}). Comprobar posible retención de líquidos o presencia de edemas maleolares en tobillos.`;
+        }
+
+        // Viñeta Punto a Vigilar (Dinámico según el parámetro prioritario)
+        let alertText = '';
+        if (latestGlu > 130) {
+          alertText = `• ⚠️ <strong>Punto a Vigilar Prioritario:</strong> Reforzar el control glucémico: realizar una caminata suave de 20-30 min tras la comida principal para estimular la captación periférica de glucosa y limitar hidratos de rápida absorción.`;
+        } else if (sys > 130 || dia > 80) {
+          alertText = `• ⚠️ <strong>Punto a Vigilar Prioritario:</strong> Rigor absoluto con el sodio: no añadir sal en mesa, usar hierbas aromáticas y asegurar la toma regular de la pauta antihipertensiva.`;
+        } else if (weightLoss < 0) {
+          alertText = `• ⚠️ <strong>Punto a Vigilar Prioritario:</strong> Control de volumen: pesar a primera hora de la mañana en ayunas y revisar posibles edemas o hinchazón en pies para descartar sobrecarga de fluidos.`;
+        } else {
+          alertText = `• ⚠️ <strong>Punto a Vigilar:</strong> Mantener el rigor culinario de doble hervor y remojo para el potasio (5.5 mEq/L) y cumplir las tomas pautadas de Omacor y Secalip para optimizar los triglicéridos.`;
+        }
+
+        elBullets.innerHTML = `${gluText}<br>${bpText}<br>${weightText}<br>${alertText}`;
       }
     }
 
@@ -3267,6 +3392,13 @@
     }
 
     function switchTab(tabId, btn) {
+      if (tabId === 'tab-semana') {
+        setTimeout(function() {
+          if (typeof updateClinicalEvolutionComments === 'function') updateClinicalEvolutionComments();
+          if (typeof renderEvolutionChart === 'function') renderEvolutionChart();
+          if (typeof renderMeasurementHistory === 'function') renderMeasurementHistory();
+        }, 50);
+      }
       document.querySelectorAll('.tab-view').forEach(el => el.style.display = 'none');
       document.querySelectorAll('.connected-tab-btn, .nav-btn').forEach(el => el.classList.remove('active'));
       const target = document.getElementById(tabId);
@@ -3279,10 +3411,35 @@
     }
 
     // Helper to dynamically ensure Tesseract is loaded from CDN/WebAssembly
-    function triggerPhotoCapture(type) {
-      const inputId = type === 'camera' ? 'native-input-camera' : 'native-input-gallery';
-      const el = document.getElementById(inputId);
-      if (el) el.click();
+        function triggerGalleryPicker() {
+      const input = document.getElementById('native-input-gallery');
+      if (input) {
+        input.value = '';
+        input.click();
+      }
+    }
+
+    function activateManualInputMode() {
+      clearOcrPhotoPreview();
+      const statusEl = document.getElementById('ocr-fill-status');
+      if (statusEl) {
+        statusEl.innerHTML = '<span style="color:#1E40AF; font-weight:800; font-size:14px;">✍️ Entrada manual activada</span><div style="color:#334155; font-size:13px; font-weight:600; margin-top:3px;">Escribe la cifra en la casilla grande de arriba o pulsa los botones de cifras rápidas.</div>';
+        statusEl.style.display = 'block';
+        statusEl.style.background = '#EFF6FF';
+        statusEl.style.border = '2px solid #BFDBFE';
+      }
+
+      let targetInput = null;
+      if (currentMetric === 'GLUCOSE') targetInput = document.getElementById('manual-input-glucose');
+      else if (currentMetric === 'BP') targetInput = document.getElementById('manual-input-sys');
+      else if (currentMetric === 'WEIGHT') targetInput = document.getElementById('manual-input-weight');
+      else if (currentMetric === 'STEPS') targetInput = document.getElementById('manual-input-steps');
+
+      if (targetInput) {
+        targetInput.focus();
+        try { targetInput.select(); } catch(e) {}
+        targetInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     }
 
     let currentOcrExtractedVal = null;
@@ -3296,8 +3453,6 @@
         if (img.src && img.src.startsWith('blob:')) URL.revokeObjectURL(img.src);
         img.src = '';
       }
-      const cam = document.getElementById('native-input-camera');
-      if (cam) cam.value = '';
       const gal = document.getElementById('native-input-gallery');
       if (gal) gal.value = '';
       const statusEl = document.getElementById('ocr-fill-status');
@@ -3464,12 +3619,12 @@
       if (!file) return;
 
       if (!file.type.startsWith('image/')) {
-        alert('Por favor selecciona un archivo de imagen valido (.jpg, .png, etc.).');
+        alert('Por favor selecciona una foto de tu aparato (.jpg o .png).');
         e.target.value = '';
         return;
       }
 
-      // Display preview thumbnail immediately
+      // Mostrar foto seleccionada de inmediato
       const previewWrap = document.getElementById('ocr-photo-preview-wrap');
       const previewImg = document.getElementById('ocr-photo-preview-img');
       const imgUrl = URL.createObjectURL(file);
@@ -3478,16 +3633,14 @@
 
       const statusEl = document.getElementById('ocr-fill-status');
       if (statusEl) {
-        statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Cargando lector óptico (OCR)...</span>';
         statusEl.style.display = 'block';
+        statusEl.style.background = '#EFF6FF';
+        statusEl.style.border = '2px solid #BFDBFE';
+        statusEl.innerHTML = '<span style="color:#0284C7; font-weight:800; font-size:14px;">⏳ Leyendo la pantalla del aparato...</span><div style="color:#475569; font-size:12.5px; margin-top:2px;">Por favor espera unos segundos.</div>';
       }
 
       try {
         await ensureTesseractLoaded();
-
-        if (statusEl) {
-          statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Analizando pantalla del aparato con IA...</span>';
-        }
 
         const img = new Image();
         await new Promise((resolve, reject) => {
@@ -3496,23 +3649,23 @@
           img.src = imgUrl;
         });
 
-        // Pass 1: Raw scaled canvas
+        // Pase 1: Escala normal de contraste
         const rawCanvas = preprocessLcdCanvas(img, false, 1000);
         let ocrResult = await Tesseract.recognize(rawCanvas, 'eng', {
           logger: m => {
             if (m.status === 'recognizing text' && statusEl) {
               const p = Math.round((m.progress || 0) * 100);
-              statusEl.innerHTML = `<span style="color:#0284C7; font-weight:700;">⏳ Leyendo pantalla (${p}%)...</span>`;
+              statusEl.innerHTML = `<span style="color:#0284C7; font-weight:800; font-size:14px;">⏳ Leyendo pantalla (${p}%)...</span><div style="color:#475569; font-size:12.5px; margin-top:2px;">Reconociendo números digitales...</div>`;
             }
           }
         });
 
         let parsed = extractBestBiometricValue(ocrResult.data, currentMetric);
 
-        // Pass 2: Inverted canvas (for white digits on dark OLED/LCD screens like OneTouch)
+        // Pase 2: Pantalla invertida para OLED oscuros con números blancos (como OneTouch)
         if (!parsed) {
           if (statusEl) {
-            statusEl.innerHTML = '<span style="color:#0284C7; font-weight:700;">⏳ Ajustando contraste para pantalla oscura...</span>';
+            statusEl.innerHTML = '<span style="color:#0284C7; font-weight:800; font-size:14px;">⏳ Ajustando lectura para pantalla oscura...</span>';
           }
           const invCanvas = preprocessLcdCanvas(img, true, 1000);
           const ocrResultInv = await Tesseract.recognize(invCanvas, 'eng');
@@ -3528,7 +3681,9 @@
             const input = document.getElementById('manual-input-glucose');
             if (input) input.value = parsed.primary;
             if (statusEl) {
-              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Glucosa detectada: <strong>${parsed.primary} mg/dL</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+              statusEl.style.background = '#ECFDF5';
+              statusEl.style.border = '2px solid #86EFAC';
+              statusEl.innerHTML = `<div style="color:#15803D; font-weight:900; font-size:15px; margin-bottom:3px;">✅ ¡Glucosa detectada: ${parsed.primary} mg/dL!</div><div style="font-size:13px; color:#1E293B; font-weight:600;">Ya está anotada en la casilla de arriba. Revisa que coincida y pulsa <strong>GUARDAR MEDICIÓN</strong>.</div>`;
             }
           } else if (currentMetric === 'BP') {
             const inputSys = document.getElementById('manual-input-sys');
@@ -3536,32 +3691,42 @@
             if (inputSys) inputSys.value = parsed.sys;
             if (inputDia) inputDia.value = parsed.dia;
             if (statusEl) {
-              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Tensión detectada: <strong>${parsed.sys}/${parsed.dia} mmHg</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+              statusEl.style.background = '#ECFDF5';
+              statusEl.style.border = '2px solid #86EFAC';
+              statusEl.innerHTML = `<div style="color:#15803D; font-weight:900; font-size:15px; margin-bottom:3px;">✅ ¡Tensión detectada: ${parsed.sys}/${parsed.dia} mmHg!</div><div style="font-size:13px; color:#1E293B; font-weight:600;">Ya está anotada en las casillas. Revisa que coincida y pulsa <strong>GUARDAR MEDICIÓN</strong>.</div>`;
             }
           } else if (currentMetric === 'WEIGHT') {
             const input = document.getElementById('manual-input-weight');
             if (input) input.value = parsed.primary;
             if (statusEl) {
-              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Peso detectado: <strong>${parsed.primary} kg</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+              statusEl.style.background = '#ECFDF5';
+              statusEl.style.border = '2px solid #86EFAC';
+              statusEl.innerHTML = `<div style="color:#15803D; font-weight:900; font-size:15px; margin-bottom:3px;">✅ ¡Peso detectado: ${parsed.primary} kg!</div><div style="font-size:13px; color:#1E293B; font-weight:600;">Ya está anotado en la casilla. Revisa que coincida y pulsa <strong>GUARDAR MEDICIÓN</strong>.</div>`;
             }
           } else if (currentMetric === 'STEPS') {
             const input = document.getElementById('manual-input-steps');
             if (input) input.value = parsed.primary;
             if (statusEl) {
-              statusEl.innerHTML = `<span style="color:#16A34A; font-weight:800;">✓ Pasos detectados: <strong>${parsed.primary}</strong>. Revisa la cifra y pulsa Guardar.</span>`;
+              statusEl.style.background = '#ECFDF5';
+              statusEl.style.border = '2px solid #86EFAC';
+              statusEl.innerHTML = `<div style="color:#15803D; font-weight:900; font-size:15px; margin-bottom:3px;">✅ ¡Pasos detectados: ${parsed.primary}!</div><div style="font-size:13px; color:#1E293B; font-weight:600;">Ya están anotados. Pulsa <strong>GUARDAR MEDICIÓN</strong>.</div>`;
             }
           }
         } else {
           currentOcrExtractedVal = null;
           if (statusEl) {
-            statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se ha podido reconocer la lectura de la pantalla. Por favor, escribe la cifra directamente en la casilla de arriba.</span>';
+            statusEl.style.background = '#FFFBEB';
+            statusEl.style.border = '2px solid #FCD34D';
+            statusEl.innerHTML = '<div style="color:#B45309; font-weight:900; font-size:14.5px; margin-bottom:3px;">ℹ️ No se pudo leer la pantalla con nitidez.</div><div style="font-size:13px; color:#475569; font-weight:600;">¡No te preocupes! Pulsa el botón <strong>✏️ A MANO</strong> para escribir la cifra directamente.</div>';
           }
         }
       } catch (err) {
         console.warn('Error en OCR:', err);
         currentOcrExtractedVal = null;
         if (statusEl) {
-          statusEl.innerHTML = '<span style="color:#D97706; font-weight:700;">⚠️ No se pudo procesar la foto automáticamente. Puedes escribir la cifra directamente en la casilla de arriba.</span>';
+          statusEl.style.background = '#FFFBEB';
+          statusEl.style.border = '2px solid #FCD34D';
+          statusEl.innerHTML = '<div style="color:#B45309; font-weight:900; font-size:14.5px; margin-bottom:3px;">ℹ️ No se pudo leer la foto automáticamente.</div><div style="font-size:13px; color:#475569; font-weight:600;">Pulsa el botón <strong>✏️ A MANO</strong> para escribir la cifra directamente.</div>';
         }
       }
     }
