@@ -3425,7 +3425,35 @@
         </a>
       </div>
     </div>
-<!-- Modal de Autenticación y Cuenta de Supabase -->
+<!-- SIGNATURE CONNECTED WAVE BOTTOM NAV DOCK (EXACTO A LA IMAGEN DE REFERENCIA) -->
+    <div class="connected-bottom-dock">
+      <div class="connected-nav-track">
+        <button class="connected-tab-btn active" onclick="switchTab('tab-hoy', this)">
+          <span class="tab-btn-icon">🏠</span>
+          <span class="tab-btn-label">Hoy</span>
+        </button>
+        <button class="connected-tab-btn" onclick="switchTab('tab-semana', this)">
+          <span class="tab-btn-icon">📅</span>
+          <span class="tab-btn-label">Semana</span>
+        </button>
+        <button class="connected-tab-btn" onclick="switchTab('tab-parametros', this)">
+          <span class="tab-btn-icon">🩺</span>
+          <span class="tab-btn-label">Doctor</span>
+        </button>
+        <button class="connected-tab-btn" onclick="switchTab('tab-nutricion', this)">
+          <span class="tab-btn-icon">🥗</span>
+          <span class="tab-btn-label">Menú</span>
+        </button>
+        <button class="connected-tab-btn" onclick="switchTab('tab-actividad', this)">
+          <span class="tab-btn-icon">👤</span>
+          <span class="tab-btn-label">Perfil</span>
+        </button>
+      </div>
+    </div>
+
+    
+    
+    <!-- Modal de Autenticación y Cuenta de Supabase -->
 
     <div id="auth-modal" class="modal-overlay">
 
@@ -9879,7 +9907,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.15.0';
+        const CURRENT_VERSION = 'v2.16.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -9891,7 +9919,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.15.0') {
+                if (k !== 'metavital-cache-v2.16.0') {
 
                   caches.delete(k);
 

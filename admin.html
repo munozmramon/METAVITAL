@@ -357,10 +357,209 @@
         justify-content: space-between;
       }
     }
+
+    /* AUTH GATE STYLES */
+    #admin-auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: radial-gradient(circle at 50% 15%, #172554 0%, #0B1120 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .auth-gate-card {
+      background: #131F37;
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.65), 0 0 30px rgba(56, 189, 248, 0.1);
+      border-radius: 24px;
+      max-width: 440px;
+      width: 100%;
+      padding: 36px 32px;
+      position: relative;
+    }
+    .auth-gate-header {
+      text-align: center;
+      margin-bottom: 26px;
+    }
+    .auth-gate-logo {
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: #FFFFFF;
+      padding: 6px;
+      object-fit: contain;
+      box-shadow: 0 6px 20px rgba(13, 148, 136, 0.35);
+      margin-bottom: 14px;
+    }
+    .auth-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      background: rgba(244, 63, 94, 0.18);
+      color: #FB7185;
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      margin-bottom: 12px;
+    }
+    .auth-input-group {
+      margin-bottom: 18px;
+    }
+    .auth-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: #CBD5E1;
+      margin-bottom: 7px;
+      letter-spacing: 0.3px;
+    }
+    .auth-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .auth-input-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 16px;
+      pointer-events: none;
+      color: #94A3B8;
+    }
+    .auth-input {
+      width: 100%;
+      background: #0B1120;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 12px;
+      padding: 12px 14px 12px 42px;
+      font-size: 14px;
+      color: #FFFFFF;
+      transition: all 0.2s;
+    }
+    .auth-input:focus {
+      outline: none;
+      border-color: #38BDF8;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+      background: #0F172A;
+    }
+    .toggle-pass-btn {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: #94A3B8;
+      padding: 4px;
+    }
+    .toggle-pass-btn:hover {
+      color: #FFFFFF;
+    }
+    .auth-submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #0284C7, #0D9488);
+      color: #FFFFFF;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 13px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(2, 132, 199, 0.35);
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+    .auth-submit-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px rgba(2, 132, 199, 0.5);
+    }
+    .auth-err-box {
+      display: none;
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.35);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: #FDA4AF;
+      margin-bottom: 16px;
+      animation: shake 0.35s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
   </style>
 </head>
 <body>
 
+  <!-- SUPERADMIN ACCESS GATE OVERLAY -->
+  <div id="admin-auth-gate">
+    <div class="auth-gate-card">
+      <div class="auth-gate-header">
+        <img src="/logo.png" alt="METAVITAL" class="auth-gate-logo">
+        <div>
+          <span class="auth-badge-pill">🔒 Superadministrador</span>
+        </div>
+        <h1 style="font-size:22px; font-weight:900; color:#FFFFFF; margin-bottom:6px; letter-spacing:-0.5px;">Panel de Control METAVITAL</h1>
+        <p style="font-size:12.5px; color:#94A3B8; line-height:1.5;">Introduce tu usuario y contraseña de administrador para desbloquear los datos clínicos e infraestructura.</p>
+      </div>
+
+      <div id="auth-gate-error" class="auth-err-box">
+        ⚠️ Usuario o contraseña incorrectos. Comprueba tus datos.
+      </div>
+
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="auth-input-group">
+          <label class="auth-label" for="admin-user-input">Usuario o Correo de Administrador</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">👤</span>
+            <input type="text" id="admin-user-input" class="auth-input" placeholder="admin o munozmramon@gmail.com" required autocomplete="username">
+          </div>
+        </div>
+
+        <div class="auth-input-group">
+          <label class="auth-label" for="admin-pass-input">Contraseña de Superadministrador</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon">🔑</span>
+            <input type="password" id="admin-pass-input" class="auth-input" placeholder="••••••••••••" required autocomplete="current-password">
+            <button type="button" class="toggle-pass-btn" onclick="togglePassVisibility()" title="Mostrar u ocultar contraseña">👁️</button>
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:18px;">
+          <label style="display:flex; align-items:center; gap:8px; font-size:12px; color:#94A3B8; cursor:pointer;">
+            <input type="checkbox" id="admin-remember-chk" checked style="accent-color:#0284C7; width:15px; height:15px;">
+            <span>Recordar en este equipo</span>
+          </label>
+        </div>
+
+        <button type="submit" id="btn-admin-submit" class="auth-submit-btn">
+          <span>🔐</span> <span>Desbloquear Panel</span>
+        </button>
+      </form>
+
+      <div style="margin-top:22px; text-align:center; padding-top:16px; border-top:1px solid rgba(255,255,255,0.08);">
+        <a href="/" style="font-size:12px; color:#94A3B8; text-decoration:none; display:inline-flex; align-items:center; gap:5px; transition:color 0.2s;" onmouseover="this.style.color='#38BDF8'" onmouseout="this.style.color='#94A3B8'">
+          <span>←</span> <span>Volver a la web pública de METAVITAL</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div id="admin-dashboard-wrap" style="display:none; flex-direction:column; min-height:100vh;">
   <!-- ADMIN HEADER -->
   <header class="admin-header">
     <div style="display:flex; align-items:center;">
@@ -382,6 +581,9 @@
       <a href="/" class="btn btn-secondary">
         <span>🌐</span> <span>Web</span>
       </a>
+      <button class="btn btn-secondary" onclick="adminLogout()" style="color:#F43F5E; border-color:rgba(244,63,94,0.35);">
+        <span>🔒</span> <span>Cerrar Sesión</span>
+      </button>
       <button class="btn btn-primary" onclick="refreshAdminData()">
         <span>🔄</span> <span>Actualizar</span>
       </button>
@@ -577,11 +779,128 @@
 
   </main>
 
+  </div><!-- end admin-dashboard-wrap -->
+
   <script>
     const SUPABASE_CONFIG = {
       url: "https://mqhicpwhcjkjvdavbggx.supabase.co",
       key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xaGljcHdoY2tqdnZkYXZiZ2d4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjE5MDYwNjQsImV4cCI6MjA3NzQ4MjA2NH0.p3D372y8Lg_QjM5q9x0G0P-kOq7K0oXy4uF6_hX7uV4"
     };
+
+    
+    // --- SUPERADMIN AUTHENTICATION GATE ---
+    async function hashSHA256(str) {
+      try {
+        const utf8 = new TextEncoder().encode(str);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', utf8);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      } catch (e) {
+        return '';
+      }
+    }
+
+    const AUTHORIZED_HASHES = [
+      'caba21c46e8763b9cc3b1cec1a3e70746b3c799050ab840383cdcb84ead30e5d', // MetaVital2026!
+      'f30fdbe1042e2ac541cd9b3b898ba41e4c22a16e715b868e085af892f55ff2f6'  // MetaVitalAdmin2026!
+    ];
+
+    const AUTHORIZED_USERS = ['admin', 'munozmramon@gmail.com', 'superadmin', 'ramon'];
+
+    function togglePassVisibility() {
+      const input = document.getElementById('admin-pass-input');
+      if (input.type === 'password') {
+        input.type = 'text';
+      } else {
+        input.type = 'password';
+      }
+    }
+
+    function checkExistingAuth() {
+      const isAuth = sessionStorage.getItem('metavital_admin_authenticated') === 'true' ||
+                     localStorage.getItem('metavital_admin_authenticated') === 'true';
+      if (isAuth) {
+        unlockDashboard();
+      }
+    }
+
+    function unlockDashboard() {
+      const gate = document.getElementById('admin-auth-gate');
+      const dash = document.getElementById('admin-dashboard-wrap');
+      if (gate) gate.style.display = 'none';
+      if (dash) {
+        dash.style.display = 'flex';
+        dash.style.flexDirection = 'column';
+      }
+      refreshAdminData();
+    }
+
+    async function handleAdminLogin(event) {
+      if (event) event.preventDefault();
+      const userEl = document.getElementById('admin-user-input');
+      const passEl = document.getElementById('admin-pass-input');
+      const errBox = document.getElementById('auth-gate-error');
+      const submitBtn = document.getElementById('btn-admin-submit');
+      const rememberChk = document.getElementById('admin-remember-chk');
+
+      const user = userEl ? userEl.value.trim().toLowerCase() : '';
+      const pass = passEl ? passEl.value : '';
+
+      errBox.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>⏳</span> <span>Verificando credenciales...</span>';
+
+      let success = false;
+
+      // 1. Check Master Hash
+      if (AUTHORIZED_USERS.includes(user)) {
+        const passHash = await hashSHA256(pass);
+        if (AUTHORIZED_HASHES.includes(passHash)) {
+          success = true;
+        }
+      }
+
+      // 2. Check Supabase Auth if user entered an email
+      if (!success && user.includes('@') && sbClient) {
+        try {
+          const { data, error } = await sbClient.auth.signInWithPassword({
+            email: user,
+            password: pass
+          });
+          if (!error && data?.user) {
+            success = true;
+          }
+        } catch (e) {
+          console.warn("Supabase auth check error:", e);
+        }
+      }
+
+      if (success) {
+        submitBtn.innerHTML = '<span>✅</span> <span>Acceso Concedido</span>';
+        sessionStorage.setItem('metavital_admin_authenticated', 'true');
+        if (rememberChk && rememberChk.checked) {
+          localStorage.setItem('metavital_admin_authenticated', 'true');
+        }
+        setTimeout(() => {
+          unlockDashboard();
+        }, 400);
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<span>🔐</span> <span>Desbloquear Panel</span>';
+        errBox.style.display = 'block';
+        if (passEl) passEl.value = '';
+        if (passEl) passEl.focus();
+      }
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('metavital_admin_authenticated');
+      localStorage.removeItem('metavital_admin_authenticated');
+      if (sbClient) {
+        try { sbClient.auth.signOut(); } catch(e){}
+      }
+      window.location.reload();
+    }
 
     let sbClient = null;
     try {
@@ -671,7 +990,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      refreshAdminData();
+      checkExistingAuth();
     });
   </script>
 </body>
