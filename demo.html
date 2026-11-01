@@ -2486,7 +2486,7 @@
 
     <!-- Modal de Captura y Registro de Constantes -->
     <div id="capture-modal" class="modal-overlay">
-      <div class="modal-box" style="max-width:390px; padding:20px; border-radius:24px;">
+      <div class="modal-box" style="max-width:390px; padding:20px; border-radius:24px; max-height:90vh; overflow-y:auto;">
         <!-- Cabecera del Modal -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
           <div style="display:flex; align-items:center; gap:8px;">
@@ -2499,10 +2499,10 @@
           <button onclick="closeCaptureModal()" style="background:#F1F5F9; border:none; width:32px; height:32px; border-radius:50%; font-size:16px; font-weight:bold; color:#64748B; cursor:pointer; display:flex; align-items:center; justify-content:center;">✕</button>
         </div>
 
-        <!-- Selector de Pestañas (Solo 2: Cámara vs Escribir a Mano) -->
+        <!-- Selector de Pestañas (Solo 2 opciones) -->
         <div style="display:flex; background:#E2E8F0; padding:4px; border-radius:12px; margin-bottom:14px;">
           <button id="tab-mode-camera" onclick="switchCaptureTab('CAMERA')" style="flex:1; padding:9px 12px; font-size:12.5px; font-weight:700; border-radius:9px; border:none; background:#0D9488; color:#FFFFFF; cursor:pointer; transition:all 0.2s;">
-            📸 Cámara (Enfocar)
+            📸 Cámara / Foto
           </button>
           <button id="tab-mode-manual" onclick="switchCaptureTab('MANUAL')" style="flex:1; padding:9px 12px; font-size:12.5px; font-weight:700; border-radius:9px; border:none; background:transparent; color:#475569; cursor:pointer; transition:all 0.2s;">
             ⌨️ Escribir a Mano
@@ -2511,13 +2511,8 @@
 
         <!-- ================= PESTAÑA 1: CÁMARA ================= -->
         <div id="view-snap">
-          <!-- Fallback input para galería si no se quiere o no se puede usar cámara en directo -->
-          <input type="file" id="ocr-gallery-input" accept="image/*" style="position:fixed; top:-9999px; left:-9999px; opacity:0; width:1px; height:1px;" onchange="handleOcrPhotoUpload(event)">
-          <!-- Fallback input para cámara nativa de móvil si WebRTC falla -->
-          <input type="file" id="ocr-mobile-native-input" accept="image/*" capture="environment" style="position:fixed; top:-9999px; left:-9999px; opacity:0; width:1px; height:1px;" onchange="handleOcrPhotoUpload(event)">
-
-          <!-- Visor de Cámara en Directo -->
-          <div id="camera-frame-box" class="camera-frame" style="position:relative; height:220px; background:#0F172A; border:2px dashed #38BDF8; border-radius:16px; overflow:hidden; padding:0; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+          <!-- Visor de Cámara -->
+          <div id="camera-frame-box" class="camera-frame" style="position:relative; height:200px; background:#0F172A; border:2px dashed #38BDF8; border-radius:16px; overflow:hidden; padding:0; display:flex; align-items:center; justify-content:center; margin-bottom:14px;">
             <!-- Elemento de Vídeo en Directo (WebRTC) -->
             <video id="camera-live-video" autoplay playsinline webkit-playsinline muted style="display:none; width:100%; height:100%; object-fit:cover;"></video>
             
@@ -2530,11 +2525,11 @@
             <!-- Estado previo a encender la cámara -->
             <div id="camera-idle-content" style="text-align:center; padding:16px; color:#FFFFFF;">
               <div style="font-size:42px; margin-bottom:6px;">📸</div>
-              <h4 id="camera-prompt" style="font-size:14.5px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">Cámara Apagada</h4>
-              <p id="camera-subtext" style="font-size:11.5px; color:#94A3B8; margin:0; line-height:16px; max-width:240px;">Pulsa el botón verde para encender la cámara y enfocar la pantalla de tu aparato</p>
+              <h4 id="camera-prompt" style="font-size:14.5px; font-weight:700; color:#F8FAFC; margin-bottom:4px;">Encuadre la Pantalla</h4>
+              <p id="camera-subtext" style="font-size:11.5px; color:#94A3B8; margin:0; line-height:16px; max-width:240px;">Haz una foto a la pantalla de tu dispositivo para leer los datos</p>
             </div>
 
-            <!-- Retícula de Enfoque Clínico (Esquinas de escaneo) -->
+            <!-- Retícula de Enfoque Clínico -->
             <div id="camera-reticle" style="display:none; position:absolute; width:82%; height:72%; border:2px solid rgba(56, 189, 248, 0.7); border-radius:12px; pointer-events:none; box-shadow:0 0 0 9999px rgba(0, 0, 0, 0.35);">
               <div style="position:absolute; top:-5px; left:-5px; width:18px; height:18px; border-top:3.5px solid #38BDF8; border-left:3.5px solid #38BDF8; border-top-left-radius:6px;"></div>
               <div style="position:absolute; top:-5px; right:-5px; width:18px; height:18px; border-top:3.5px solid #38BDF8; border-right:3.5px solid #38BDF8; border-top-right-radius:6px;"></div>
@@ -2547,47 +2542,50 @@
             <div id="camera-scan-laser" style="display:none; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, transparent, #22C55E, transparent); box-shadow:0 0 10px #22C55E; animation:laserScan 1.4s infinite alternate;"></div>
           </div>
 
-          <!-- Mensaje de aviso solo si la cámara no se puede encender -->
-          <div id="camera-fallback-msg" style="display:none; background:#FEF3C7; border:1px solid #FCD34D; border-radius:10px; padding:10px; margin-bottom:12px; font-size:12px; color:#92400E; line-height:16px;">
-            <strong>⚠️ No se pudo abrir el vídeo en pantalla.</strong> Puedes disparar la cámara del móvil pulsando el botón de abajo o seleccionar una foto de tu galería.
-          </div>
+          <!-- BOTONES PRINCIPALES DE ACCIÓN DIRECTA -->
+          <div style="display:flex; flex-direction:column; gap:9px; margin-bottom:10px;">
+            <!-- BOTÓN 1: HACER FOTO CON LA CÁMARA (Acceso táctil directo del sistema operativo) -->
+            <div style="position:relative; width:100%; border-radius:12px; overflow:hidden;">
+              <button type="button" style="width:100%; padding:14px; font-size:14px; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #0D9488 0%, #0F766E 100%); color:#FFFFFF; border:none; pointer-events:none; box-shadow:0 3px 12px rgba(13,148,136,0.35);">
+                📸 1. HACER FOTO CON LA CÁMARA
+              </button>
+              <input type="file" accept="image/*" capture="environment" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="handleOcrPhotoUpload(event)">
+            </div>
 
-          <!-- BOTONES DE ACCIÓN (Sin repeticiones) -->
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <!-- Botón 1: Encender Cámara en Pantalla (Estado inicial) -->
-            <button id="btn-turnon-camera" class="btn-primary" onclick="startLiveCameraStream()" style="width:100%; padding:13px; font-size:14px; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; background:linear-gradient(135deg, #0D9488 0%, #0F766E 100%); color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 3px 12px rgba(13,148,136,0.35);">
-              🎥 1. ENCENDER CÁMARA Y ENFOCAR
+            <!-- BOTÓN 2: ELEGIR FOTO DE LA GALERÍA (Acceso táctil directo del sistema operativo) -->
+            <div style="position:relative; width:100%; border-radius:12px; overflow:hidden;">
+              <button type="button" style="width:100%; padding:12px; font-size:13.5px; font-weight:700; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; background:#F8FAFC; border:1.5px solid #CBD5E1; color:#1E293B; pointer-events:none;">
+                📁 2. ELEGIR FOTO DE LA GALERÍA
+              </button>
+              <input type="file" accept="image/*" style="position:absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;" onchange="handleOcrPhotoUpload(event)">
+            </div>
+
+            <!-- BOTÓN 3: ENCENDER VÍDEO EN DIRECTO EN PANTALLA -->
+            <button id="btn-live-stream-toggle" type="button" onclick="startLiveCameraStream()" style="width:100%; padding:10px; font-size:12px; font-weight:700; border-radius:10px; background:#F0FDF4; border:1px solid #BBF7D0; color:#166534; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">
+              🎥 O ver vídeo en directo dentro del visor
             </button>
 
-            <!-- Botón 2: Capturar Foto (Solo visible cuando la cámara está emitiendo en directo) -->
+            <!-- Botón de captura cuando el vídeo en directo está activo -->
             <button id="btn-snap-active" class="btn-primary" onclick="captureLiveStreamFrame()" style="display:none; width:100%; padding:13px; font-size:14px; font-weight:800; border-radius:12px; align-items:center; justify-content:center; gap:8px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer; box-shadow:0 4px 14px rgba(16, 185, 129, 0.45);">
               📸 TOMAR FOTO Y LEER DÍGITOS
             </button>
 
-            <!-- Controles cuando la cámara está activa -->
+            <!-- Controles cuando el vídeo en directo está activo -->
             <div id="camera-live-controls" style="display:none; gap:8px;">
               <button onclick="flipLiveCamera()" type="button" style="flex:1; padding:8px; font-size:12px; font-weight:700; border:1px solid #CBD5E1; background:#FFFFFF; color:#334155; border-radius:9px; cursor:pointer;">
                 🔄 Cambiar Cámara
               </button>
               <button onclick="stopLiveCameraStream()" type="button" style="flex:1; padding:8px; font-size:12px; font-weight:700; border:1px solid #FECACA; background:#FEF2F2; color:#991B1B; border-radius:9px; cursor:pointer;">
-                ⏹️ Apagar Cámara
+                ⏹️ Apagar Vídeo
               </button>
             </div>
+          </div>
 
-            <!-- Botón de fallback para móvil si WebRTC no tiene permisos -->
-            <button id="btn-native-mobile-cam" type="button" onclick="document.getElementById('ocr-mobile-native-input').click()" style="display:none; width:100%; padding:12px; font-size:13.5px; font-weight:800; border-radius:12px; background:#0284C7; color:#FFFFFF; border:none; cursor:pointer;">
-              📸 DISPARAR CÁMARA DEL MÓVIL
+          <!-- Opción rápida de prueba -->
+          <div style="text-align:center; padding-top:4px;">
+            <button onclick="simulateSnap()" type="button" style="background:none; border:none; font-size:12px; font-weight:600; color:#64748B; cursor:pointer; text-decoration:underline;">
+              🧪 Probar con lectura de ejemplo (Simular)
             </button>
-
-            <!-- Opciones secundarias limpias -->
-            <div style="display:flex; justify-content:space-between; align-items:center; padding-top:6px;">
-              <button onclick="document.getElementById('ocr-gallery-input').click()" type="button" style="background:none; border:none; font-size:12px; font-weight:600; color:#0284C7; cursor:pointer; text-decoration:underline;">
-                📁 Elegir foto de la galería
-              </button>
-              <button onclick="simulateSnap()" type="button" style="background:none; border:none; font-size:12px; font-weight:600; color:#64748B; cursor:pointer; text-decoration:underline;">
-                🧪 Lectura de prueba (Simular)
-              </button>
-            </div>
           </div>
         </div>
 
@@ -2673,34 +2671,7 @@
         </div>
       </div>
     </div>
-
-          <button class="btn-primary btn-success" onclick="saveManualConstantReading()" style="width:100%; padding:11px; font-size:13.5px; font-weight:800; border-radius:12px; background:#10B981; color:#FFFFFF; border:none; cursor:pointer;">
-            ✓ GUARDAR MEDICIÓN MANUAL
-          </button>
-        </div>
-
-        <!-- ================= VISTA 3: CONFIRMACIÓN ================= -->
-        <div id="view-confirm" style="display:none;">
-          <div style="background:#DCFCE7; padding:9px 12px; border-radius:8px; margin-bottom:12px; font-size:12px; color:#166534; font-weight:700; display:flex; align-items:center; gap:6px;">
-            <span>✓</span> Lectura detectada por IA con 98.6% de precisión
-          </div>
-          <div style="text-align:center; padding:14px; background:#F8FAFC; border-radius:12px; margin-bottom:12px; border:1.5px solid var(--border);">
-            <div id="detected-val" style="font-size:36px; font-weight:900; color:var(--text-main);">114</div>
-            <div id="detected-unit" style="font-size:13px; font-weight:700; color:var(--text-muted); margin-top:2px;">mg/dL (Glucómetro Digital)</div>
-          </div>
-          <div style="display:flex; gap:8px;">
-            <button onclick="resetCaptureView()" style="flex:1; padding:10px; border-radius:10px; border:1px solid #CBD5E1; background:#FFFFFF; font-size:12px; font-weight:700; color:#64748B; cursor:pointer;">
-              ↺ Repetir
-            </button>
-            <button class="btn-primary btn-success" onclick="saveReading()" style="flex:2; padding:10px; border-radius:10px; font-size:13px; font-weight:800; background:#10B981; color:#FFFFFF; border:none; cursor:pointer;">
-              ✓ GUARDAR
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Modal para Configurar Datos y WhatsApp del Médico de Cabecera -->
+<!-- Modal para Configurar Datos y WhatsApp del Médico de Cabecera -->
     <div id="doctor-modal" class="modal-overlay">
       <div class="modal-box">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
