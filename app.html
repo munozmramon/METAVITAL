@@ -1429,11 +1429,11 @@
         <img src="/logo.png" alt="METAVITAL Logo" onclick="openCoverModal()" class="modern-hdr-logo" title="Ver Portada Oficial METAVITAL">
         <div class="header-user-group" onclick="openProfileModal()" style="cursor:pointer;" title="Ver Perfil de Salud">
           <div class="user-avatar-circle" id="hdr-user-avatar">
-            RM
+            CG
             <div class="online-badge"></div>
           </div>
           <div class="user-text-col">
-            <span class="user-greeting" id="hdr-user-greeting">Hola, Ramón</span>
+            <span class="user-greeting" id="hdr-user-greeting">Hola, Carlos</span>
             <span class="user-date" id="hdr-user-date">1 Noviembre, 2026</span>
           </div>
         </div>
@@ -1505,7 +1505,7 @@
         <div class="hero-center-row" onclick="openDoctorModal()" style="cursor:pointer;" title="Ver Ficha del Médico">
           <div class="hero-left-info">
             <span class="hero-role-tag">Médico Responsable</span>
-            <h3 class="hero-doc-title">Dr. Nicolás Cobo</h3>
+            <h3 class="hero-doc-title">Dra. Elena Morales</h3>
             <p class="hero-doc-sub">Nefrología & Control Metabólico</p>
             <div style="margin-top:6px; display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.18); padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700;">
               🎯 Glucosa 70-130 • PA &lt;130/80
@@ -1517,11 +1517,11 @@
         </div>
 
         <!-- Hidden binding spans so existing JS and Supabase sync never break -->
-        <span id="card-fullname" style="display:none;">Ramón Muñoz Martínez</span>
-        <span id="card-subdetails" style="display:none;">63 años • Estatura: 165 cm</span>
-        <span id="badge-bmi-category" style="display:none;">Obesidad Gr. II</span>
-        <span id="disp-profile-weight" style="display:none;">101.5</span>
-        <span id="disp-profile-bmi" style="display:none;">37.28</span>
+        <span id="card-fullname" style="display:none;">Carlos Gómez Navarro</span>
+        <span id="card-subdetails" style="display:none;">58 años • Estatura: 172 cm</span>
+        <span id="badge-bmi-category" style="display:none;">Sobrepeso Leve</span>
+        <span id="disp-profile-weight" style="display:none;">78.5</span>
+        <span id="disp-profile-bmi" style="display:none;">26.54</span>
         <span id="disp-target-glu" style="display:none;">70-130</span>
         <span id="disp-target-bp" style="display:none;">130/80</span>
 
@@ -1586,7 +1586,7 @@
           </div>
           <div>
             <div class="tile-title">Báscula</div>
-            <div id="disp-scale-btn" class="tile-main-val">101.5 <small>kg</small></div>
+            <div id="disp-scale-btn" class="tile-main-val">78.5 <small>kg</small></div>
           </div>
           <div class="tile-arrow-circle">↗</div>
         </div>
@@ -1641,12 +1641,12 @@
             <span>🩺</span> <span>Comentario Médico de Evolución General:</span>
           </div>
           <p id="clinical-summary-comment-text" style="margin-bottom: 8px;">
-            <strong>Ramón, tu evolución global en este período es CLARAMENTE POSITIVA (+):</strong> La adherencia a las tomas (96%), la caminata diaria en llano y las técnicas culinarias muestran una respuesta muy favorable en los 3 parámetros clave que tú controlas:
+            <strong>Carlos, tu evolución global en este período es CLARAMENTE POSITIVA (+):</strong> La adherencia a las tomas (96%), la caminata diaria en llano y las técnicas culinarias muestran una respuesta muy favorable en los 3 parámetros clave que tú controlas:
           </p>
           <div id="clinical-summary-bullets" style="border-top: 1px dashed #E2E8F0; padding-top: 8px;">
             • 🩸 <strong>Azúcar / Glucosa:</strong> <em style="color:#15803D; font-weight:700;">Evolución muy favorable.</em> Tu media basal ha descendido de 138 a 118 mg/dL, logrando un 85% de tiempo en rango diana (70-130) sin registrar hipoglucemias.<br>
             • 💓 <strong>Tensión Arterial:</strong> <em style="color:#15803D; font-weight:700;">Evolución favorable.</em> Curva en descenso continuo de 142/88 a 126/78 mmHg de media semanal, con pulso estable a 61 lpm bajo tratamiento con Atenolol.<br>
-            • ⚖️ <strong>Peso Corporal:</strong> <em style="color:#15803D; font-weight:700;">Evolución excelente (-4.5 kg).</em> De 106.0 kg a 101.5 kg (IMC de 38.9 a 37.28); este descenso alivia 18 kg de impacto biomecánico en cada paso y reduce la presión sobre el filtrado renal (FG 42).<br>
+            • ⚖️ <strong>Peso Corporal:</strong> <em style="color:#15803D; font-weight:700;">Evolución excelente (-4.5 kg).</em> De 82.5 kg a 78.5 kg (IMC de 27.9 a 26.54); este descenso alivia el impacto biomecánico en cada paso y reduce la presión sobre el filtrado renal.<br>
             • ⚠️ <strong>Punto a Vigilar:</strong> Mantener el rigor culinario de doble hervor y remojo para el potasio (5.5 mEq/L) y cumplir las tomas de Omacor y Secalip para reducir los triglicéridos.
           </div>
         </div>
@@ -1719,7 +1719,7 @@
             </div>
             <div style="background: #F0FDF4; padding: 6px; border-radius: 6px; border: 1px solid #BBF7D0;">
               <span style="color: #166534; font-size: 9.5px; display: block; font-weight:700;">Hoy (Actual)</span>
-              <strong id="summary-curr-weight" style="color: #15803D; font-size: 13px;">101.5 kg ✓</strong>
+              <strong id="summary-curr-weight" style="color: #15803D; font-size: 13px;">78.5 kg ✓</strong>
               <small id="summary-curr-bmi" style="font-size:9px; color:#15803D; font-weight:700; display:block;">IMC 37.28</small>
             </div>
           </div>
@@ -1914,7 +1914,7 @@
             <span style="font-size:11px; font-weight:800; color:#DC2626;">NO TOMAR</span>
           </div>
           <p style="font-size:11.5px; color:#B91C1C; margin:4px 0 0 0; line-height:15px;">
-            • <strong>Trajenta 5 mg (Linagliptina)</strong>: Retirado expresamente por el Dr. Cobo.
+            • <strong>Trajenta 5 mg (Linagliptina)</strong>: Retirado por indicación médica facultativa.
           </p>
         </div>
 
@@ -1966,7 +1966,7 @@
       <div style="background:linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%); color:#FFFFFF; border-radius:12px; padding:12px; margin-bottom:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <strong style="font-size:13px;">🏥 H.U. Jaén • Nefrología General</strong>
-          <span style="background:#DC2626; color:#FFF; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;">Dr. Cobo Fernández</span>
+          <span style="background:#0F766E; color:#FFF; font-size:10px; font-weight:800; padding:2px 6px; border-radius:4px;">Dra. Elena Morales</span>
         </div>
         <p style="font-size:11.5px; color:#DBEAFE; margin-top:4px; line-height:15px;">
           Resumen clínico de biomarcadores según el último informe hospitalario.
@@ -2103,11 +2103,11 @@
         <!-- 4. Peso Corporal & IMC -->
         <div class="param-alert-box warning-tone">
           <div class="param-alert-head">
-            <strong>⚠️ Peso Actual: 101.5 kg / IMC 37.28</strong>
+            <strong>⚠️ Peso Actual: 78.5 kg / IMC 26.54</strong>
             <span class="badge" style="background:#D97706;">Obesidad Gr. II</span>
           </div>
           <div class="param-alert-body">
-            <strong>Evolución:</strong> Muy positiva (-4.5 kg desde los 106 kg iniciales), pero sigue exigiendo esfuerzo a las articulaciones y al riñón.
+            <strong>Evolución:</strong> Muy positiva (-4.0 kg desde los 82.5 kg iniciales), pero sigue exigiendo esfuerzo a las articulaciones y al riñón.
             <div style="margin-top:6px; font-weight:800; color:#92400E;">Medidas correctoras recomendadas:</div>
             <ul class="param-action-list">
               <li>Caminar diariamente por <strong>terreno llano</strong> (quema glucosa sin traumatizar rodillas ni columna).</li>
@@ -2286,7 +2286,7 @@
         <!-- Criterios Médicos Plegables -->
         <details style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 7px 10px; margin-bottom: 10px; font-size: 11px; color: #166534; line-height: 15px; cursor: pointer;">
           <summary style="font-weight: 800; display: flex; align-items: center; justify-content: space-between;">
-            <span>👨‍⚕️ Criterios Médicos Comunes (Dr. Cobo Fernández)</span>
+            <span>👨‍⚕️ Criterios Médicos Comunes (Guías Clínicas)</span>
             <span style="font-size: 10px; color: #15803D;">(Tocar para ver/ocultar)</span>
           </summary>
           <div style="margin-top: 6px; border-top: 1px dashed #BBF7D0; padding-top: 6px;">
@@ -2385,7 +2385,7 @@
 
         <div style="background:#F5F3FF; border:1px solid #DDD6FE; border-radius:10px; padding:10px; margin-bottom:12px;">
           <p style="font-size:12px; color:#5B21B6; font-style:italic; line-height:16px;">
-            "Debe de efectuar ejercicio físico con regularidad, <strong>caminando por terreno llano</strong>." — Dr. Cobo Fernández (Nefrología Baeza/Jaén)
+            "Debe de efectuar ejercicio físico con regularidad, <strong>caminando por terreno llano</strong>." — Dra. Elena Morales Castillo (Medicina Interna)
           </p>
         </div>
 
@@ -2404,7 +2404,7 @@
 
         <!-- Efecto 2 -->
         <div style="background:#FFFFFF; border:1px solid #E2E8F0; border-radius:10px; padding:10px; margin-bottom:8px;">
-          <strong style="color:#16A34A; font-size:12.5px;">🛡️ 2. Protección Articular y de Columna con 101.5 kg:</strong>
+          <strong style="color:#16A34A; font-size:12.5px;">🛡️ 2. Protección Articular y de Columna con Sobrepeso:</strong>
           <p style="font-size:11.5px; color:#334155; margin-top:3px; line-height:16px;">
             Caminar exclusivamente en <strong>terreno llano</strong> suprime el impacto repetitivo y las fuerzas de cizallamiento en las rodillas y discos lumbares, protegiendo los cartílagos del sobrepeso sin riesgo de lesiones.
           </p>
@@ -2591,20 +2591,20 @@
         <div class="card-header">
           <div>
             <div class="card-title" style="color: #166534; font-size: 15.5px;">👨‍⚕️ Mi Médico de Cabecera</div>
-            <div id="disp-doctor-center-badge" class="card-subtitle">Centro de Salud de Baeza (Jaén)</div>
+            <div id="disp-doctor-center-badge" class="card-subtitle">Centro Clínico de Especialidades</div>
           </div>
           <span class="badge" style="background: #25D366;">WhatsApp Activo</span>
         </div>
 
         <div style="background: #FFFFFF; border: 1.5px solid #BBF7D0; border-radius: 12px; padding: 12px; margin-bottom: 12px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <strong id="disp-doctor-name" style="font-size: 15px; color: var(--text-main);">Dr. Nicolás Cobo Fernández</strong>
+            <strong id="disp-doctor-name" style="font-size: 15px; color: var(--text-main);">Dra. Elena Morales Castillo</strong>
             <button class="btn-edit-profile" onclick="openDoctorModal()" style="padding: 4px 10px; font-size: 11px; background:#F0FDF4; border-color:#86EFAC; color:#166534;">
               ✏️ EDITAR
             </button>
           </div>
           <div style="font-size: 12px; color: var(--text-muted); line-height: 18px;">
-            • <strong>Centro Asignado:</strong> <span id="disp-doctor-center">C.S. Baeza (Distrito Jaén Nordeste)</span><br>
+            • <strong>Centro Asignado:</strong> <span id="disp-doctor-center">Centro Clínico de Especialidades</span><br>
             • <strong>Especialidad:</strong> <span id="disp-doctor-role">Medicina Familiar / Nefrología</span><br>
             • <strong>WhatsApp Consulta:</strong> <strong id="disp-doctor-phone" style="color: #15803D; font-size: 13px;">+34 600 000 000</strong>
           </div>
@@ -2753,7 +2753,7 @@
           <form id="form-signup" style="display:none;" onsubmit="event.preventDefault(); handleSupabaseSignUp();">
             <div style="margin-bottom:10px; text-align:left;">
               <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Nombre y Apellidos:</label>
-              <input type="text" id="signup-name" required placeholder="Ej: Ramón Muñoz Martínez" style="width:100%; padding:9px; border:1px solid #CBD5E1; border-radius:8px; font-size:12.5px; box-sizing:border-box;">
+              <input type="text" id="signup-name" required placeholder="Ej: Carlos Gómez Navarro" style="width:100%; padding:9px; border:1px solid #CBD5E1; border-radius:8px; font-size:12.5px; box-sizing:border-box;">
             </div>
             <div style="margin-bottom:10px; text-align:left;">
               <label style="font-size:11px; font-weight:700; color:#475569; display:block; margin-bottom:4px;">Correo Electrónico:</label>
@@ -2855,13 +2855,13 @@
         <!-- Ficha de Portada del Usuario -->
         <div style="background:#F0FDF4; border:1.5px solid #BBF7D0; border-radius:14px; padding:12px; text-align:left; margin-bottom:12px; font-size:12px; line-height:18px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #DCFCE7; padding-bottom:6px;">
-            <strong style="color:#166534; font-size:13.5px;">Ramón Muñoz Martínez</strong>
-            <span class="badge" style="background:#0D9488; color:#FFF; font-size:9.5px; font-weight:800; padding:2px 8px; border-radius:6px;">63 AÑOS</span>
+            <strong style="color:#166534; font-size:13.5px;">Carlos Gómez Navarro</strong>
+            <span class="badge" style="background:#0D9488; color:#FFF; font-size:9.5px; font-weight:800; padding:2px 8px; border-radius:6px;">58 AÑOS</span>
           </div>
           <div style="color:#334155;">
-            • <strong>Estatura / Peso:</strong> 178 cm • 86.2 kg (📉 -2.8 kg)<br>
-            • <strong>Centro Asignado:</strong> Hospital Universitario • Nefrología & Metabólica<br>
-            • <strong>Médico Responsable:</strong> Dr. Nicolás Cobo<br>
+            • <strong>Estatura / Peso:</strong> 172 cm • 78.5 kg (📉 -4.0 kg)<br>
+            • <strong>Centro Asignado:</strong> Hospital Clínico • Nefrología & Metabólica<br>
+            • <strong>Médico Responsable:</strong> Dra. Elena Morales<br>
             • <strong>Diagnóstico:</strong> Control Metabólico Integral • Monitorización Renal Preventiva
           </div>
         </div>
@@ -2951,7 +2951,7 @@
           <div id="manual-group-weight" style="display:none; width:100%; box-sizing:border-box;">
             <label style="display:block; font-size:14.5px; font-weight:900; color:#1E293B; margin-bottom:8px; text-align:center;">Peso Actual de la Báscula (kg):</label>
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:6px; width:100%; box-sizing:border-box;">
-              <input type="number" step="0.1" inputmode="decimal" id="manual-input-weight" value="101.5" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
+              <input type="number" step="0.1" inputmode="decimal" id="manual-input-weight" value="78.5" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
               <span style="font-size:16px; font-weight:900; color:#334155; flex-shrink:0;">kg</span>
             </div>
           </div>
@@ -3017,12 +3017,12 @@
 
         <div class="form-group">
           <label>Nombre y Apellidos del Médico:</label>
-          <input id="input-doctor-name" class="form-control" type="text" value="Dr. Nicolás Cobo Fernández">
+          <input id="input-doctor-name" class="form-control" type="text" value="Dra. Elena Morales Castillo">
         </div>
 
         <div class="form-group">
           <label>Centro de Salud / Hospital:</label>
-          <input id="input-doctor-center" class="form-control" type="text" value="Centro de Salud de Baeza">
+          <input id="input-doctor-center" class="form-control" type="text" value="Centro de Salud y Especialidades">
         </div>
 
         <div class="form-group">
@@ -3063,12 +3063,12 @@
 
         <div class="form-group">
           <label>Nombre:</label>
-          <input id="input-first-name" class="form-control" type="text" value="Ramón">
+          <input id="input-first-name" class="form-control" type="text" value="Carlos">
         </div>
 
         <div class="form-group">
           <label>Apellidos:</label>
-          <input id="input-last-name" class="form-control" type="text" value="Muñoz Martínez">
+          <input id="input-last-name" class="form-control" type="text" value="Gómez Navarro">
         </div>
 
         <div class="form-row-2">
@@ -3084,7 +3084,7 @@
 
         <div class="form-group">
           <label>Peso Actual (kg):</label>
-          <input id="input-weight" class="form-control" type="number" step="0.1" value="101.5">
+          <input id="input-weight" class="form-control" type="number" step="0.1" value="78.5">
         </div>
 
         <div style="border-top:1px solid #E2E8F0; padding-top:10px; margin-top:10px;">
@@ -3138,7 +3138,7 @@
           <div class="camera-frame" style="height:140px; background:#F8FAFC; border:2px dashed #94A3B8;">
             <div style="font-size:30px;">📋</div>
             <h4 style="font-size:13.5px; margin:4px 0;">Informe Hospital Univ. de Jaén</h4>
-            <p style="font-size:11px; color:#64748B;">Nefrología General • Dr. Cobo Fernández</p>
+            <p style="font-size:11px; color:#64748B;">Nefrología General • Dra. Elena Morales</p>
           </div>
 
           <button class="btn-primary" style="margin-top:10px;" onclick="simulateScanHospitalReport()">
@@ -3339,12 +3339,13 @@
     }
 
     let patient = {
-      firstName: "Ramón",
-      lastName: "Muñoz Martínez",
-      fullName: "Ramón Muñoz Martínez",
-      age: 63,
-      heightCm: 165.0,
-      weightKg: 101.5,
+      firstName: "Carlos",
+      lastName: "Gómez Navarro",
+      fullName: "Carlos Gómez Navarro",
+      name: "Carlos Gómez Navarro",
+      age: 58,
+      heightCm: 172.0,
+      weightKg: 78.5,
       bmi: 37.28,
       bmiCategory: "Obesidad (Grado II)",
       clinicalProfile: "STANDARD",
@@ -3355,7 +3356,7 @@
       targetStepsDaily: 4000
     };
 
-    // Historial clínico mensual ordenado (últimos 30 días para Ramón Muñoz Martínez)
+    // Historial clínico mensual ordenado (Paciente Demo: Carlos Gómez Navarro)
     let selectedEvolutionPeriod = 7; // 7 o 30
     let selectedChartMetric = 'GLUCOSE'; // 'GLUCOSE', 'BP', 'WEIGHT'
     let selectedHistoryFilter = 'ALL'; // 'ALL', 'GLUCOSE', 'BP', 'WEIGHT'
@@ -3366,7 +3367,7 @@
       { id: 102, type: 'GLUCOSE', icon: '🩸', label: 'Glucómetro Digital (OCR)', value: '109 mg/dL', date: 'Hoy (1 Nov), 10:17', day: 'Hoy, 1 Nov 2026', numVal: 109, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
       { id: 103, type: 'BP', icon: '💓', label: 'Tensiómetro Digital', value: '130/74 mmHg (61 lpm)', date: 'Hoy (1 Nov), 08:20', day: 'Hoy, 1 Nov 2026', numVal: 130, numValDia: 74, status: 'Controlada', badgeColor: 'var(--success)' },
       { id: 104, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '122 mg/dL', date: 'Hoy (1 Nov), 08:15', day: 'Hoy, 1 Nov 2026', numVal: 122, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 105, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital de Peso', value: '101.5 kg (IMC 37.28)', date: 'Hoy (1 Nov), 08:10', day: 'Hoy, 1 Nov 2026', numVal: 101.5, status: '📉 -4.5 kg', badgeColor: 'var(--primary)' },
+      { id: 105, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital de Peso', value: '78.5 kg (IMC 26.54)', date: 'Hoy (1 Nov), 08:10', day: 'Hoy, 1 Nov 2026', numVal: 78.5, status: '📉 -4.5 kg', badgeColor: 'var(--primary)' },
 
       // Ayer (31 de Octubre 2026)
       { id: 201, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Pre-Cena', value: '114 mg/dL', date: 'Ayer (31 Oct), 21:00', day: 'Ayer, 31 Oct 2026', numVal: 114, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
@@ -3499,7 +3500,7 @@
 
       // Parámetros base del paciente
       const isNeli = (typeof patient !== 'undefined' && patient && patient.name && patient.name.includes('Neli'));
-      const pName = isNeli ? 'Neli' : ((typeof patient !== 'undefined' && patient && patient.name) ? patient.name.split(' ')[0] : 'Ramón');
+      const pName = isNeli ? 'Neli' : ((typeof patient !== 'undefined' && patient && patient.name) ? patient.name.split(' ')[0] : 'Carlos');
       const baselineGlu = isNeli ? 145 : 138;
       const startWeight = isNeli ? 76.5 : 106.0;
       const heightCm = (typeof patient !== 'undefined' && patient && patient.heightCm) ? patient.heightCm : (isNeli ? 160 : 165);
@@ -3515,7 +3516,7 @@
       const sys = latestBpItem ? (latestBpItem.numVal || 130) : 130;
       const dia = latestBpItem ? (latestBpItem.numValDia || 74) : 74;
 
-      const latestWeight = weightItems.length > 0 ? (weightItems[0].numVal || parseFloat(weightItems[0].value)) : ((typeof patient !== 'undefined' && patient) ? patient.weightKg : 101.5);
+      const latestWeight = weightItems.length > 0 ? (weightItems[0].numVal || parseFloat(weightItems[0].value)) : ((typeof patient !== 'undefined' && patient) ? patient.weightKg : 78.5);
       const weightLoss = parseFloat((startWeight - latestWeight).toFixed(1));
       const currentBmi = (latestWeight / (heightM * heightM)).toFixed(2);
       const biomechanicalRelief = (Math.abs(weightLoss) * 4).toFixed(0);
@@ -3821,7 +3822,7 @@
 
       const weightItems = measurementHistory.filter(i => i.type === 'WEIGHT');
       if (weightItems.length > 0) {
-        const wAvg = (weightItems.reduce((acc, curr) => acc + (curr.numVal || parseFloat(curr.value) || 101.5), 0) / weightItems.length).toFixed(1);
+        const wAvg = (weightItems.reduce((acc, curr) => acc + (curr.numVal || parseFloat(curr.value) || 78.5), 0) / weightItems.length).toFixed(1);
         const elW = document.getElementById('stat-avg-weight');
         if (elW) elW.innerHTML = wAvg + ' <span style="font-size:9.5px;">kg</span>';
       }
@@ -4762,7 +4763,7 @@
     }
 
     function populateBaselineStepsHistory() {
-      // Generar serie coherente de 30 días para Ramón Muñoz Martínez
+      // Generar serie coherente de 30 días (Paciente Demo: Carlos Gómez Navarro)
       stepsDailyHistory = {};
       const now = new Date();
       
@@ -5315,7 +5316,7 @@
     }
 
     function sendReportEmail() {
-      const doctorEmail = (doctor.email && doctor.email.trim()) || 'medico.baeza@saluddeandalucia.es';
+      const doctorEmail = (doctor.email && doctor.email.trim()) || 'consulta.medica@metavital.fans';
       const now = new Date();
       const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
       const currentMonth = monthNames[now.getMonth()] + ' ' + now.getFullYear();
@@ -5478,7 +5479,7 @@
           doc.text('1. PROHIBICION AINES: Cero Ibuprofeno/Enantyum por nefrotoxicidad; usar Paracetamol/Nolotil.', 18, 160);
           doc.text('2. SEGURIDAD POTASIO: Prohibida sal de potasio; tecnicas de remojo y doble coccion en verduras.', 18, 166);
           doc.text('3. ROTACION INSULINA: Alternar cuadrantes para erradicar lipodistrofia e irregularidad glucemica.', 18, 172);
-          doc.text('4. EVOLUCION PONDERAL: Peso 101.5 kg [-4.5 kg desde consulta de 106 kg en H.U. Jaen]. Enhorabuena.', 18, 178);
+          doc.text('4. EVOLUCION PONDERAL: Peso 78.5 kg [-4.0 kg descenso acumulado]. Enhorabuena.', 18, 178);
           doc.text('5. RITMO DE VIDA: Caminatas en llano 15 min posprandial. Ejercicio aeróbico moderado continuo.', 18, 184);
 
           // Signature Box
@@ -5603,11 +5604,11 @@
 
     // Primary Care Physician (Médico de Cabecera) State
     let doctor = {
-      name: "Dr. Nicolás Cobo Fernández",
-      center: "Centro de Salud de Baeza",
+      name: "Dra. Elena Morales Castillo",
+      center: "Centro de Salud y Especialidades",
       role: "Medicina Familiar / Nefrología",
       phone: "+34 600 000 000",
-      email: "medico.baeza@saluddeandalucia.es"
+      email: "consulta.medica@metavital.fans"
     };
 
     function updateDoctorUI() {
@@ -5673,7 +5674,7 @@
         "*METAVITAL - INFORME CLÍNICO MENSUAL DE EVOLUCIÓN*",
         "📅 *Período:* Balance Mensual (" + currentMonth + ")",
         "👤 *Paciente:* " + patient.fullName + " (" + patient.age + " años • " + patient.heightCm + " cm)",
-        "📍 *Centro:* " + doctor.center + " • Baeza (Jaén)",
+        "📍 *Centro:* " + doctor.center,
         "👨‍⚕️ *Facultativo Asignado:* " + doctor.name,
         "",
         "📊 *1. CONTROL PONDERAL E IMC*",
@@ -6119,7 +6120,7 @@
 
       const allText = (des + " " + com + " " + cen).toLowerCase();
 
-      // Clinical dictionaries for Ramon (ERC 3a K+ 5.5, TG 346, DM2, HTA)
+      // Clinical dictionaries (perfil clínico metabólico y renal)
       const potassiumRisks = [
         {word: 'plátano', name: 'Plátano', why: 'Muy rico en potasio libre. Con tu potasio en 5.5 mEq/L puede inducir hiperpotasemia severa.'},
         {word: 'platano', name: 'Plátano', why: 'Muy rico en potasio libre. Con tu potasio en 5.5 mEq/L puede inducir hiperpotasemia severa.'},
@@ -6210,7 +6211,7 @@
       if (totalAlerts === 0) {
         statusBadge = '<span class="badge" style="background:#16A34A; font-size:11px;">🟢 DIETA 100% COMPATIBLE Y PROTECTORA</span>';
         statusColor = '#15803D';
-        statusSummary = '¡Enhorabuena, Ramón! Tu menú de hoy se alinea a la perfección con la pauta del Dr. Cobo Fernández. Protege tu filtrado renal (FG 42), mantiene el potasio bajo control (<5.5 mEq/L) y ayuda a bajar triglicéridos y glucosa.';
+        statusSummary = '¡Enhorabuena, Carlos! Tu menú de hoy se alinea a la perfección con la pauta médica preventiva. Protege tu filtrado renal, mantiene el potasio bajo control y ayuda a regular glucosa y peso.';
       } else if (totalAlerts <= 2 && detectedK.length === 0) {
         statusBadge = '<span class="badge" style="background:#F59E0B; font-size:11px;">🟡 ATENCIÓN: AJUSTES REQUERIDOS</span>';
         statusColor = '#B45309';
@@ -7071,12 +7072,12 @@
 
           <!-- Paciente Info Box -->
           <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px 12px; margin-bottom:12px;">
-            <div style="font-size:13px; font-weight:800; color:#0F172A;" id="rep-disp-name">PACIENTE: RAMÓN MUÑOZ MARTÍNEZ</div>
+            <div style="font-size:13px; font-weight:800; color:#0F172A;" id="rep-disp-name">PACIENTE: CARLOS GÓMEZ NAVARRO</div>
             <div style="font-size:11.5px; color:#475569; margin-top:2px;" id="rep-disp-meta">
-              Edad: 63 años • Estatura: 165 cm • Peso: 101.5 kg • IMC: 37.28 (Obesidad Grado II)
+              Edad: 58 años • Estatura: 172 cm • Peso: 78.5 kg • IMC: 26.54 (Sobrepeso Leve)
             </div>
             <div style="font-size:11px; color:#0369A1; margin-top:3px; font-weight:600;" id="rep-disp-doc">
-              Médico: Dr. Nicolás Cobo Fernández • C.S. Baeza (Distrito Jaén Nordeste)
+              Médico: Dra. Elena Morales Castillo • Centro de Salud y Especialidades
             </div>
           </div>
 
@@ -7239,13 +7240,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.28.1';
+        const CURRENT_VERSION = 'v2.29.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.28.1') {
+                if (k !== 'metavital-cache-v2.29.0') {
                   caches.delete(k);
                 }
               });
