@@ -2110,27 +2110,32 @@
           <div style="background: #FFFBEB; border: 1px solid #FDE68A; border-radius: 8px; padding: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
               <strong style="color: #B45309; font-size: 11.5px;">☀️ 1. Desayuno Real:</strong>
-              <small style="color: #92400E; font-size: 10px;">¿Qué has tomado esta mañana?</small>
+              <span id="badge-kcal-desayuno" style="font-size: 10px; font-weight: 800; background: #FEF3C7; color: #92400E; padding: 2px 6px; border-radius: 4px; border: 1px solid #FCD34D;">0 kcal</span>
             </div>
-            <textarea id="diet-real-desayuno" rows="2" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px; font-size: 11.5px; box-sizing: border-box; font-family: inherit; resize: vertical;" placeholder="Ej: Tostada de pan integral con AOVE de Jaén y café descafeinado solo..."></textarea>
+            <textarea id="diet-real-desayuno" oninput="handleRealDietInput()" rows="2" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px; font-size: 11.5px; box-sizing: border-box; font-family: inherit; resize: vertical;" placeholder="Ej: Taza de 250 ml de leche semidesnatada con café y colacao..."></textarea>
           </div>
 
           <!-- 2. Comida Real -->
           <div style="background: #F0F9FF; border: 1px solid #BAE6FD; border-radius: 8px; padding: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
               <strong style="color: #0369A1; font-size: 11.5px;">🍲 2. Comida / Almuerzo Real:</strong>
-              <small style="color: #0C4A6E; font-size: 10px;">Plato principal y bebida</small>
+              <span id="badge-kcal-comida" style="font-size: 10px; font-weight: 800; background: #E0F2FE; color: #0369A1; padding: 2px 6px; border-radius: 4px; border: 1px solid #7DD3FC;">0 kcal</span>
             </div>
-            <textarea id="diet-real-comida" rows="2" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px; font-size: 11.5px; box-sizing: border-box; font-family: inherit; resize: vertical;" placeholder="Ej: Lomo de salmón fresco con brócoli al vapor y limón, agua..."></textarea>
+            <textarea id="diet-real-comida" oninput="handleRealDietInput()" rows="2" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px; font-size: 11.5px; box-sizing: border-box; font-family: inherit; resize: vertical;" placeholder="Ej: Lomo de salmón fresco con brócoli al vapor y patata cocida..."></textarea>
           </div>
 
           <!-- 3. Cena Real -->
           <div style="background: #F5F3FF; border: 1px solid #DDD6FE; border-radius: 8px; padding: 8px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
               <strong style="color: #6D28D9; font-size: 11.5px;">🌙 3. Cena Real:</strong>
-              <small style="color: #5B21B6; font-size: 10px;">Cena y postre</small>
+              <span id="badge-kcal-cena" style="font-size: 10px; font-weight: 800; background: #EDE9FE; color: #6D28D9; padding: 2px 6px; border-radius: 4px; border: 1px solid #C4B5FD;">0 kcal</span>
             </div>
-            <textarea id="diet-real-cena" rows="2" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px; font-size: 11.5px; box-sizing: border-box; font-family: inherit; resize: vertical;" placeholder="Ej: Crema de calabacín casera (doble hervor), tortilla francesa y compota de manzana asada..."></textarea>
+            <textarea id="diet-real-cena" oninput="handleRealDietInput()" rows="2" style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 6px; font-size: 11.5px; box-sizing: border-box; font-family: inherit; resize: vertical;" placeholder="Ej: Crema de calabacín casera, tortilla francesa y manzana asada..."></textarea>
+          </div>
+
+          <!-- PANEL EN VIVO: CÁLCULO DE CALORÍAS REALES & COMPARACIÓN CON LA META -->
+          <div id="real-diet-calories-summary" style="background: #FFFFFF; border: 1.5px solid #BAE6FD; border-radius: 10px; padding: 10px 12px; margin-top: 4px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);">
+            <!-- Inyectado por updateRealDietCalorieDisplay() -->
           </div>
         </div>
 
@@ -3769,6 +3774,12 @@
           if (typeof updateClinicalEvolutionComments === 'function') updateClinicalEvolutionComments();
           if (typeof renderEvolutionChart === 'function') renderEvolutionChart();
           if (typeof renderMeasurementHistory === 'function') renderMeasurementHistory();
+        }, 50);
+      } else if (tabId === 'tab-nutricion') {
+        setTimeout(function() {
+          if (typeof loadDietDayInputs === 'function') loadDietDayInputs();
+          if (typeof updateRealDietCalorieDisplay === 'function') updateRealDietCalorieDisplay();
+          if (typeof renderSelectedDayView === 'function') renderSelectedDayView();
         }, 50);
       }
       document.querySelectorAll('.tab-view').forEach(el => el.style.display = 'none');
@@ -5624,6 +5635,228 @@
       initSupabase();
     }
 
+    
+    // ========================================================
+    // MOTOR DE CÁLCULO CALÓRICO Y AUTO-GUARDADO DE INGESTA REAL
+    // ========================================================
+    function handleRealDietInput() {
+      // 1. Guardar de forma inmediata en localStorage para no perder nada
+      const des = (document.getElementById('diet-real-desayuno').value || '');
+      const com = (document.getElementById('diet-real-comida').value || '');
+      const cen = (document.getElementById('diet-real-cena').value || '');
+
+      const logs = getDietStorage();
+      if (!logs[currentDietDay]) logs[currentDietDay] = {};
+      logs[currentDietDay].desayuno = des;
+      logs[currentDietDay].comida = com;
+      logs[currentDietDay].cena = cen;
+      logs[currentDietDay].lastModified = new Date().toISOString();
+      saveDietStorage(logs);
+
+      // 2. Recalcular calorías estimadas en tiempo real
+      updateRealDietCalorieDisplay();
+    }
+
+    // Diccionario de ingredientes y estimación calórica inteligente
+    const CALORIE_LEXICON = [
+      // Lácteos y bebidas
+      { keywords: ['leche entera'], baseKcal: 150, unit: 'vaso/taza', grams: 250 },
+      { keywords: ['leche semidesnatada', 'semi', 'semidesnatada'], baseKcal: 115, unit: 'vaso/taza', grams: 250 },
+      { keywords: ['leche desnatada', 'desnatada'], baseKcal: 85, unit: 'vaso/taza', grams: 250 },
+      { keywords: ['leche de almendra', 'bebida de almendra'], baseKcal: 45, unit: 'vaso', grams: 200 },
+      { keywords: ['leche de soja', 'bebida de soja'], baseKcal: 75, unit: 'vaso', grams: 200 },
+      { keywords: ['leche de avena', 'bebida de avena'], baseKcal: 90, unit: 'vaso', grams: 200 },
+      { keywords: ['leche'], baseKcal: 115, unit: 'vaso', grams: 250 },
+      { keywords: ['colacao', 'cola cao', 'nesquik', 'cacao en polvo'], baseKcal: 55, unit: 'cucharada', grams: 15 },
+      { keywords: ['cafe', 'café', 'descafeinado'], baseKcal: 5, unit: 'taza', grams: 50 },
+      { keywords: ['sacarina', 'edulcorante', 'stevia'], baseKcal: 0, unit: 'pizca', grams: 1 },
+      { keywords: ['azucar', 'azúcar'], baseKcal: 45, unit: 'cucharada/sobre', grams: 10 },
+      { keywords: ['miel'], baseKcal: 65, unit: 'cucharada', grams: 20 },
+      
+      // Panes, cereales y granos
+      { keywords: ['avena', 'copos de avena', 'gachas'], baseKcal: 160, unit: 'porción', grams: 45 },
+      { keywords: ['tostada integral', 'pan integral', 'centeno', 'pan 100% integral'], baseKcal: 140, unit: 'rebanada', grams: 55 },
+      { keywords: ['tostada', 'pan blanco', 'rebanada de pan', 'pan'], baseKcal: 135, unit: 'porción', grams: 50 },
+      { keywords: ['picos', 'colines', 'biscotes'], baseKcal: 85, unit: 'ración', grams: 25 },
+      { keywords: ['galletas', 'galleta'], baseKcal: 110, unit: '2-3 unidades', grams: 25 },
+      { keywords: ['tortitas', 'tortita de avena'], baseKcal: 150, unit: 'unidad', grams: 60 },
+      { keywords: ['arroz integral', 'arroz'], baseKcal: 180, unit: 'plato cocido', grams: 140 },
+      { keywords: ['pasta', 'fideos', 'espaguetis', 'macarrones'], baseKcal: 200, unit: 'plato cocido', grams: 140 },
+
+      // Grasas y aceites
+      { keywords: ['aceite de oliva', 'aove', 'aceite'], baseKcal: 110, unit: 'cucharada', grams: 12 },
+      { keywords: ['mantequilla', 'margarina'], baseKcal: 90, unit: 'porción', grams: 12 },
+      { keywords: ['nueces', 'frutos secos', 'almendras'], baseKcal: 110, unit: 'puñadito', grams: 18 },
+      { keywords: ['lino', 'chia', 'chía', 'semillas'], baseKcal: 60, unit: 'cucharadita', grams: 12 },
+
+      // Proteínas: carnes, pescados, huevos
+      { keywords: ['salmon', 'salmón'], baseKcal: 310, unit: 'lomo', grams: 160 },
+      { keywords: ['atun', 'atún', 'caballa', 'sardinas'], baseKcal: 240, unit: 'porción', grams: 140 },
+      { keywords: ['merluza', 'pescado blanco', 'dorada', 'lubina', 'lenguado', 'bacalao', 'gallo'], baseKcal: 150, unit: 'filete/lomo', grams: 170 },
+      { keywords: ['sepia', 'calamar', 'gambas', 'langostinos'], baseKcal: 120, unit: 'ración', grams: 150 },
+      { keywords: ['pavo', 'pechuga de pavo'], baseKcal: 160, unit: 'filete', grams: 140 },
+      { keywords: ['pollo', 'pechuga de pollo'], baseKcal: 190, unit: 'pechuga', grams: 150 },
+      { keywords: ['conejo'], baseKcal: 220, unit: 'ración magra', grams: 160 },
+      { keywords: ['ternera', 'filete de ternera'], baseKcal: 210, unit: 'filete', grams: 140 },
+      { keywords: ['huevo', 'huevo poché', 'huevo cocido', 'huevo frito'], baseKcal: 80, unit: '1 unidad', grams: 55 },
+      { keywords: ['claras', 'claras de huevo'], baseKcal: 45, unit: '2-3 claras', grams: 90 },
+      { keywords: ['tortilla francesa', 'tortilla'], baseKcal: 140, unit: 'tortilla', grams: 110 },
+      { keywords: ['jamon york', 'jamón cocido', 'pavo en lonchas'], baseKcal: 50, unit: '2 lonchas', grams: 45 },
+      { keywords: ['queso fresco', 'queso 0%', 'queso de burgos'], baseKcal: 65, unit: 'porción', grams: 70 },
+      { keywords: ['queso curado', 'queso semicurado', 'queso'], baseKcal: 130, unit: 'porción', grams: 35 },
+      { keywords: ['yogur natural', 'yogur desnatado', 'yogur'], baseKcal: 55, unit: 'tarrina', grams: 125 },
+
+      // Legumbres y tubérculos
+      { keywords: ['lentejas', 'guiso de lentejas'], baseKcal: 210, unit: 'plato cocido', grams: 180 },
+      { keywords: ['garbanzos', 'guiso de garbanzos'], baseKcal: 230, unit: 'plato cocido', grams: 170 },
+      { keywords: ['alubias', 'judías blancas'], baseKcal: 210, unit: 'plato cocido', grams: 170 },
+      { keywords: ['patata cocida', 'patata hervida', 'patatas cocidas', 'patata'], baseKcal: 110, unit: 'patata mediana', grams: 130 },
+      { keywords: ['pure de patata', 'puré de patata'], baseKcal: 130, unit: 'ración', grams: 140 },
+      { keywords: ['patatas fritas'], baseKcal: 280, unit: 'ración frita', grams: 100 },
+
+      // Hortalizas y verduras
+      { keywords: ['crema de calabacin', 'crema de verduras', 'crema'], baseKcal: 85, unit: 'plato hondo', grams: 250 },
+      { keywords: ['sopa de verduras', 'caldo'], baseKcal: 40, unit: 'tazón', grams: 250 },
+      { keywords: ['brocoli', 'brócoli'], baseKcal: 60, unit: 'ración al vapor', grams: 180 },
+      { keywords: ['calabacin', 'calabacín'], baseKcal: 40, unit: 'ración', grams: 160 },
+      { keywords: ['judias verdes', 'judías verdes'], baseKcal: 55, unit: 'ración hervida', grams: 170 },
+      { keywords: ['espinacas', 'acelgas'], baseKcal: 45, unit: 'ración hervida', grams: 160 },
+      { keywords: ['ensalada', 'lechuga', 'canónigos', 'tomate'], baseKcal: 50, unit: 'plato mediano', grams: 150 },
+      { keywords: ['champinones', 'champiñones', 'setas'], baseKcal: 35, unit: 'ración', grams: 120 },
+
+      // Frutas
+      { keywords: ['manzana asada', 'manzana'], baseKcal: 65, unit: 'pieza', grams: 140 },
+      { keywords: ['pera al horno', 'pera cocida', 'pera'], baseKcal: 65, unit: 'pieza', grams: 140 },
+      { keywords: ['platano', 'plátano'], baseKcal: 95, unit: 'pieza', grams: 100 },
+      { keywords: ['naranja', 'mandarina'], baseKcal: 55, unit: 'pieza', grams: 130 },
+      { keywords: ['compota de manzana', 'compota'], baseKcal: 70, unit: 'tarrina casera', grams: 120 }
+    ];
+
+    function estimateMealCalories(text) {
+      if (!text || !text.trim()) return { totalKcal: 0, matchedItems: [] };
+      const norm = text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      
+      let total = 0;
+      let matched = [];
+      let foundKeywords = new Set();
+
+      CALORIE_LEXICON.forEach(entry => {
+        for (let kw of entry.keywords) {
+          const cleanKw = kw.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+          if (norm.includes(cleanKw) && !foundKeywords.has(entry)) {
+            // Factor de cantidad si dice 250ml o 2 vasos o 2 cucharadas
+            let multiplier = 1;
+            if (cleanKw === 'leche' || cleanKw.includes('leche')) {
+              if (norm.includes('250') || norm.includes('taza') || norm.includes('tazn')) multiplier = 1;
+              else if (norm.includes('500') || norm.includes('medio litro')) multiplier = 2;
+            }
+            const kcal = Math.round(entry.baseKcal * multiplier);
+            total += kcal;
+            matched.push({ name: entry.keywords[0], kcal: kcal, grams: entry.grams * multiplier, unit: entry.unit });
+            foundKeywords.add(entry);
+            break;
+          }
+        }
+      });
+
+      // Si no reconoci nada pero hay texto, aplicar estimacin prudencial basada en longitud de comida
+      if (total === 0 && text.trim().length > 5) {
+        total = 150; // Estimacin basal mnima
+        matched.push({ name: 'Ingesta registrada', kcal: 150, grams: 100, unit: 'porcin' });
+      }
+
+      return { totalKcal: total, matchedItems: matched };
+    }
+
+    function updateRealDietCalorieDisplay() {
+      const des = (document.getElementById('diet-real-desayuno').value || '');
+      const com = (document.getElementById('diet-real-comida').value || '');
+      const cen = (document.getElementById('diet-real-cena').value || '');
+
+      const cDes = estimateMealCalories(des);
+      const cCom = estimateMealCalories(com);
+      const cCen = estimateMealCalories(cen);
+
+      // Actualizar badges individuales
+      const bDes = document.getElementById('badge-kcal-desayuno');
+      if (bDes) bDes.innerText = `~${cDes.totalKcal} kcal`;
+      const bCom = document.getElementById('badge-kcal-comida');
+      if (bCom) bCom.innerText = `~${cCom.totalKcal} kcal`;
+      const bCen = document.getElementById('badge-kcal-cena');
+      if (bCen) bCen.innerText = `~${cCen.totalKcal} kcal`;
+
+      const totalReal = cDes.totalKcal + cCom.totalKcal + cCen.totalKcal;
+      const targetKcal = 1650; // Meta diaria de prdida de peso
+      const pct = Math.min(130, Math.round((totalReal / targetKcal) * 100));
+
+      const box = document.getElementById('real-diet-calories-summary');
+      if (!box) return;
+
+      if (totalReal === 0) {
+        box.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-size:10.5px; font-weight:800; color:#0369A1; text-transform:uppercase;">📊 Contador Calórico Diario:</span>
+              <div style="font-size:12px; color:#64748B;">Escribe lo que has comido para ver el cálculo automático.</div>
+            </div>
+            <span style="font-size:10px; color:#10B981; font-weight:700;">💾 Guardado automático</span>
+          </div>
+        `;
+        return;
+      }
+
+      let statusMsg = '';
+      let statusColor = '#0284C7';
+      let statusBg = '#F0F9FF';
+      let statusBorder = '#BAE6FD';
+
+      if (totalReal >= 1350 && totalReal <= 1750) {
+        statusMsg = '✅ <strong>DENTRO DE LO RECOMENDADO:</strong> Tu ingesta está en el rango óptimo de déficit (~1.650 kcal) para perder ~2,5 kg al mes sin efecto rebote ni sobrecargar el riñón.';
+        statusColor = '#15803D';
+        statusBg = '#F0FDF4';
+        statusBorder = '#86EFAC';
+      } else if (totalReal > 1750) {
+        const extra = totalReal - targetKcal;
+        statusMsg = `⚠️ <strong>POR ENCIMA DE LO RECOMENDADO (+${extra} kcal):</strong> Has superado el presupuesto diario de 1.650 kcal. Para no frenar la pérdida de peso, ajusta las porciones en la siguiente toma.`;
+        statusColor = '#B45309';
+        statusBg = '#FFFBEB';
+        statusBorder = '#FDE68A';
+      } else {
+        const remaining = targetKcal - totalReal;
+        statusMsg = `ℹ️ <strong>INGESTA PARCIAL:</strong> Llevas ~${totalReal} kcal registradas hoy. Te quedan ~${remaining} kcal disponibles de tu presupuesto de pérdida de peso.`;
+        statusColor = '#0369A1';
+        statusBg = '#EFF6FF';
+        statusBorder = '#BFDBFE';
+      }
+
+      box.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;">
+          <div>
+            <span style="font-size:10.5px; font-weight:800; color:#0369A1; text-transform:uppercase; letter-spacing:0.3px;">🔥 Calorías Reales Ingeridas Hoy:</span>
+            <div style="font-size:22px; font-weight:900; color:#0F172A; line-height:1.1;">
+              ~${totalReal.toLocaleString('es-ES')} <span style="font-size:13px; color:#64748B; font-weight:700;">/ 1.650 kcal recomendadas</span>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:10px; font-weight:800; background:#ECFDF5; color:#166534; padding:2px 7px; border-radius:4px; border:1px solid #86EFAC;">
+              💾 Guardado activo
+            </span>
+            <div style="font-size:11px; font-weight:800; color:#0284C7; margin-top:2px;">${pct}% consumido</div>
+          </div>
+        </div>
+
+        <!-- Barra de progreso calrico -->
+        <div style="background:#E2E8F0; height:8px; border-radius:999px; overflow:hidden; margin-bottom:8px;">
+          <div style="background:${totalReal > 1750 ? '#F59E0B' : 'linear-gradient(90deg, #0284C7, #10B981)'}; width:${Math.min(100, pct)}%; height:100%; border-radius:999px; transition:width 0.4s ease;"></div>
+        </div>
+
+        <!-- Diagnstico clnico de cumplimiento -->
+        <div style="background:${statusBg}; border:1px solid ${statusBorder}; color:${statusColor}; border-radius:8px; padding:7px 10px; font-size:11px; line-height:15px;">
+          ${statusMsg}
+        </div>
+      `;
+    }
+
     function loadDietDayInputs() {
       const logs = getDietStorage();
       const dayData = logs[currentDietDay] || recommendedMenusByDay[currentDietDay] || {desayuno: '', comida: '', cena: ''};
@@ -5638,6 +5871,7 @@
       } else {
         box.style.display = 'none';
       }
+      updateRealDietCalorieDisplay();
     }
 
     function prefillRecommendedMenuDay() {
@@ -5821,6 +6055,29 @@
       html += '</div>';
 
       html += '<p style="color:#1E293B; margin-bottom:10px; font-weight:600;">' + statusSummary + '</p>';
+      // Resumen Calórico en Auditoría
+      const cDes = estimateMealCalories(des);
+      const cCom = estimateMealCalories(com);
+      const cCen = estimateMealCalories(cen);
+      const totalCal = cDes.totalKcal + cCom.totalKcal + cCen.totalKcal;
+      const targetCal = 1650;
+
+      html += '<div style="background:#F0F9FF; border:1.5px solid #BAE6FD; border-radius:8px; padding:10px; margin-bottom:10px;">';
+      html += '  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">';
+      html += '    <strong style="color:#0369A1; font-size:12px;">⚖️ Balance Calórico del Día:</strong>';
+      html += '    <span style="font-weight:900; font-size:13px; color:#0C4A6E;">~' + totalCal.toLocaleString('es-ES') + ' / ' + targetCal.toLocaleString('es-ES') + ' kcal</span>';
+      html += '  </div>';
+      html += '  <div style="font-size:10.5px; color:#334155; margin-bottom:4px;">';
+      html += '    • Desayuno: <strong>~' + cDes.totalKcal + ' kcal</strong> | Comida: <strong>~' + cCom.totalKcal + ' kcal</strong> | Cena: <strong>~' + cCen.totalKcal + ' kcal</strong>';
+      html += '  </div>';
+      if (totalCal >= 1350 && totalCal <= 1750) {
+        html += '  <div style="font-size:10.5px; font-weight:800; color:#15803D; background:#DCFCE7; padding:3px 7px; border-radius:4px; display:inline-block;">✓ Cumples el déficit calórico para perder peso (~2,5 kg/mes)</div>';
+      } else if (totalCal > 1750) {
+        html += '  <div style="font-size:10.5px; font-weight:800; color:#B45309; background:#FEF3C7; padding:3px 7px; border-radius:4px; display:inline-block;">⚠️ Superas la pauta recomendada en +' + (totalCal - targetCal) + ' kcal</div>';
+      } else {
+        html += '  <div style="font-size:10.5px; font-weight:800; color:#0369A1; background:#E0F2FE; padding:3px 7px; border-radius:4px; display:inline-block;">ℹ️ Llevas ~' + totalCal + ' kcal registradas (Restan ' + (targetCal - totalCal) + ' kcal para completar tu meta)</div>';
+      }
+      html += '</div>';
 
       // Detalle de alertas si las hay
       if (detectedK.length > 0) {
@@ -6705,13 +6962,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.24.0';
+        const CURRENT_VERSION = 'v2.25.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.24.0') {
+                if (k !== 'metavital-cache-v2.25.0') {
                   caches.delete(k);
                 }
               });
