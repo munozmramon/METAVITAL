@@ -1332,6 +1332,11 @@
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
     window.addEventListener('DOMContentLoaded', () => {
       try {
+        if (localStorage.getItem('metavital_active_profile') === 'carlos_gomez') {
+          if (typeof applyCarlosGomezFreeProfile === 'function') applyCarlosGomezFreeProfile();
+        }
+      } catch(e) {}
+      try {
         if (typeof initStepsModule === 'function') initStepsModule();
       } catch(e) {}
       try {
@@ -1343,14 +1348,6 @@
         }
       } catch(e) {}
       try {
-        // Si el usuario prueba con credenciales demo o plan free
-        if (email.toLowerCase().includes('gratis') || email.toLowerCase().includes('demo') || email.toLowerCase().includes('prueba') || email.endsWith('@metavital.fans')) {
-          loginAsFreeDemoUser();
-          btn.disabled = false;
-          btn.textContent = 'Crear Mi Cuenta Gratis';
-          return;
-        }
-
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('auth') === 'open' || urlParams.get('login') === '1') {
           setTimeout(() => {
@@ -1428,7 +1425,7 @@
       <div style="display:flex; align-items:center; gap:8px;">
         <img src="/logo.png" alt="METAVITAL Logo" onclick="openCoverModal()" class="modern-hdr-logo" title="Ver Portada Oficial METAVITAL">
         <div class="header-user-group" onclick="openProfileModal()" style="cursor:pointer;" title="Ver Perfil de Salud">
-          <div class="user-avatar-circle">
+          <div class="user-avatar-circle" id="hdr-user-avatar">
             RM
             <div class="online-badge"></div>
           </div>
@@ -2734,12 +2731,12 @@
 
           <!-- Acceso Rápido como Usuario Gratuito de Prueba -->
           <div style="margin-top:14px; border-top:1px dashed #CBD5E1; padding-top:12px; text-align:center;">
-            <span style="font-size:11px; font-weight:800; color:#0369A1; display:block; margin-bottom:6px;">🚀 ¿Quieres probar el Plan Gratuito sin usar tus datos?</span>
+            <span style="font-size:11px; font-weight:800; color:#0369A1; display:block; margin-bottom:6px;">🚀 Probar como Carlos Gómez (Usuario Gratuito):</span>
             <button type="button" onclick="loginAsFreeDemoUser()" style="background:#F0FDF4; border:1.5px solid #86EFAC; color:#166534; font-weight:800; font-size:12px; padding:9px 12px; border-radius:8px; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(22,163,74,0.15);">
-              <span>🟢</span> <span>Entrar como Usuario Gratuito (1 Clic)</span>
+              <span>👤</span> <span>Entrar como Carlos Gómez Navarro (1 Clic)</span>
             </button>
             <div style="font-size:10.5px; color:#64748B; margin-top:5px; line-height:14px;">
-              O introduce: <strong>gratis@metavital.fans</strong> • clave: <strong>gratis123</strong>
+              Usuario ficticio: <strong>carlos.gomez@metavital.fans</strong> • Clave: <strong>gratis123</strong>
             </div>
           </div>
         </div>
@@ -6587,22 +6584,41 @@
       }
     }
 
-    function loginAsFreeDemoUser() {
+    function applyCarlosGomezFreeProfile() {
+      patient.firstName = "Carlos";
+      patient.lastName = "Gómez Navarro";
+      patient.fullName = "Carlos Gómez Navarro";
+      
+      const greetingEl = document.getElementById('hdr-user-greeting');
+      if (greetingEl) greetingEl.textContent = 'Hola, Carlos';
+
+      const avatarEl = document.getElementById('hdr-user-avatar');
+      if (avatarEl) avatarEl.innerHTML = 'CG<div class="online-badge"></div>';
+
+      const cardName = document.getElementById('card-fullname');
+      if (cardName) cardName.innerText = 'Carlos Gómez Navarro';
+
       localStorage.setItem('metavital_user_plan', 'free');
+      localStorage.setItem('metavital_active_profile', 'carlos_gomez');
+
       const demoUser = {
-        id: 'demo-free-user-001',
-        email: 'gratis@metavital.fans',
-        user_metadata: { full_name: 'Usuario Plan Gratuito (Demo)', plan: 'free' }
+        id: 'carlos-gomez-free-001',
+        email: 'carlos.gomez@metavital.fans',
+        user_metadata: { full_name: 'Carlos Gómez Navarro', plan: 'free' }
       };
       currentUserSession = demoUser;
       onUserAuthenticated(demoUser);
+    }
+
+    function loginAsFreeDemoUser() {
+      applyCarlosGomezFreeProfile();
       closeAuthModal();
 
       const banner = document.getElementById('clinical-alert-banner');
       if (banner) {
         banner.classList.add('show');
-        document.getElementById('alert-title').innerText = '🟢 SESIÓN INICIADA: PLAN GRATUITO';
-        document.getElementById('alert-msg').innerText = 'Has entrado con el Plan Gratuito de prueba. Puedes registrar tus 4 constantes a mano, usar el podómetro con 30 días de historial y seguir el menú de iniciación.';
+        document.getElementById('alert-title').innerText = '🟢 SESIÓN: CARLOS GÓMEZ (PLAN GRATUITO)';
+        document.getElementById('alert-msg').innerText = 'Has iniciado sesión como Carlos Gómez Navarro. Tienes el Plan Gratuito activo (sin privilegios de administrador ni superadmin).';
         setTimeout(() => banner.classList.remove('show'), 4500);
       }
     }
@@ -6658,7 +6674,7 @@
 
       try {
         // Acceso demo para testing del Plan Gratuito sin necesidad de email real
-        if (email.toLowerCase().includes('gratis') || email.toLowerCase().includes('demo') || email.toLowerCase().includes('prueba') || email === 'gratis@metavital.fans') {
+        if (email.toLowerCase().includes('carlos') || email.toLowerCase().includes('gratis') || email.toLowerCase().includes('demo') || email.toLowerCase().includes('prueba') || email === 'carlos.gomez@metavital.fans') {
           loginAsFreeDemoUser();
           btn.disabled = false;
           btn.textContent = '🚀 Entrar a Mi Cuenta';
@@ -6705,6 +6721,13 @@
       msg.style.display = 'none';
 
       try {
+        // Registro demo para testing del Plan Gratuito sin verificaciones
+        if (email.toLowerCase().includes('carlos') || email.toLowerCase().includes('gratis') || email.toLowerCase().includes('demo') || email.toLowerCase().includes('prueba') || email.endsWith('@metavital.fans')) {
+          loginAsFreeDemoUser();
+          btn.disabled = false;
+          btn.textContent = '✨ Crear Mi Cuenta de Paciente';
+          return;
+        }
         const urlParams = new URLSearchParams(window.location.search);
         const chosenPlan = urlParams.get('plan') || localStorage.getItem('metavital_user_plan') || 'free';
         localStorage.setItem('metavital_user_plan', chosenPlan);
@@ -7026,13 +7049,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.26.0';
+        const CURRENT_VERSION = 'v2.27.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.26.0') {
+                if (k !== 'metavital-cache-v2.27.0') {
                   caches.delete(k);
                 }
               });
