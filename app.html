@@ -1331,12 +1331,14 @@
 <script>
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
     window.addEventListener('DOMContentLoaded', () => {
-      try { checkPlanGates(); } catch(e){}
+      /* urlParams already defined */
       try {
-        if (localStorage.getItem('metavital_active_profile') === 'carlos_gomez') {
-          if (typeof applyCarlosGomezFreeProfile === 'function') applyCarlosGomezFreeProfile();
+        if (localStorage.getItem('metavital_active_profile') === 'carlos_gomez' || urlParams.get('user') === 'carlos') {
+          const targetPlan = urlParams.get('plan') || localStorage.getItem('metavital_user_plan') || 'essential';
+          if (typeof applyCarlosGomezProfile === 'function') applyCarlosGomezProfile(targetPlan);
         }
       } catch(e) {}
+      try { checkPlanGates(); } catch(e){}
       try {
         if (typeof initStepsModule === 'function') initStepsModule();
       } catch(e) {}
@@ -2793,14 +2795,19 @@
             </button>
           </form>
 
-          <!-- Acceso Rápido como Usuario Gratuito de Prueba -->
+          <!-- Acceso Rápido como Usuario de Prueba (Carlos Gómez) -->
           <div style="margin-top:14px; border-top:1px dashed #CBD5E1; padding-top:12px; text-align:center;">
-            <span style="font-size:11px; font-weight:800; color:#0369A1; display:block; margin-bottom:6px;">🚀 Probar como Carlos Gómez (Usuario Gratuito):</span>
-            <button type="button" onclick="loginAsFreeDemoUser()" style="background:#F0FDF4; border:1.5px solid #86EFAC; color:#166534; font-weight:800; font-size:12px; padding:9px 12px; border-radius:8px; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(22,163,74,0.15);">
-              <span>👤</span> <span>Entrar como Carlos Gómez Navarro (1 Clic)</span>
-            </button>
-            <div style="font-size:10.5px; color:#64748B; margin-top:5px; line-height:14px;">
-              Usuario ficticio: <strong>carlos.gomez@metavital.fans</strong> • Clave: <strong>gratis123</strong>
+            <span style="font-size:11px; font-weight:800; color:#0369A1; display:block; margin-bottom:8px;">🚀 Probar como Carlos Gómez Navarro (1 Clic):</span>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+              <button type="button" onclick="loginAsCarlosGomez('essential')" style="background:#F0FDFA; border:1.5px solid #99F6E4; color:#0F766E; font-weight:800; font-size:11.5px; padding:9px 6px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 6px rgba(13,148,136,0.15);">
+                <span>📋</span> <span>Plan 4,99 € (Esencial)</span>
+              </button>
+              <button type="button" onclick="loginAsCarlosGomez('free')" style="background:#F0FDF4; border:1.5px solid #86EFAC; color:#166534; font-weight:800; font-size:11.5px; padding:9px 6px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 6px rgba(22,163,74,0.15);">
+                <span>🟢</span> <span>Plan 0 € (Gratis)</span>
+              </button>
+            </div>
+            <div style="font-size:10.5px; color:#64748B; margin-top:6px; line-height:14px;">
+              Usuario: <strong>carlos.gomez@metavital.fans</strong> • Clave: <strong>gratis123</strong>
             </div>
           </div>
         </div>
@@ -6739,7 +6746,8 @@
       }
     }
 
-    function applyCarlosGomezFreeProfile() {
+    function applyCarlosGomezProfile(plan) {
+      if (!plan) plan = 'essential';
       patient.firstName = "Carlos";
       patient.lastName = "Gómez Navarro";
       patient.fullName = "Carlos Gómez Navarro";
@@ -6753,29 +6761,44 @@
       const cardName = document.getElementById('card-fullname');
       if (cardName) cardName.innerText = 'Carlos Gómez Navarro';
 
-      localStorage.setItem('metavital_user_plan', 'free');
+      localStorage.setItem('metavital_user_plan', plan);
       localStorage.setItem('metavital_active_profile', 'carlos_gomez');
 
       const demoUser = {
-        id: 'carlos-gomez-free-001',
+        id: 'carlos-gomez-001',
         email: 'carlos.gomez@metavital.fans',
-        user_metadata: { full_name: 'Carlos Gómez Navarro', plan: 'free' }
+        user_metadata: { full_name: 'Carlos Gómez Navarro', plan: plan }
       };
       currentUserSession = demoUser;
       onUserAuthenticated(demoUser);
+      if (typeof checkPlanGates === 'function') checkPlanGates();
     }
 
-    function loginAsFreeDemoUser() {
-      applyCarlosGomezFreeProfile();
+    function applyCarlosGomezFreeProfile() {
+      applyCarlosGomezProfile('essential');
+    }
+
+    function loginAsCarlosGomez(plan) {
+      if (!plan) plan = 'essential';
+      applyCarlosGomezProfile(plan);
       closeAuthModal();
 
       const banner = document.getElementById('clinical-alert-banner');
       if (banner) {
         banner.classList.add('show');
-        document.getElementById('alert-title').innerText = '🟢 SESIÓN: CARLOS GÓMEZ (PLAN GRATUITO)';
-        document.getElementById('alert-msg').innerText = 'Has iniciado sesión como Carlos Gómez Navarro. Tienes el Plan Gratuito activo (sin privilegios de administrador ni superadmin).';
-        setTimeout(() => banner.classList.remove('show'), 4500);
+        if (plan === 'essential') {
+          document.getElementById('alert-title').innerText = '📋 SESIÓN: CARLOS GÓMEZ (CONTROL ESENCIAL 4,99 €)';
+          document.getElementById('alert-msg').innerText = 'Has activado el Plan Control Esencial. La pestaña Semana (gráficas evolutivas) está desbloqueada. Nutrición, OCR y Doctor están reservados para Salud Integral (9,99 €).';
+        } else {
+          document.getElementById('alert-title').innerText = '🟢 SESIÓN: CARLOS GÓMEZ (PLAN GRATUITO)';
+          document.getElementById('alert-msg').innerText = 'Has iniciado sesión con el Plan Gratuito (registro diario y pasos de hoy).';
+        }
+        setTimeout(() => banner.classList.remove('show'), 5500);
       }
+    }
+
+    function loginAsFreeDemoUser() {
+      loginAsCarlosGomez('essential');
     }
 
     function switchAuthTab(tab) {
@@ -7231,13 +7254,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.28.0';
+        const CURRENT_VERSION = 'v2.28.1';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.28.0') {
+                if (k !== 'metavital-cache-v2.28.1') {
                   caches.delete(k);
                 }
               });
