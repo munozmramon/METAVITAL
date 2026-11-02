@@ -1918,22 +1918,7 @@
           </p>
         </div>
 
-        <!-- Asistente de Rotación de Insulina (Prevención Lipodistrofia) -->
-        <div style="background:#F8FAFC; border:1px solid #E2E8F0; padding:10px; border-radius:10px; margin-top:10px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-            <strong style="font-size:12.5px; color:#3730A3;">💉 Rotación de Insulina (Evitar bultos)</strong>
-            <span id="badge-quadrant-selected" class="badge" style="background:#4F46E5;">Cuadrante 2</span>
-          </div>
-          <p style="font-size:11px; color:#475569; margin-bottom:8px;">
-            El informe de Jaén advirtió no pinchar siempre en el mismo sitio para garantizar absorción uniforme:
-          </p>
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:6px;">
-            <button id="q-btn-1" class="btn-take" style="background:#F1F5F9; color:#334155; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(1, 'Abdomen Sup. Derecho')">1. Abd. Sup. Der.</button>
-            <button id="q-btn-2" class="btn-take" style="background:#4F46E5; color:#FFF; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(2, 'Abdomen Sup. Izquierdo')">2. Abd. Sup. Izq. ✓</button>
-            <button id="q-btn-3" class="btn-take" style="background:#F1F5F9; color:#334155; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(3, 'Abdomen Inf. Derecho')">3. Abd. Inf. Der.</button>
-            <button id="q-btn-4" class="btn-take" style="background:#F1F5F9; color:#334155; padding:6px; font-size:11px;" onclick="selectInsulinQuadrant(4, 'Abdomen Inf. Izquierdo')">4. Abd. Inf. Izq.</button>
-          </div>
-        </div>
+
 
         <!-- Botones de Acción Rápida -->
         <div style="display:flex; gap:8px; margin-top:12px;">
@@ -5462,7 +5447,7 @@
           doc.setFont('helvetica', 'normal');
           doc.text('1. PROHIBICION AINES: Cero Ibuprofeno/Enantyum por nefrotoxicidad; usar Paracetamol/Nolotil.', 18, 160);
           doc.text('2. SEGURIDAD POTASIO: Prohibida sal de potasio; tecnicas de remojo y doble coccion en verduras.', 18, 166);
-          doc.text('3. ROTACION INSULINA: Alternar cuadrantes para erradicar lipodistrofia e irregularidad glucemica.', 18, 172);
+          doc.text('3. ADHERENCIA TERAPEUTICA: Toma regular de la medicacion prescrita sin omisiones.', 18, 172);
           doc.text('4. EVOLUCION PONDERAL: Peso 78.5 kg [-4.0 kg descenso acumulado]. Enhorabuena.', 18, 178);
           doc.text('5. RITMO DE VIDA: Caminatas en llano 15 min posprandial. Ejercicio aeróbico moderado continuo.', 18, 184);
 
@@ -7233,13 +7218,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.30.0';
+        const CURRENT_VERSION = 'v2.31.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.30.0') {
+                if (k !== 'metavital-cache-v2.31.0') {
                   caches.delete(k);
                 }
               });
