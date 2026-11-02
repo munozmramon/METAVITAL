@@ -1343,6 +1343,14 @@
         }
       } catch(e) {}
       try {
+        // Si el usuario prueba con credenciales demo o plan free
+        if (email.toLowerCase().includes('gratis') || email.toLowerCase().includes('demo') || email.toLowerCase().includes('prueba') || email.endsWith('@metavital.fans')) {
+          loginAsFreeDemoUser();
+          btn.disabled = false;
+          btn.textContent = 'Crear Mi Cuenta Gratis';
+          return;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.get('auth') === 'open' || urlParams.get('login') === '1') {
           setTimeout(() => {
@@ -2576,6 +2584,22 @@
         </div>
       </div>
 
+      <!-- TARJETA: MI CUENTA DE PACIENTE & PLAN ACTIVO -->
+      <div class="card" style="background: linear-gradient(135deg, #F0F9FF 0%, #FFFFFF 100%); border: 1.5px solid #BAE6FD; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(2, 132, 199, 0.08);">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span style="font-size:16px;">🔐</span>
+              <strong style="color:#0369A1; font-size:13.5px;">Mi Cuenta & Plan</strong>
+            </div>
+            <span style="font-size:11px; color:#64748B;">Comprueba tu plan activo o cambia de usuario</span>
+          </div>
+          <button type="button" onclick="openAuthModal()" style="background:#0284C7; color:#FFF; border:none; padding:7px 12px; border-radius:8px; font-size:11px; font-weight:800; cursor:pointer;">
+            👤 Ver Mi Cuenta
+          </button>
+        </div>
+      </div>
+
       <!-- Tarjeta ALCER Jaén (Apoyo Renal) -->
       <div class="card" style="background:#F8FAFC; border:1px solid #CBD5E1;">
         <div class="card-header">
@@ -2708,11 +2732,15 @@
             </button>
           </form>
 
-          <!-- Acceso como Invitado / Demo -->
-          <div style="margin-top:12px; border-top:1px dashed #E2E8F0; padding-top:10px; text-align:center;">
-            <button type="button" onclick="closeAuthModal()" style="background:none; border:none; color:#64748B; font-size:11px; cursor:pointer; text-decoration:underline;">
-              Continuar en modo demostración local
+          <!-- Acceso Rápido como Usuario Gratuito de Prueba -->
+          <div style="margin-top:14px; border-top:1px dashed #CBD5E1; padding-top:12px; text-align:center;">
+            <span style="font-size:11px; font-weight:800; color:#0369A1; display:block; margin-bottom:6px;">🚀 ¿Quieres probar el Plan Gratuito sin usar tus datos?</span>
+            <button type="button" onclick="loginAsFreeDemoUser()" style="background:#F0FDF4; border:1.5px solid #86EFAC; color:#166534; font-weight:800; font-size:12px; padding:9px 12px; border-radius:8px; cursor:pointer; width:100%; display:flex; align-items:center; justify-content:center; gap:6px; box-shadow:0 2px 6px rgba(22,163,74,0.15);">
+              <span>🟢</span> <span>Entrar como Usuario Gratuito (1 Clic)</span>
             </button>
+            <div style="font-size:10.5px; color:#64748B; margin-top:5px; line-height:14px;">
+              O introduce: <strong>gratis@metavital.fans</strong> • clave: <strong>gratis123</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -6544,11 +6572,39 @@
     }
 
     function openAuthModal() {
-      document.getElementById('auth-modal').classList.add('active');
+      const m = document.getElementById('auth-modal');
+      if (m) {
+        m.classList.add('active');
+        m.style.display = 'flex';
+      }
     }
 
     function closeAuthModal() {
-      document.getElementById('auth-modal').classList.remove('active');
+      const m = document.getElementById('auth-modal');
+      if (m) {
+        m.classList.remove('active');
+        m.style.display = 'none';
+      }
+    }
+
+    function loginAsFreeDemoUser() {
+      localStorage.setItem('metavital_user_plan', 'free');
+      const demoUser = {
+        id: 'demo-free-user-001',
+        email: 'gratis@metavital.fans',
+        user_metadata: { full_name: 'Usuario Plan Gratuito (Demo)', plan: 'free' }
+      };
+      currentUserSession = demoUser;
+      onUserAuthenticated(demoUser);
+      closeAuthModal();
+
+      const banner = document.getElementById('clinical-alert-banner');
+      if (banner) {
+        banner.classList.add('show');
+        document.getElementById('alert-title').innerText = '🟢 SESIÓN INICIADA: PLAN GRATUITO';
+        document.getElementById('alert-msg').innerText = 'Has entrado con el Plan Gratuito de prueba. Puedes registrar tus 4 constantes a mano, usar el podómetro con 30 días de historial y seguir el menú de iniciación.';
+        setTimeout(() => banner.classList.remove('show'), 4500);
+      }
     }
 
     function switchAuthTab(tab) {
@@ -6601,6 +6657,14 @@
       msg.style.display = 'none';
 
       try {
+        // Acceso demo para testing del Plan Gratuito sin necesidad de email real
+        if (email.toLowerCase().includes('gratis') || email.toLowerCase().includes('demo') || email.toLowerCase().includes('prueba') || email === 'gratis@metavital.fans') {
+          loginAsFreeDemoUser();
+          btn.disabled = false;
+          btn.textContent = '🚀 Entrar a Mi Cuenta';
+          return;
+        }
+
         const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
         if (error) {
           msg.style.display = 'block';
@@ -6962,13 +7026,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.25.0';
+        const CURRENT_VERSION = 'v2.26.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.25.0') {
+                if (k !== 'metavital-cache-v2.26.0') {
                   caches.delete(k);
                 }
               });
