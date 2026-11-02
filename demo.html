@@ -2661,6 +2661,7 @@
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
 
     window.addEventListener('DOMContentLoaded', () => {
+      try { if (typeof checkPlanGates === 'function') checkPlanGates(); } catch(e){}
 
       try {
         const dateEl = document.querySelector('.user-date');
@@ -3134,6 +3135,23 @@
 
             <!-- PÁGINA 2: SEMANA (EVOLUCIÓN) -->
     <div id="tab-semana" class="screen-content tab-view" style="display:none;">
+      <!-- GATE DE BLOQUEO PLAN GRATUITO: SEMANA -->
+      <div id="semana-plan-gate" style="display:none; margin-bottom:14px; background:#FFFBEB; border:2px solid #F59E0B; border-radius:14px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(245,158,11,0.15);">
+        <div style="font-size:26px; margin-bottom:4px;">🔒 📈</div>
+        <h3 style="font-size:15px; font-weight:900; color:#92400E; margin:0 0 6px 0;">Gráficas de Evolución Temporal Bloqueadas</h3>
+        <p style="font-size:12px; color:#78350F; line-height:16px; margin:0 0 12px 0;">
+          Tu <strong>Plan Gratuito</strong> solo permite registrar las tomas de hoy. Para ver las curvas de evolución de tensión, glucosa y peso necesitas el <strong>Plan Control Esencial (4,99 €/mes)</strong> o el paquete completo <strong>Plan Salud Integral (9,99 €/mes)</strong>.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:6px; max-width:320px; margin:0 auto;">
+          <a href="/#precios" style="background:linear-gradient(135deg, #0F766E, #0284C7); color:#FFF; font-weight:900; font-size:12.5px; padding:10px; border-radius:10px; text-decoration:none; display:block;">
+            👑 Desbloquear con Salud Integral (9,99 €)
+          </a>
+          <a href="/#precios" style="background:#FFF; color:#0F766E; border:1.5px solid #0D9488; font-weight:800; font-size:11.5px; padding:8px; border-radius:10px; text-decoration:none; display:block;">
+            Elegir Control Esencial (4,99 €)
+          </a>
+        </div>
+      </div>
+      <div id="semana-content-body">
       <!-- ETIQUETA AZUL -->
       <div style="background: linear-gradient(135deg, #0284C7, #0369A1); color:#FFFFFF; border-radius:14px; padding:14px 16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(2,132,199,0.2);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -3208,7 +3226,20 @@
         </a>
       </div>
     </div>
-<div id="tab-parametros" class="screen-content tab-view" style="display:none;">
+</div>
+    <div id="tab-parametros" class="screen-content tab-view" style="display:none;">
+      <!-- GATE DE BLOQUEO PLANES INFERIORES: DOCTOR E INFORMES PDF -->
+      <div id="parametros-plan-gate" style="display:none; margin-bottom:14px; background:#EFF6FF; border:2px solid #2563EB; border-radius:14px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(37,99,235,0.15);">
+        <div style="font-size:26px; margin-bottom:4px;">👑 🩺 🔒</div>
+        <h3 style="font-size:15px; font-weight:900; color:#1E40AF; margin:0 0 6px 0;">Informes Oficiales en PDF y Panel Renal Bloqueados</h3>
+        <p style="font-size:12px; color:#1E3A8A; line-height:16px; margin:0 0 12px 0;">
+          La generación y descarga de informes médicos oficiales A4 para tu especialista y el panel renal avanzado (eGFR, creatinina, microalbúmina) son <strong>exclusivos del Plan Salud Integral (9,99 €/mes)</strong>.
+        </p>
+        <a href="/#precios" style="background:linear-gradient(135deg, #1D4ED8, #1E40AF); color:#FFF; font-weight:900; font-size:13px; padding:11px 20px; border-radius:10px; text-decoration:none; display:inline-block; box-shadow:0 4px 12px rgba(37,99,235,0.3);">
+          👑 Desbloquear Plan Salud Integral (9,99 €/mes) ➔
+        </a>
+      </div>
+      <div id="parametros-content-body">
       <!-- ETIQUETA AZUL -->
       <div style="background: linear-gradient(135deg, #1E3A8A, #1D4ED8); color:#FFFFFF; border-radius:14px; padding:14px 16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(30,58,138,0.2);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -3284,7 +3315,20 @@
         </a>
       </div>
     </div>
-<div id="tab-nutricion" class="screen-content tab-view" style="display:none;">
+</div>
+    <div id="tab-nutricion" class="screen-content tab-view" style="display:none;">
+      <!-- GATE DE BLOQUEO PLANES INFERIORES: MENÚ 4 SEMANAS, GRAMOS Y CALORÍAS -->
+      <div id="nutricion-plan-gate" style="display:none; margin-bottom:14px; background:#FFF7ED; border:2px solid #EA580C; border-radius:14px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(234,88,12,0.15);">
+        <div style="font-size:26px; margin-bottom:4px;">👑 🥗 🔒</div>
+        <h3 style="font-size:15px; font-weight:900; color:#9A3412; margin:0 0 6px 0;">Menú Terapéutico de 28 Días, Gramos y Calorías Bloqueado</h3>
+        <p style="font-size:12px; color:#7C2D12; line-height:16px; margin:0 0 12px 0;">
+          El ciclo de 4 semanas terapéuticas con recetas, gramos por plato, cálculo calórico para perder peso, lista de la compra y auditor clínico es <strong>exclusivo del Plan Salud Integral (9,99 €/mes)</strong>.
+        </p>
+        <a href="/#precios" style="background:linear-gradient(135deg, #EA580C, #C2410C); color:#FFF; font-weight:900; font-size:13px; padding:11px 20px; border-radius:10px; text-decoration:none; display:inline-block; box-shadow:0 4px 12px rgba(234,88,12,0.3);">
+          👑 Desbloquear Plan Salud Integral (9,99 €/mes) ➔
+        </a>
+      </div>
+      <div id="nutricion-content-body">
       <!-- ETIQUETA VERDE -->
       <div style="background: linear-gradient(135deg, #15803D, #16A34A); color:#FFFFFF; border-radius:14px; padding:14px 16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(21,128,61,0.2);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -3376,7 +3420,8 @@
         </a>
       </div>
     </div>
-<div id="tab-actividad" class="screen-content tab-view" style="display:none;">
+</div>
+    <div id="tab-actividad" class="screen-content tab-view" style="display:none;">
       <!-- ETIQUETA MORADA -->
       <div style="background: linear-gradient(135deg, #7E22CE, #9333EA); color:#FFFFFF; border-radius:14px; padding:14px 16px; margin-bottom:14px; box-shadow:0 3px 10px rgba(126,34,206,0.2);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
@@ -5555,6 +5600,7 @@
 
 
     function switchTab(tabId, btn) {
+      if (typeof checkPlanGates === 'function') checkPlanGates();
 
       if (tabId === 'tab-semana') {
 
@@ -9963,7 +10009,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.27.1';
+        const CURRENT_VERSION = 'v2.28.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -9975,7 +10021,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.27.1') {
+                if (k !== 'metavital-cache-v2.28.0') {
 
                   caches.delete(k);
 

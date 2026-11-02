@@ -1331,6 +1331,7 @@
 <script>
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
     window.addEventListener('DOMContentLoaded', () => {
+      try { checkPlanGates(); } catch(e){}
       try {
         if (localStorage.getItem('metavital_active_profile') === 'carlos_gomez') {
           if (typeof applyCarlosGomezFreeProfile === 'function') applyCarlosGomezFreeProfile();
@@ -1605,6 +1606,23 @@
 
     <!-- PÁGINA 2: SEMANA & MEDICACIÓN (Datos acumulados semana anterior + Medicamentos + Explicación Tomar) -->
     <div id="tab-semana" class="screen-content tab-view" style="display:none;">
+      <!-- GATE DE BLOQUEO PLAN GRATUITO: SEMANA -->
+      <div id="semana-plan-gate" style="display:none; margin-bottom:14px; background:#FFFBEB; border:2px solid #F59E0B; border-radius:14px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(245,158,11,0.15);">
+        <div style="font-size:26px; margin-bottom:4px;">🔒 📈</div>
+        <h3 style="font-size:15px; font-weight:900; color:#92400E; margin:0 0 6px 0;">Gráficas de Evolución Temporal Bloqueadas</h3>
+        <p style="font-size:12px; color:#78350F; line-height:16px; margin:0 0 12px 0;">
+          Tu <strong>Plan Gratuito</strong> solo permite registrar las tomas de hoy. Para ver las curvas de evolución de tensión, glucosa y peso necesitas el <strong>Plan Control Esencial (4,99 €/mes)</strong> o el paquete completo <strong>Plan Salud Integral (9,99 €/mes)</strong>.
+        </p>
+        <div style="display:flex; flex-direction:column; gap:6px; max-width:320px; margin:0 auto;">
+          <a href="/#precios" style="background:linear-gradient(135deg, #0F766E, #0284C7); color:#FFF; font-weight:900; font-size:12.5px; padding:10px; border-radius:10px; text-decoration:none; display:block;">
+            👑 Desbloquear con Salud Integral (9,99 €)
+          </a>
+          <a href="/#precios" style="background:#FFF; color:#0F766E; border:1.5px solid #0D9488; font-weight:800; font-size:11.5px; padding:8px; border-radius:10px; text-decoration:none; display:block;">
+            Elegir Control Esencial (4,99 €)
+          </a>
+        </div>
+      </div>
+      <div id="semana-content-body">
       <!-- TARJETA: BALANCE DE EVOLUCIÓN GLOBAL DEL ESTADO DE SALUD -->
       <div class="card" style="border: 2px solid #16A34A; background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%);">
         <div class="card-header">
@@ -1928,7 +1946,20 @@
     </div>
 
     <!-- PÁGINA 3: MIS PARÁMETROS & SALUD (Semáforo: En Orden vs Desviados con Medidas Correctoras) -->
+    </div>
     <div id="tab-parametros" class="screen-content tab-view" style="display:none;">
+      <!-- GATE DE BLOQUEO PLANES INFERIORES: DOCTOR E INFORMES PDF -->
+      <div id="parametros-plan-gate" style="display:none; margin-bottom:14px; background:#EFF6FF; border:2px solid #2563EB; border-radius:14px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(37,99,235,0.15);">
+        <div style="font-size:26px; margin-bottom:4px;">👑 🩺 🔒</div>
+        <h3 style="font-size:15px; font-weight:900; color:#1E40AF; margin:0 0 6px 0;">Informes Oficiales en PDF y Panel Renal Bloqueados</h3>
+        <p style="font-size:12px; color:#1E3A8A; line-height:16px; margin:0 0 12px 0;">
+          La generación y descarga de informes médicos oficiales A4 para tu especialista y el panel renal avanzado (eGFR, creatinina, microalbúmina) son <strong>exclusivos del Plan Salud Integral (9,99 €/mes)</strong>.
+        </p>
+        <a href="/#precios" style="background:linear-gradient(135deg, #1D4ED8, #1E40AF); color:#FFF; font-weight:900; font-size:13px; padding:11px 20px; border-radius:10px; text-decoration:none; display:inline-block; box-shadow:0 4px 12px rgba(37,99,235,0.3);">
+          👑 Desbloquear Plan Salud Integral (9,99 €/mes) ➔
+        </a>
+      </div>
+      <div id="parametros-content-body">
       <!-- Cabecera de la Consulta de Nefrología -->
       <div style="background:linear-gradient(135deg, #1E3A8A 0%, #1E40AF 100%); color:#FFFFFF; border-radius:12px; padding:12px; margin-bottom:12px;">
         <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -2087,7 +2118,20 @@
     </div>
 
     <!-- PÁGINA 4: NUTRICIÓN & COMPRA (Menú Completo: Desayuno, Comida y Cena + Función Saludable + Lista Compra) -->
+    </div>
     <div id="tab-nutricion" class="screen-content tab-view" style="display:none;">
+      <!-- GATE DE BLOQUEO PLANES INFERIORES: MENÚ 4 SEMANAS, GRAMOS Y CALORÍAS -->
+      <div id="nutricion-plan-gate" style="display:none; margin-bottom:14px; background:#FFF7ED; border:2px solid #EA580C; border-radius:14px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(234,88,12,0.15);">
+        <div style="font-size:26px; margin-bottom:4px;">👑 🥗 🔒</div>
+        <h3 style="font-size:15px; font-weight:900; color:#9A3412; margin:0 0 6px 0;">Menú Terapéutico de 28 Días, Gramos y Calorías Bloqueado</h3>
+        <p style="font-size:12px; color:#7C2D12; line-height:16px; margin:0 0 12px 0;">
+          El ciclo de 4 semanas terapéuticas con recetas, gramos por plato, cálculo calórico para perder peso, lista de la compra y auditor clínico es <strong>exclusivo del Plan Salud Integral (9,99 €/mes)</strong>.
+        </p>
+        <a href="/#precios" style="background:linear-gradient(135deg, #EA580C, #C2410C); color:#FFF; font-weight:900; font-size:13px; padding:11px 20px; border-radius:10px; text-decoration:none; display:inline-block; box-shadow:0 4px 12px rgba(234,88,12,0.3);">
+          👑 Desbloquear Plan Salud Integral (9,99 €/mes) ➔
+        </a>
+      </div>
+      <div id="nutricion-content-body">
       <!-- REGISTRO DIARIO DE INGESTA REAL Y AUDITORÍA NUTRICIONAL -->
       <div class="card" style="border: 2px solid #0284C7; background: linear-gradient(135deg, #FFFFFF 0%, #F0F9FF 100%); margin-bottom: 16px;">
         <div class="card-header" style="margin-bottom: 8px;">
@@ -2325,6 +2369,7 @@
 
     </div>
     <!-- PÁGINA 5: MÉDICO DE CABECERA, ACTIVIDAD FÍSICA & REPORTE -->
+    </div>
     <div id="tab-actividad" class="screen-content tab-view" style="display:none;">
       <!-- Tarjeta Prescripción Médica de Actividad -->
       <div class="card" style="border-left:4px solid #8B5CF6;">
@@ -2447,6 +2492,18 @@
 
 
         <!-- SECCIÓN DE HISTORIAL DE 30 DÍAS CON SELECTOR 7/30 DÍAS -->
+        <!-- GATE DE BLOQUEO PLANES INFERIORES: PODÓMETRO 30 DÍAS -->
+        <div id="steps-history-plan-gate" style="display:none; margin-bottom:12px; background:#FAF5FF; border:2px solid #9333EA; border-radius:14px; padding:16px; text-align:center; box-shadow:0 4px 15px rgba(147,51,234,0.15);">
+          <div style="font-size:26px; margin-bottom:4px;">👑 👟 🔒</div>
+          <h3 style="font-size:15px; font-weight:900; color:#6B21A8; margin:0 0 6px 0;">Historial Completo de 30 Días de Pasos Bloqueado</h3>
+          <p style="font-size:12px; color:#581C87; line-height:16px; margin:0 0 12px 0;">
+            En tu plan puedes ver y anotar tus pasos de hoy. La gráfica comparativa de 30 días, estadísticas de objetivo cumplido y comparativa semanal son <strong>exclusivas del Plan Salud Integral (9,99 €/mes)</strong>.
+          </p>
+          <a href="/#precios" style="background:linear-gradient(135deg, #7C3AED, #6B21A8); color:#FFF; font-weight:900; font-size:13px; padding:11px 20px; border-radius:10px; text-decoration:none; display:inline-block; box-shadow:0 4px 12px rgba(124,58,237,0.3);">
+            👑 Desbloquear Plan Salud Integral (9,99 €/mes) ➔
+          </a>
+        </div>
+        <div id="steps-history-content-body">
         <div style="border-top: 1.5px solid #F1F5F9; padding-top: 14px; margin-top: 10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
             <div>
@@ -2525,6 +2582,7 @@
           </div>
         </div>
       </div>
+        </div>
 
       <!-- TARJETA 0: MÉDICO DE CABECERA & ENVÍO MENSUAL POR WHATSAPP -->
       <div class="card" style="border: 2px solid #25D366; background: linear-gradient(135deg, #FFFFFF 0%, #F0FDF4 100%);">
@@ -3141,6 +3199,63 @@
       return 'free'; // Por defecto Plan Gratuito
     }
 
+    
+    function checkPlanGates() {
+      const uPlan = getUserPlan();
+      
+      // 1. Gate Semana: bloqueado para 'free'
+      const gSemana = document.getElementById('semana-plan-gate');
+      const bodySemana = document.getElementById('semana-content-body');
+      if (gSemana) {
+        if (uPlan === 'free') {
+          gSemana.style.display = 'block';
+          if (bodySemana) { bodySemana.style.opacity = '0.35'; bodySemana.style.pointerEvents = 'none'; bodySemana.style.filter = 'grayscale(60%)'; }
+        } else {
+          gSemana.style.display = 'none';
+          if (bodySemana) { bodySemana.style.opacity = '1'; bodySemana.style.pointerEvents = 'auto'; bodySemana.style.filter = 'none'; }
+        }
+      }
+
+      // 2. Gate Nutrición: bloqueado para 'free' y 'essential' (solo 'integral')
+      const gNutri = document.getElementById('nutricion-plan-gate');
+      const bodyNutri = document.getElementById('nutricion-content-body');
+      if (gNutri) {
+        if (uPlan !== 'integral') {
+          gNutri.style.display = 'block';
+          if (bodyNutri) { bodyNutri.style.opacity = '0.35'; bodyNutri.style.pointerEvents = 'none'; bodyNutri.style.filter = 'grayscale(60%)'; }
+        } else {
+          gNutri.style.display = 'none';
+          if (bodyNutri) { bodyNutri.style.opacity = '1'; bodyNutri.style.pointerEvents = 'auto'; bodyNutri.style.filter = 'none'; }
+        }
+      }
+
+      // 3. Gate Doctor: bloqueado para 'free' y 'essential' (solo 'integral')
+      const gParam = document.getElementById('parametros-plan-gate');
+      const bodyParam = document.getElementById('parametros-content-body');
+      if (gParam) {
+        if (uPlan !== 'integral') {
+          gParam.style.display = 'block';
+          if (bodyParam) { bodyParam.style.opacity = '0.35'; bodyParam.style.pointerEvents = 'none'; bodyParam.style.filter = 'grayscale(60%)'; }
+        } else {
+          gParam.style.display = 'none';
+          if (bodyParam) { bodyParam.style.opacity = '1'; bodyParam.style.pointerEvents = 'auto'; bodyParam.style.filter = 'none'; }
+        }
+      }
+
+      // 4. Gate Pasos 30 Días: bloqueado para 'free' y 'essential' (solo 'integral')
+      const gSteps = document.getElementById('steps-history-plan-gate');
+      const bodySteps = document.getElementById('steps-history-content-body');
+      if (gSteps) {
+        if (uPlan !== 'integral') {
+          gSteps.style.display = 'block';
+          if (bodySteps) { bodySteps.style.opacity = '0.35'; bodySteps.style.pointerEvents = 'none'; bodySteps.style.filter = 'grayscale(60%)'; }
+        } else {
+          gSteps.style.display = 'none';
+          if (bodySteps) { bodySteps.style.opacity = '1'; bodySteps.style.pointerEvents = 'auto'; bodySteps.style.filter = 'none'; }
+        }
+      }
+    }
+
     function openPlanUpgradeModal(feature) {
       const modal = document.getElementById('plan-upgrade-modal');
       const icon = document.getElementById('upgrade-modal-icon');
@@ -3156,35 +3271,68 @@
       if (feature === 'ocr') {
         icon.textContent = '📸';
         title.textContent = 'Escaneo Fotográfico con Cámara (OCR)';
-        desc.innerHTML = 'El escaneo automático de la pantalla de glucómetros, tensiómetros y básculas está disponible a partir del <strong>Plan Control Esencial (4,99 €/mes)</strong>.';
-        freeNote.innerHTML = '✓ En tu <strong>Plan Gratuito</strong> puedes introducir tus cifras pulsando <strong>"A MANO ✏️"</strong> de forma 100% ilimitada.';
-        cta.innerHTML = '⭐ Mejorar a Control Esencial (4,99 €/mes)';
+        desc.innerHTML = 'El escaneo instantáneo de analíticas y pantallas de aparatos con la cámara es <strong>exclusivo del Plan Salud Integral (9,99 €/mes)</strong>.';
+        freeNote.innerHTML = '✓ En tu plan puedes introducir tus cifras pulsando <strong>"A MANO ✏️"</strong> de forma 100% ilimitada.';
+        cta.innerHTML = '👑 Desbloquear Plan Salud Integral (9,99 €/mes)';
         cta.href = '/#precios';
-        dismissText.textContent = '✏️ Escribir Cifra A Mano (Gratis)';
+        dismissText.textContent = '✏️ Escribir Cifra A Mano';
         dismissBtn.onclick = function() {
           closePlanUpgradeModal();
           if (typeof activateManualInputMode === 'function') activateManualInputMode();
         };
       } else if (feature === 'menu') {
         icon.textContent = '🥗';
-        title.textContent = 'Menú de 28 Días (Semanas 2, 3 y 4)';
-        desc.innerHTML = 'El ciclo completo de 28 días rotativos con listas de la compra adaptadas forma parte del <strong>Plan Control Esencial (4,99 €/mes)</strong>.';
-        freeNote.innerHTML = '✓ Tu <strong>Plan Gratuito</strong> incluye acceso ilimitado a los <strong>primeros 7 días (Semana 1: Cardioprotección & Omega-3)</strong>.';
-        cta.innerHTML = '⭐ Desbloquear Menú de 28 Días (4,99 €/mes)';
+        title.textContent = 'Menú de 28 Días, Gramos y Calorías';
+        desc.innerHTML = 'El ciclo de 4 semanas terapéuticas con recetas, gramos exactos por plato, cálculo calórico y auditor clínico es <strong>exclusivo del Plan Salud Integral (9,99 €/mes)</strong>.';
+        freeNote.innerHTML = '🔒 Tu plan actual no incluye el plan de nutrición terapéutica.';
+        cta.innerHTML = '👑 Desbloquear Plan Salud Integral (9,99 €/mes)';
         cta.href = '/#precios';
-        dismissText.textContent = 'Volver a Semana 1 (Gratis)';
+        dismissText.textContent = 'Cerrar y Volver a Inicio';
         dismissBtn.onclick = function() {
           closePlanUpgradeModal();
-          if (typeof selectMonthWeek === 'function') selectMonthWeek(1, document.getElementById('m-week-btn-1'));
+          switchTab('tab-hoy');
         };
       } else if (feature === 'pdf') {
         icon.textContent = '📄';
-        title.textContent = 'Informe Clínico Oficial en PDF A4';
-        desc.innerHTML = 'La compilación y descarga del documento oficial de 1 página A4 para entregar a tu médico en consulta está reservada para el <strong>Plan Salud Integral (9,99 €/mes)</strong> o Control Esencial.';
-        freeNote.innerHTML = '✓ En tu <strong>Plan Gratuito</strong> puedes consultar todas tus constantes, evolución y medias clínicas directamente en pantalla.';
+        title.textContent = 'Informes Clínicos Oficiales en PDF A4';
+        desc.innerHTML = 'La compilación y descarga del informe oficial maquetado en 1 página A4 para entregar a tu médico especialista es <strong>exclusiva del Plan Salud Integral (9,99 €/mes)</strong>.';
+        freeNote.innerHTML = '🔒 Tu plan actual no incluye la generación de informes oficiales.';
         cta.innerHTML = '👑 Desbloquear Informes PDF A4 (9,99 €/mes)';
         cta.href = '/#precios';
-        dismissText.textContent = 'Cerrar y Ver en Pantalla';
+        dismissText.textContent = 'Cerrar';
+        dismissBtn.onclick = function() {
+          closePlanUpgradeModal();
+        };
+      } else if (feature === 'steps30') {
+        icon.textContent = '👟';
+        title.textContent = 'Historial Completo de 30 Días de Podómetro';
+        desc.innerHTML = 'La gráfica comparativa de 30 días, métricas de constancia y comparativa semanal son <strong>exclusivas del Plan Salud Integral (9,99 €/mes)</strong>.';
+        freeNote.innerHTML = '✓ En tu plan puedes consultar y anotar tus pasos de hoy.';
+        cta.innerHTML = '👑 Desbloquear Plan Salud Integral (9,99 €/mes)';
+        cta.href = '/#precios';
+        dismissText.textContent = 'Cerrar';
+        dismissBtn.onclick = function() {
+          closePlanUpgradeModal();
+        };
+      } else if (feature === 'cloud') {
+        icon.textContent = '☁️';
+        title.textContent = 'Sincronización y Respaldo en la Nube';
+        desc.innerHTML = 'La sincronización en tiempo real y respaldo multi-dispositivo en la nube es <strong>exclusiva del Plan Salud Integral (9,99 €/mes)</strong>.';
+        freeNote.innerHTML = '🔒 En planes inferiores tus datos se guardan únicamente en la memoria de este dispositivo.';
+        cta.innerHTML = '👑 Desbloquear Copia en la Nube (9,99 €/mes)';
+        cta.href = '/#precios';
+        dismissText.textContent = 'Cerrar';
+        dismissBtn.onclick = function() {
+          closePlanUpgradeModal();
+        };
+      } else if (feature === 'semana') {
+        icon.textContent = '📈';
+        title.textContent = 'Gráficas de Evolución y Tendencias Semanales';
+        desc.innerHTML = 'El seguimiento evolutivo de tensión, glucosa y peso está disponible en <strong>Control Esencial (4,99 €)</strong> o en el paquete completo <strong>Salud Integral (9,99 €)</strong>.';
+        freeNote.innerHTML = '✓ En tu Plan Gratuito puedes registrar tus cifras de hoy.';
+        cta.innerHTML = '👑 Desbloquear con Salud Integral (9,99 € - Recomendado)';
+        cta.href = '/#precios';
+        dismissText.textContent = 'Cerrar';
         dismissBtn.onclick = function() {
           closePlanUpgradeModal();
         };
@@ -3800,6 +3948,7 @@
     }
 
     function switchTab(tabId, btn) {
+      checkPlanGates();
       if (tabId === 'tab-semana') {
         setTimeout(function() {
           if (typeof updateClinicalEvolutionComments === 'function') updateClinicalEvolutionComments();
@@ -7082,13 +7231,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.27.1';
+        const CURRENT_VERSION = 'v2.28.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.27.1') {
+                if (k !== 'metavital-cache-v2.28.0') {
                   caches.delete(k);
                 }
               });
