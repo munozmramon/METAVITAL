@@ -2308,11 +2308,8 @@
           </div>
           <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
             <span class="badge" style="background:#10B981; color:#FFFFFF; font-weight:800; font-size:10.5px; padding:3px 8px;">PLAN GRATUITO</span>
-            <button type="button" onclick="openStepTargetModal()" style="background:#FAF5FF; border:1.5px solid #DDD6FE; color:#7C3AED; font-weight:800; font-size:11px; padding:4px 9px; border-radius:8px; cursor:pointer;" title="Configurar objetivo de pasos">
-              ⚙️ Meta
-            </button>
-            <button type="button" id="btn-sync-steps" onclick="syncHealthSteps()" style="background:#F0FDFA; border:1.5px solid #99F6E4; color:#0F766E; font-weight:800; font-size:11px; padding:4px 9px; border-radius:8px; cursor:pointer;" title="Sincronizar podómetro / sensor">
-              🔄 Sincronizar
+            <button type="button" onclick="openStepTargetModal()" style="background:#FAF5FF; border:1.5px solid #DDD6FE; color:#7C3AED; font-weight:800; font-size:11.5px; padding:5px 11px; border-radius:8px; cursor:pointer;" title="Configurar objetivo de pasos diarios">
+              ⚙️ Ajustar Meta
             </button>
           </div>
         </div>
@@ -2349,14 +2346,14 @@
             </div>
           </div>
 
-          <!-- FECHA Y HORA DE ÚLTIMA SINCRONIZACIÓN -->
+          <!-- FECHA Y HORA DE ÚLTIMO REGISTRO -->
           <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; padding-top: 8px; border-top: 1px dashed #E2E8F0; font-size: 11px;">
             <div style="color: #64748B;">
-              <span>⏱️ Última sincronización: </span>
+              <span>⏱️ Último registro: </span>
               <strong id="step-last-sync-disp" style="color: #1E293B;">Hoy, 10:18</strong>
             </div>
             <span id="step-source-badge" style="background: #F1F5F9; color: #475569; padding: 2px 7px; border-radius: 6px; font-weight: 700; font-size: 10px;">
-              Sensor & Manual
+              Paseo activo
             </span>
           </div>
         </div>
@@ -2371,22 +2368,7 @@
           </button>
         </div>
 
-        <!-- INTEGRACIÓN CON FUENTES DE SALUD (APPLE HEALTH / HEALTH CONNECT / WEB SENSORS) -->
-        <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:10px 12px; margin-bottom:14px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-            <div style="display:flex; align-items:center; gap:8px; text-align:left;">
-              <span style="font-size:20px;">📱</span>
-              <div>
-                <strong style="font-size:12px; color:#1E293B; display:block;">Fuentes de Salud Compatibles</strong>
-                <span id="health-sync-status" style="font-size:11px; color:#64748B;">Sincroniza con Apple Health, Health Connect o sensor de movimiento PWA.</span>
-              </div>
-            </div>
-            <button type="button" onclick="connectDeviceSensors()" class="btn-secondary" style="font-size:11px; font-weight:800; padding:5px 10px; border-radius:8px; border:1px solid #CBD5E1; background:#FFFFFF; color:#1E293B; cursor:pointer; white-space:nowrap;">
-              Conectar
-            </button>
-          </div>
-          <div id="sensor-permission-guide" style="display:none; font-size:11px; color:#475569; margin-top:8px; padding-top:8px; border-top:1px dashed #CBD5E1; line-height:1.4;"></div>
-        </div>
+
 
         <!-- SECCIÓN DE HISTORIAL DE 30 DÍAS CON SELECTOR 7/30 DÍAS -->
         <div style="border-top: 1.5px solid #F1F5F9; padding-top: 14px; margin-top: 10px;">
@@ -4508,7 +4490,7 @@
         stepsDailyHistory[todayKey] = {
           steps: steps || 6420,
           syncTime: 'Hoy, 10:18',
-          source: 'Sensor & Manual',
+          source: 'Paseo activo',
           hasData: true
         };
       } else {
@@ -4561,7 +4543,7 @@
           stepsDailyHistory[key] = {
             steps: val,
             syncTime: i === 0 ? 'Hoy, 10:18' : '21:30',
-            source: i % 3 === 0 ? 'Apple Health' : (i % 2 === 0 ? 'Health Connect' : 'Sensor PWA'),
+            source: 'Paseo activo',
             hasData: true
           };
         }
@@ -4785,7 +4767,7 @@
         box.style.background = isMet ? '#F0FDF4' : '#FAF5FF';
         box.style.borderColor = isMet ? '#BBF7D0' : '#E9D5FF';
         box.style.color = isMet ? '#166534' : '#581C87';
-        box.innerHTML = `📅 <strong>${formattedDate}:</strong> <strong>${entry.steps.toLocaleString('es-ES')} pasos</strong> (~${km} km) • ${isMet ? '✅ Objetivo cumplido' : '⚡ En progreso'} • <em>Fuente: ${entry.source || 'Manual'}</em>`;
+        box.innerHTML = `📅 <strong>${formattedDate}:</strong> <strong>${entry.steps.toLocaleString('es-ES')} pasos</strong> (~${km} km) • ${isMet ? '✅ Objetivo cumplido' : '⚡ En progreso'}`;
       }
     }
 
@@ -6576,13 +6558,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.21.0';
+        const CURRENT_VERSION = 'v2.22.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.21.0') {
+                if (k !== 'metavital-cache-v2.22.0') {
                   caches.delete(k);
                 }
               });
