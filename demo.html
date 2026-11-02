@@ -3617,16 +3617,17 @@
 
             </div>
 
-            <div style="margin-bottom:14px; text-align:left; font-size:11px; color:#475569; line-height:15px; display:flex; gap:6px; align-items:flex-start;">
-
-              <input type="checkbox" id="signup-rgpd" required style="margin-top:2px; cursor:pointer;">
-
-              <label for="signup-rgpd" style="cursor:pointer;">
-
-                Autorizo expresamente el tratamiento de mis datos de salud con fines preventivos (Art. 9 RGPD).
-
+            <div style="margin-bottom:8px; text-align:left; font-size:11px; color:#475569; line-height:15px; display:flex; gap:6px; align-items:flex-start;">
+              <input type="checkbox" id="signup-privacy" required style="margin-top:2px; cursor:pointer;">
+              <label for="signup-privacy" style="cursor:pointer;">
+                He leído y acepto la <a href="/privacidad.html" target="_blank" rel="noopener noreferrer" style="color:#0284C7; font-weight:700; text-decoration:underline;">Política de Privacidad</a> y los <a href="/terminos.html" target="_blank" rel="noopener noreferrer" style="color:#0284C7; font-weight:700; text-decoration:underline;">Términos de Uso</a>.
               </label>
-
+            </div>
+            <div style="margin-bottom:14px; text-align:left; font-size:11px; color:#475569; line-height:15px; display:flex; gap:6px; align-items:flex-start;">
+              <input type="checkbox" id="signup-rgpd" required style="margin-top:2px; cursor:pointer;">
+              <label for="signup-rgpd" style="cursor:pointer;">
+                Consiento expresamente el tratamiento de mis datos de salud con fines preventivos y de seguimiento clínico (Art. 9 RGPD).
+              </label>
             </div>
 
             <button type="submit" id="btn-submit-signup" class="btn-primary" style="background:#16A34A; padding:10px; font-size:13px; font-weight:800; width:100%;">
@@ -9302,6 +9303,28 @@
 
 
       try {
+        const chkPrivacy = document.getElementById('signup-privacy');
+        const chkRgpd = document.getElementById('signup-rgpd');
+        if (chkPrivacy && !chkPrivacy.checked) {
+          msg.style.display = 'block';
+          msg.style.background = '#FEF2F2';
+          msg.style.color = '#991B1B';
+          msg.style.border = '1px solid #FECACA';
+          msg.textContent = '⚠️ Debes leer y aceptar la Política de Privacidad para registrarte.';
+          btn.disabled = false;
+          btn.textContent = '✨ Crear Mi Cuenta de Paciente';
+          return;
+        }
+        if (chkRgpd && !chkRgpd.checked) {
+          msg.style.display = 'block';
+          msg.style.background = '#FEF2F2';
+          msg.style.color = '#991B1B';
+          msg.style.border = '1px solid #FECACA';
+          msg.textContent = '⚠️ Debes autorizar el tratamiento de datos de salud conforme al RGPD.';
+          btn.disabled = false;
+          btn.textContent = '✨ Crear Mi Cuenta de Paciente';
+          return;
+        }
 
         const { data, error } = await sbClient.auth.signUp({
 
@@ -9310,9 +9333,12 @@
           password,
 
           options: {
-
-            data: { full_name: fullName }
-
+            data: { 
+              full_name: fullName, 
+              plan: 'free',
+              accepted_privacy_at: new Date().toISOString(),
+              accepted_rgpd_at: new Date().toISOString()
+            }
           }
 
         });
@@ -9937,7 +9963,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.27.0';
+        const CURRENT_VERSION = 'v2.27.1';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -9949,7 +9975,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.27.0') {
+                if (k !== 'metavital-cache-v2.27.1') {
 
                   caches.delete(k);
 
