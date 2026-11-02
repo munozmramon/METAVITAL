@@ -1449,7 +1449,6 @@
           <div id="header-dropdown-menu" class="hdr-dropdown-menu" style="display:none;">
             <a href="javascript:void(0)" onclick="forceAppUpdate()" class="hdr-dropdown-item" style="color:#0D9488; font-weight:900;">🔄 Actualizar App Ahora</a>
             <a href="/" class="hdr-dropdown-item">🌐 Portada Web</a>
-            <a href="javascript:void(0)" onclick="openAuthModal()" class="hdr-dropdown-item">👤 Mi Cuenta Cloud</a>
             <a href="javascript:void(0)" onclick="openCoverModal()" class="hdr-dropdown-item">🌟 Ver Portada Oficial</a>
             <a href="javascript:void(0)" onclick="openPwaInstallModal()" class="hdr-dropdown-item">📲 Instalar App</a>
             <a href="/admin" class="hdr-dropdown-item">⚡ Panel Admin</a>
@@ -6706,13 +6705,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.23.0';
+        const CURRENT_VERSION = 'v2.24.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.23.0') {
+                if (k !== 'metavital-cache-v2.24.0') {
                   caches.delete(k);
                 }
               });
