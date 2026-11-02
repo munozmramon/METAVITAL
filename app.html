@@ -1333,9 +1333,9 @@
     window.addEventListener('DOMContentLoaded', () => {
       /* urlParams already defined */
       try {
-        if (localStorage.getItem('metavital_active_profile') === 'carlos_gomez' || urlParams.get('user') === 'carlos') {
-          const targetPlan = urlParams.get('plan') || localStorage.getItem('metavital_user_plan') || 'essential';
-          if (typeof applyCarlosGomezProfile === 'function') applyCarlosGomezProfile(targetPlan);
+        // Acceso por defecto para Ramón como Superadministrador
+        if (typeof applyRamonSuperadminProfile === 'function') {
+          applyRamonSuperadminProfile();
         }
       } catch(e) {}
       try { checkPlanGates(); } catch(e){}
@@ -2779,22 +2779,6 @@
               ✨ Crear Mi Cuenta de Paciente
             </button>
           </form>
-
-          <!-- Acceso Rápido como Usuario de Prueba (Carlos Gómez) -->
-          <div style="margin-top:14px; border-top:1px dashed #CBD5E1; padding-top:12px; text-align:center;">
-            <span style="font-size:11px; font-weight:800; color:#0369A1; display:block; margin-bottom:8px;">🚀 Probar como Carlos Gómez Navarro (1 Clic):</span>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-              <button type="button" onclick="loginAsCarlosGomez('essential')" style="background:#F0FDFA; border:1.5px solid #99F6E4; color:#0F766E; font-weight:800; font-size:11.5px; padding:9px 6px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 6px rgba(13,148,136,0.15);">
-                <span>📋</span> <span>Plan 4,99 € (Esencial)</span>
-              </button>
-              <button type="button" onclick="loginAsCarlosGomez('free')" style="background:#F0FDF4; border:1.5px solid #86EFAC; color:#166534; font-weight:800; font-size:11.5px; padding:9px 6px; border-radius:8px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:4px; box-shadow:0 2px 6px rgba(22,163,74,0.15);">
-                <span>🟢</span> <span>Plan 0 € (Gratis)</span>
-              </button>
-            </div>
-            <div style="font-size:10.5px; color:#64748B; margin-top:6px; line-height:14px;">
-              Usuario: <strong>carlos.gomez@metavital.fans</strong> • Clave: <strong>gratis123</strong>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -6683,11 +6667,11 @@
       const upgradePrompt = document.getElementById('auth-upgrade-prompt');
       const uPlan = getUserPlan();
       if (planBadge) {
-        if (uPlan === 'integral') {
+        if (uPlan === 'integral' || user.email === 'munozmramon@gmail.com') {
           planBadge.style.background = '#EFF6FF';
           planBadge.style.borderColor = '#93C5FD';
           planBadge.style.color = '#1E40AF';
-          planBadge.innerHTML = '👑 <strong>Plan Activo:</strong> Salud Integral';
+          planBadge.innerHTML = '👑 <strong>Superadministrador:</strong> Salud Integral (Acceso Total)';
           if (upgradePrompt) upgradePrompt.style.display = 'none';
         } else if (uPlan === 'essential') {
           planBadge.style.background = '#F0FDFA';
@@ -6732,59 +6716,68 @@
       }
     }
 
-    function applyCarlosGomezProfile(plan) {
-      if (!plan) plan = 'essential';
-      patient.firstName = "Carlos";
-      patient.lastName = "Gómez Navarro";
-      patient.fullName = "Carlos Gómez Navarro";
+    function applyRamonSuperadminProfile() {
+      patient.firstName = "Ramón";
+      patient.lastName = "Muñoz Martínez";
+      patient.fullName = "Ramón Muñoz Martínez";
+      patient.age = 63;
+      patient.heightCm = 165.0;
+      patient.weightKg = 101.5;
+      patient.bmi = 37.28;
+      patient.bmiCategory = "Obesidad (Grado II)";
       
       const greetingEl = document.getElementById('hdr-user-greeting');
-      if (greetingEl) greetingEl.textContent = 'Hola, Carlos';
+      if (greetingEl) greetingEl.textContent = 'Hola, Ramón';
 
       const avatarEl = document.getElementById('hdr-user-avatar');
-      if (avatarEl) avatarEl.innerHTML = 'CG<div class="online-badge"></div>';
+      if (avatarEl) avatarEl.innerHTML = 'RM<div class="online-badge"></div>';
 
       const cardName = document.getElementById('card-fullname');
-      if (cardName) cardName.innerText = 'Carlos Gómez Navarro';
+      if (cardName) cardName.innerText = 'Ramón Muñoz Martínez';
 
-      localStorage.setItem('metavital_user_plan', plan);
-      localStorage.setItem('metavital_active_profile', 'carlos_gomez');
+      const cardSub = document.getElementById('card-subdetails');
+      if (cardSub) cardSub.innerText = '63 años • Estatura: 165 cm';
 
-      const demoUser = {
-        id: 'carlos-gomez-001',
-        email: 'carlos.gomez@metavital.fans',
-        user_metadata: { full_name: 'Carlos Gómez Navarro', plan: plan }
+      const badgeBmi = document.getElementById('badge-bmi-category');
+      if (badgeBmi) badgeBmi.innerText = 'Obesidad Gr. II';
+
+      const dispWeight = document.getElementById('disp-profile-weight');
+      if (dispWeight) dispWeight.innerText = '101.5';
+
+      const dispBmi = document.getElementById('disp-profile-bmi');
+      if (dispBmi) dispBmi.innerText = '37.28';
+
+      const scaleTile = document.getElementById('disp-scale-btn');
+      if (scaleTile) scaleTile.innerHTML = '101.5 <small>kg</small>';
+
+      localStorage.setItem('metavital_user_plan', 'integral');
+      localStorage.setItem('metavital_active_profile', 'ramon');
+
+      const superadminUser = {
+        id: 'superadmin-ramon-001',
+        email: 'munozmramon@gmail.com',
+        role: 'superadmin',
+        user_metadata: { 
+          full_name: 'Ramón Muñoz Martínez', 
+          plan: 'integral', 
+          role: 'superadmin' 
+        }
       };
-      currentUserSession = demoUser;
-      onUserAuthenticated(demoUser);
+      currentUserSession = superadminUser;
+      onUserAuthenticated(superadminUser);
       if (typeof checkPlanGates === 'function') checkPlanGates();
     }
 
-    function applyCarlosGomezFreeProfile() {
-      applyCarlosGomezProfile('essential');
+    function applyCarlosGomezProfile(plan) {
+      applyRamonSuperadminProfile();
     }
 
     function loginAsCarlosGomez(plan) {
-      if (!plan) plan = 'essential';
-      applyCarlosGomezProfile(plan);
-      closeAuthModal();
-
-      const banner = document.getElementById('clinical-alert-banner');
-      if (banner) {
-        banner.classList.add('show');
-        if (plan === 'essential') {
-          document.getElementById('alert-title').innerText = '📋 SESIÓN: CARLOS GÓMEZ (CONTROL ESENCIAL 4,99 €)';
-          document.getElementById('alert-msg').innerText = 'Has activado el Plan Control Esencial. La pestaña Semana (gráficas evolutivas) está desbloqueada. Nutrición, OCR y Doctor están reservados para Salud Integral (9,99 €).';
-        } else {
-          document.getElementById('alert-title').innerText = '🟢 SESIÓN: CARLOS GÓMEZ (PLAN GRATUITO)';
-          document.getElementById('alert-msg').innerText = 'Has iniciado sesión con el Plan Gratuito (registro diario y pasos de hoy).';
-        }
-        setTimeout(() => banner.classList.remove('show'), 5500);
-      }
+      applyRamonSuperadminProfile();
     }
 
     function loginAsFreeDemoUser() {
-      loginAsCarlosGomez('essential');
+      applyRamonSuperadminProfile();
     }
 
     function switchAuthTab(tab) {
@@ -7240,13 +7233,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.29.0';
+        const CURRENT_VERSION = 'v2.30.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.29.0') {
+                if (k !== 'metavital-cache-v2.30.0') {
                   caches.delete(k);
                 }
               });
