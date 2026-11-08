@@ -1344,9 +1344,16 @@
       if (typeof checkWeeklyBackupReminder === 'function') checkWeeklyBackupReminder();
       /* urlParams already defined */
       try {
-        // Acceso por defecto para Ramón como Superadministrador
-        if (typeof applyRamonSuperadminProfile === 'function') {
-          applyRamonSuperadminProfile();
+        const activeProfile = localStorage.getItem('metavital_active_profile');
+        if (activeProfile === 'carlos') {
+          if (typeof applyCarlosGomezProfile === 'function') {
+            applyCarlosGomezProfile(localStorage.getItem('metavital_user_plan') || 'gratis');
+          }
+        } else {
+          // Acceso por defecto para Ramón como Superadministrador
+          if (typeof applyRamonSuperadminProfile === 'function') {
+            applyRamonSuperadminProfile();
+          }
         }
       } catch(e) {}
       try { checkPlanGates(); } catch(e){}
@@ -3126,12 +3133,24 @@
             🔄 Restaurar Copia desde Archivo
           </button>
           <input type="file" id="input-restore-backup-profile" accept=".json" style="display:none;" onchange="handleRestoreBackupFile(this)">
-        </div>/div>
-
+        </div>
 
         <button class="btn-primary" onclick="saveProfileData()" style="margin-top:10px;">
           GUARDAR PERFIL & OBJETIVOS
         </button>
+
+        <!-- Conmutador de Identidad (Superadmin vs Demo) -->
+        <div style="margin-top:14px; padding-top:12px; border-top:1px dashed #CBD5E1; text-align:center;">
+          <div style="font-size:11px; font-weight:700; color:#64748B; margin-bottom:8px;">Modo de Usuario Activo:</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <button type="button" onclick="applyCarlosGomezProfile('gratis'); closeProfileModal();" style="padding:10px 8px; border-radius:10px; border:1.5px solid #0D9488; background:#F0FDFA; color:#0F766E; font-size:11.5px; font-weight:800; cursor:pointer;">
+              👤 Paciente Demo (Carlos)
+            </button>
+            <button type="button" onclick="applyRamonSuperadminProfile(); closeProfileModal();" style="padding:10px 8px; border-radius:10px; border:1.5px solid #D97706; background:#FFFBEB; color:#B45309; font-size:11.5px; font-weight:800; cursor:pointer;">
+              👑 Superadmin (Ramón)
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -3622,11 +3641,11 @@
       const weightItems = measurementHistory.filter(i => i.type === 'WEIGHT');
 
       // Parámetros base del paciente
-      const isNeli = (typeof patient !== 'undefined' && patient && patient.name && patient.name.includes('Neli'));
-      const pName = isNeli ? 'Neli' : ((typeof patient !== 'undefined' && patient && patient.name) ? patient.name.split(' ')[0] : 'Carlos');
-      const baselineGlu = isNeli ? 145 : 138;
-      const startWeight = isNeli ? 76.5 : 106.0;
-      const heightCm = (typeof patient !== 'undefined' && patient && patient.heightCm) ? patient.heightCm : (isNeli ? 160 : 165);
+      const isRamon = (typeof patient !== 'undefined' && patient && patient.name && patient.name.includes('Ramón'));
+      const pName = (typeof patient !== 'undefined' && patient && patient.name) ? patient.name.split(' ')[0] : 'Carlos';
+      const baselineGlu = isRamon ? 138 : 145;
+      const startWeight = isRamon ? 106.0 : 82.5;
+      const heightCm = (typeof patient !== 'undefined' && patient && patient.heightCm) ? patient.heightCm : (isRamon ? 165 : 172);
       const heightM = heightCm / 100.0;
 
       // Últimas lecturas reales de la libreta
@@ -7117,15 +7136,67 @@
     }
 
     function applyCarlosGomezProfile(plan) {
-      applyRamonSuperadminProfile();
+      patient.firstName = "Carlos";
+      patient.lastName = "Gómez Navarro";
+      patient.fullName = "Carlos Gómez Navarro";
+      patient.name = "Carlos Gómez Navarro";
+      patient.age = 58;
+      patient.heightCm = 172.0;
+      patient.weightKg = 78.5;
+      patient.bmi = 26.54;
+      patient.bmiCategory = "Sobrepeso Leve";
+
+      const greetingEl = document.getElementById('hdr-user-greeting');
+      if (greetingEl) greetingEl.textContent = 'Hola, Carlos';
+
+      const avatarEl = document.getElementById('hdr-user-avatar');
+      if (avatarEl) avatarEl.innerHTML = 'CG<div class="online-badge"></div>';
+
+      const cardName = document.getElementById('card-fullname');
+      if (cardName) cardName.innerText = 'Carlos Gómez Navarro';
+
+      const cardSub = document.getElementById('card-subdetails');
+      if (cardSub) cardSub.innerText = '58 años • Estatura: 172 cm';
+
+      const badgeBmi = document.getElementById('badge-bmi-category');
+      if (badgeBmi) badgeBmi.innerText = 'Sobrepeso Leve';
+
+      const dispWeight = document.getElementById('disp-profile-weight');
+      if (dispWeight) dispWeight.innerText = '78.5';
+
+      const dispBmi = document.getElementById('disp-profile-bmi');
+      if (dispBmi) dispBmi.innerText = '26.54';
+
+      const scaleTile = document.getElementById('disp-scale-btn');
+      if (scaleTile) scaleTile.innerHTML = '78.5 <small>kg</small>';
+
+      const userPlan = plan || 'gratis';
+      localStorage.setItem('metavital_user_plan', userPlan);
+      localStorage.setItem('metavital_active_profile', 'carlos');
+
+      const carlosUser = {
+        id: 'demo-carlos-001',
+        email: 'carlos.demo@metavital.fans',
+        role: 'user',
+        user_metadata: {
+          full_name: 'Carlos Gómez Navarro',
+          plan: userPlan,
+          role: 'user'
+        }
+      };
+      currentUserSession = carlosUser;
+      onUserAuthenticated(carlosUser);
+      if (typeof checkPlanGates === 'function') checkPlanGates();
     }
 
     function loginAsCarlosGomez(plan) {
-      applyRamonSuperadminProfile();
+      applyCarlosGomezProfile(plan || 'gratis');
+      closeAuthModal();
     }
 
     function loginAsFreeDemoUser() {
-      applyRamonSuperadminProfile();
+      applyCarlosGomezProfile('gratis');
+      closeAuthModal();
     }
 
     function switchAuthTab(tab) {
@@ -7801,7 +7872,7 @@ window.addEventListener('DOMContentLoaded', () => {
     };
 
     window.sendWhatsAppDailySummary = function() {
-      const pName = (typeof patient !== 'undefined' && patient.fullName) ? patient.fullName : 'Neli Gómez Serrano';
+      const pName = (typeof patient !== 'undefined' && patient.fullName) ? patient.fullName : 'Carlos Gómez Navarro';
       const glu = document.getElementById('disp-glucose') ? document.getElementById('disp-glucose').innerText.trim() : '109 mg/dL';
       const bp = document.getElementById('disp-bp') ? document.getElementById('disp-bp').innerText.trim() : '124/76 mmHg';
       const weight = document.getElementById('disp-profile-weight') ? document.getElementById('disp-profile-weight').innerText.trim() + ' kg' : '71.4 kg';
