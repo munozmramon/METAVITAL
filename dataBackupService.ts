@@ -186,3 +186,4 @@ export async function importUserDataFromJSON(file: File): Promise<boolean> {
     reader.readAsText(file);
   });
 }
+
