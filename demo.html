@@ -2911,109 +2911,42 @@
 
 
 
-      <!-- TEAL HERO CARD (ESTILO FEATURED TOP DOCTORS DE LA IMAGEN DE REFERENCIA) -->
-
-      <div class="teal-hero-card">
-
-        <div class="hero-top-row">
-
-          <div class="hero-rating-pill">
-
-            <span>★ 4.9</span> • <strong>Dianas en Rango</strong>
-
-          </div>
-
-          <button class="hero-shield-btn" onclick="openProfileModal()" title="Protocolo de Seguridad y Dianas">
-
-            🛡️
-
-          </button>
-
+      <!-- CABECERA LIMPIA DE FECHA CON NAVEGACIÓN ACCESIBLE SÉNIOR (BOTONES >= 48PX) -->
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:14px; background:#FFFFFF; padding:10px 14px; border-radius:20px; border:1.5px solid #E2E8F0; box-shadow:0 3px 10px rgba(0,0,0,0.03);">
+        <button type="button" onclick="navigateActiveDay(-1)" title="Ver día anterior" style="min-width:48px; min-height:48px; background:#F8FAFC; border:1.5px solid #CBD5E1; border-radius:14px; font-size:22px; font-weight:900; color:#1E293B; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation;">
+          ‹
+        </button>
+        <div style="text-align:center; flex:1;">
+          <span style="font-size:11px; font-weight:800; text-transform:uppercase; color:#0D9488; letter-spacing:0.6px; display:block;">SEGUIMIENTO DE HOY</span>
+          <strong id="disp-active-day-label" style="font-size:17px; font-weight:900; color:#0F172A; line-height:1.2;">Hoy, Domingo 8 de Noviembre</strong>
         </div>
-
-
-
-        <div class="hero-center-row" onclick="openDoctorModal()" style="cursor:pointer;" title="Ver Ficha del Médico">
-
-          <div class="hero-left-info">
-
-            <span class="hero-role-tag">Médica Responsable</span>
-
-            <h3 class="hero-doc-title">Dra. Elena Morales</h3>
-
-            <p class="hero-doc-sub">Medicina Familiar & Prevención Renal</p>
-
-            <div style="margin-top:6px; display:inline-flex; align-items:center; gap:6px; background:rgba(255,255,255,0.18); padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700;">
-
-              🎯 Glucosa 70-130 • PA &lt;130/80
-
-            </div>
-
-          </div>
-
-          <div class="hero-doc-avatar-wrap">
-
-            👩‍⚕️
-
-          </div>
-
-        </div>
-
-
-
-        <!-- Hidden binding spans so existing JS never breaks -->
-
-        <span id="card-fullname" style="display:none;">Neli Gómez Serrano</span>
-
-        <span id="card-subdetails" style="display:none;">58 años • Estatura: 162 cm</span>
-
-        <span id="badge-bmi-category" style="display:none;">Sobrepeso Leve</span>
-
-        <span id="disp-profile-weight" style="display:none;">71.4</span>
-
-        <span id="disp-profile-bmi" style="display:none;">27.20</span>
-
-        <span id="disp-target-glu" style="display:none;">70-130</span>
-
-        <span id="disp-target-bp" style="display:none;">130/80</span>
-
-
-
-        <!-- TIRA SEMANAL HORIZONTAL DE 7 DÍAS -->
-
-        <div class="hero-subcard-strip" onclick="switchTab('tab-semana')" style="cursor:pointer;" title="Ver Seguimiento Semanal Completo">
-
-          <div class="subcard-strip-hdr">
-
-            <span>Seguimiento Semanal • 4 Tomas</span>
-
-            <span>&lt; Octubre 2026 &gt;</span>
-
-          </div>
-
-          <div class="strip-days-row">
-
-            <div class="strip-day-col"><span>L</span><strong>25</strong></div>
-
-            <div class="strip-day-col"><span>M</span><strong>26</strong></div>
-
-            <div class="strip-day-col"><span>X</span><strong>27</strong></div>
-
-            <div class="strip-day-col"><span>J</span><strong>28</strong></div>
-
-            <div class="strip-day-col"><span>V</span><strong>29</strong></div>
-
-            <div class="strip-day-col"><span>S</span><strong>30</strong></div>
-
-            <div class="strip-day-col active-day"><span>D</span><strong>31</strong></div>
-
-          </div>
-
-        </div>
-
+        <button type="button" onclick="navigateActiveDay(1)" title="Ver día siguiente" style="min-width:48px; min-height:48px; background:#F8FAFC; border:1.5px solid #CBD5E1; border-radius:14px; font-size:22px; font-weight:900; color:#1E293B; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation;">
+          ›
+        </button>
       </div>
 
+      <!-- ACCESO RÁPIDO Y DIANAS MÉDICAS (COMPACTO Y VISIBLE SIN OCULTAR CONSTANTES) -->
+      <div style="display:flex; align-items:center; justify-content:space-between; background:linear-gradient(135deg, #0F766E 0%, #0D9488 100%); color:#FFFFFF; border-radius:16px; padding:10px 14px; margin-bottom:14px; box-shadow:0 4px 12px rgba(13,148,136,0.2);">
+        <div style="display:flex; align-items:center; gap:8px; cursor:pointer;" onclick="openDoctorModal()" title="Ver Ficha de la Dra. Elena Morales">
+          <span style="font-size:22px;">👩‍⚕️</span>
+          <div>
+            <div style="font-size:13px; font-weight:900;">Dra. Elena Morales</div>
+            <div style="font-size:11px; color:#CCFBF1; font-weight:600;">Dianas: Glucosa 70-130 • PA &lt;130/80</div>
+          </div>
+        </div>
+        <button type="button" onclick="openDoctorModal()" style="background:rgba(255,255,255,0.2); border:1px solid rgba(255,255,255,0.4); color:#FFFFFF; font-size:11.5px; font-weight:800; padding:6px 12px; border-radius:999px; cursor:pointer; touch-action:manipulation;">
+          Ficha ➔
+        </button>
+      </div>
 
+      <!-- Hidden binding spans para mantener integridad con scripts existentes -->
+      <span id="card-fullname" style="display:none;">Carlos Gómez Navarro</span>
+      <span id="card-subdetails" style="display:none;">58 años • Estatura: 172 cm</span>
+      <span id="badge-bmi-category" style="display:none;">Sobrepeso Leve</span>
+      <span id="disp-profile-weight" style="display:none;">78.5</span>
+      <span id="disp-profile-bmi" style="display:none;">26.54</span>
+      <span id="disp-target-glu" style="display:none;">70-130</span>
+      <span id="disp-target-bp" style="display:none;">130/80</span>
 
       <!-- SECCIÓN DE CONSTANTES BIOMÉTRICAS (GRID 2x2 COMO "DISEASE MONITORING") -->
 
@@ -3879,23 +3812,23 @@
 
             <div style="display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:12px; width:100%; box-sizing:border-box;">
 
-              <input type="number" inputmode="numeric" id="manual-input-glucose" value="118" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
+              <input type="number" inputmode="decimal" id="manual-input-glucose" value="118" oninput="validateVitalsInput('GLUCOSE')" style="width:100%; max-width:160px; min-height:60px; font-size:34px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box; box-shadow:0 2px 8px rgba(13,148,136,0.18);">
 
               <span style="font-size:16px; font-weight:900; color:#334155; flex-shrink:0;">mg/dL</span>
 
             </div>
 
-            <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:center; align-items:center;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; align-items:center;">
 
               <span style="font-size:13px; font-weight:900; color:#475569; margin-right:4px;">Cifras:</span>
 
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 95)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">95</button>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 95)" style="min-height:56px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">95</button>
 
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 110)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">110</button>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 110)" style="min-height:56px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">110</button>
 
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 118)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">118</button>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 118)" style="min-height:56px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">118</button>
 
-              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 130)" style="min-height:46px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">130</button>
+              <button type="button" onclick="setManualQuickVal('manual-input-glucose', 130)" style="min-height:56px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:16px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">130</button>
 
             </div>
 
@@ -3913,7 +3846,7 @@
 
               <div style="flex:1; max-width:95px; min-width:0; box-sizing:border-box;">
 
-                <input type="number" inputmode="numeric" id="manual-input-sys" value="124" title="Sistólica (Alta)" style="width:100%; min-height:60px; font-size:28px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" id="manual-input-sys" value="124" title="Sistólica (Alta)" oninput="if(this.value.length>=3){document.getElementById('manual-input-dia').focus();} validateVitalsInput('BP');" style="width:100%; min-height:60px; font-size:28px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
 
               </div>
 
@@ -3921,7 +3854,7 @@
 
               <div style="flex:1; max-width:95px; min-width:0; box-sizing:border-box;">
 
-                <input type="number" inputmode="numeric" id="manual-input-dia" value="76" title="Diastólica (Baja)" style="width:100%; min-height:60px; font-size:28px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
+                <input type="number" inputmode="numeric" pattern="[0-9]*" id="manual-input-dia" value="76" title="Diastólica (Baja)" oninput="validateVitalsInput('BP')" style="width:100%; min-height:60px; font-size:28px; font-weight:900; text-align:center; padding:6px; border:3px solid #0D9488; border-radius:14px; color:#0F766E; background:#FFFFFF; box-sizing:border-box;">
 
               </div>
 
@@ -3929,15 +3862,15 @@
 
             </div>
 
-            <div style="display:flex; gap:6px; justify-content:center; align-items:center; flex-wrap:wrap;">
+            <div style="display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap;">
 
               <span style="font-size:13px; font-weight:900; color:#475569; margin-right:4px;">Cifras:</span>
 
-              <button type="button" onclick="setManualQuickBp(120, 80)" style="min-height:46px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">120/80</button>
+              <button type="button" onclick="setManualQuickBp(120, 80)" style="min-height:56px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">120/80</button>
 
-              <button type="button" onclick="setManualQuickBp(125, 75)" style="min-height:46px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">125/75</button>
+              <button type="button" onclick="setManualQuickBp(125, 75)" style="min-height:56px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">125/75</button>
 
-              <button type="button" onclick="setManualQuickBp(130, 80)" style="min-height:46px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">130/80</button>
+              <button type="button" onclick="setManualQuickBp(130, 80)" style="min-height:56px; min-width:56px; background:#FFFFFF; border:2px solid #CBD5E1; padding:8px 12px; border-radius:10px; font-size:15px; font-weight:900; color:#1E293B; cursor:pointer; touch-action:manipulation;">130/80</button>
 
             </div>
 
@@ -4271,6 +4204,33 @@
 
         </div>
 
+
+
+        
+        <!-- MÓDULO DE SALVAGUARDA DE DATOS OFFLINE (PLAN GRATUITO / PWA) -->
+        <div style="background:#F0FDF4; border:1.5px solid #86EFAC; border-radius:16px; padding:16px; margin-top:14px; text-align:left;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+            <strong style="color:#166534; font-size:14px; display:flex; align-items:center; gap:6px;">
+              <span>💾</span> <span>Salvaguarda de Datos (Copia Local)</span>
+            </strong>
+            <span style="background:#DCFCE7; color:#15803D; font-size:10px; font-weight:800; padding:2px 8px; border-radius:6px;">OFFLINE-FIRST</span>
+          </div>
+          <p style="font-size:12px; color:#166534; line-height:1.45; margin:0 0 12px 0;">
+            Descarga tus constantes para abrirlas en Excel o guardarlas en tu móvil sin depender de la nube.
+          </p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+            <button type="button" class="btn-primary" onclick="exportUserDataToJSON()" style="background:#16A34A; color:#FFFFFF; font-size:12px; font-weight:800; padding:10px; border-radius:10px; border:none; cursor:pointer;">
+              📥 Copia JSON
+            </button>
+            <button type="button" onclick="exportUserDataToCSV()" style="background:#0F766E; color:#FFFFFF; font-size:12px; font-weight:800; padding:10px; border-radius:10px; border:none; cursor:pointer;">
+              📊 Copia Excel/CSV
+            </button>
+          </div>
+          <button type="button" onclick="document.getElementById('input-restore-backup-profile').click()" style="width:100%; background:#FFFFFF; border:1.5px solid #16A34A; color:#166534; font-size:12px; font-weight:800; padding:10px; border-radius:10px; cursor:pointer;">
+            🔄 Restaurar Copia desde Archivo
+          </button>
+          <input type="file" id="input-restore-backup-profile" accept=".json" style="display:none;" onchange="handleRestoreBackupFile(this)">
+        </div>
 
 
         <button class="btn-primary" onclick="saveProfileData()" style="margin-top:10px;">
@@ -6314,7 +6274,70 @@
 
 
 
+    
+    // ==============================================================
+    // VALIDACIÓN SUAVE CLIENTE Y FEEDBACK HÁPTICO (HCI SÉNIOR)
+    // ==============================================================
+    function validateVitalsInput(metric) {
+      const warnBox = document.getElementById('vitals-soft-warning');
+      if (!warnBox) return;
+      let warningMsg = '';
+
+      if (metric === 'BP') {
+        const sys = parseInt(document.getElementById('manual-input-sys').value, 10);
+        const dia = parseInt(document.getElementById('manual-input-dia').value, 10);
+        if (sys && (sys < 60 || sys > 240)) {
+          warningMsg = '⚠️ Cifra de presión sistólica inusual (' + sys + ' mmHg). Verifica que hayas anotado los dígitos correctos.';
+        } else if (dia && (dia < 40 || dia > 140)) {
+          warningMsg = '⚠️ Cifra de presión diastólica inusual (' + dia + ' mmHg). Verifica el tensiómetro.';
+        }
+      } else if (metric === 'GLUCOSE') {
+        const glu = parseFloat(document.getElementById('manual-input-glucose').value);
+        if (glu && (glu < 30 || glu > 500)) {
+          warningMsg = '⚠️ Cifra de glucosa fuera de rangos habituales (' + glu + ' mg/dL). Comprueba la tira y el glucómetro.';
+        }
+      } else if (metric === 'WEIGHT') {
+        const w = parseFloat(document.getElementById('manual-input-weight').value);
+        if (w && (w < 30 || w > 250)) {
+          warningMsg = '⚠️ Cifra de peso inusual (' + w + ' kg). Comprueba la báscula.';
+        }
+      }
+
+      if (warningMsg) {
+        warnBox.innerText = warningMsg;
+        warnBox.style.display = 'block';
+      } else {
+        warnBox.style.display = 'none';
+      }
+    }
+
+    let currentViewDayOffset = 0;
+    function navigateActiveDay(offset) {
+      currentViewDayOffset += offset;
+      if (currentViewDayOffset > 0) currentViewDayOffset = 0;
+      updateActiveDayDisplay();
+    }
+
+    function updateActiveDayDisplay() {
+      const d = new Date();
+      d.setDate(d.getDate() + currentViewDayOffset);
+      const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+      const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      const dayName = days[d.getDay()];
+      const monthName = months[d.getMonth()];
+      const prefix = currentViewDayOffset === 0 ? 'Hoy, ' : (currentViewDayOffset === -1 ? 'Ayer, ' : '');
+      const labelEl = document.getElementById('disp-active-day-label');
+      if (labelEl) {
+        labelEl.innerText = `${prefix}${dayName} ${d.getDate()} de ${monthName}`;
+      }
+    }
+
     function saveManualConstantReading() {
+      // Feedback Háptico para usuario sénior
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        try { navigator.vibrate(50); } catch(e) {}
+      }
+
 
       const now = new Date();
 
@@ -7448,7 +7471,7 @@
 
           doc.setTextColor(148, 163, 184);
 
-          doc.text('Aviso: Este documento es un resumen de autocontrol registrado por el paciente. No constituye un informe clinico vinculante, prescripcion medica ni diagnostico.', 14, 278);
+          doc.text('Este documento es un registro de autocontrol facilitado por el paciente. No constituye un informe clínico vinculante, prescripción médica ni diagnóstico.', 14, 278);
           doc.text('METAVITAL Salud Personal | Cifrado local del dispositivo | Estandar de proteccion de datos RGPD (UE) 2016/679', 14, 283);
 
 
@@ -10056,7 +10079,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.33.0';
+        const CURRENT_VERSION = 'v2.35.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -10068,7 +10091,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.33.0') {
+                if (k !== 'metavital-cache-v2.35.0') {
 
                   caches.delete(k);
 

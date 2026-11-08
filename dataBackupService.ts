@@ -1,7 +1,7 @@
 /**
  * METAVITAL - Data Backup & Local Persistence Service
- * Cumplimiento de Salvaguarda de Datos PWA Offline (Target Sénior / Plan Local)
- * Previene la pérdida de constantes históricas por purga de almacenamiento (Safari ITP / Chrome)
+ * Cumplimiento de Salvaguarda de Datos PWA Offline-First (Target Sénior)
+ * Soporte JSON + CSV estructurado e IndexedDB
  */
 
 export interface PatientProfile {
@@ -47,10 +47,45 @@ export interface MetavitalBackupPayload {
 }
 
 /**
- * Recopila y exporta las constantes del usuario a un archivo JSON legible y descargable
+ * Inicializa y almacena en IndexedDB para persistencia robusta offline-first
+ */
+const DB_NAME = 'metavital_offline_db';
+const DB_VERSION = 1;
+const STORE_NAME = 'readings';
+
+export function openIndexedDB(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    if (typeof indexedDB === 'undefined') {
+      reject(new Error('IndexedDB no soportado en este navegador.'));
+      return;
+    }
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    request.onupgradeneeded = (e: any) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE_NAME)) {
+        db.createObjectStore(STORE_NAME, { keyPath: 'id' });
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function saveRecordToIndexedDB(record: MeasurementRecord): Promise<void> {
+  try {
+    const db = await openIndexedDB();
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const store = tx.objectStore(STORE_NAME);
+    store.put(record);
+  } catch (err) {
+    console.warn('[IndexedDB] Error guardando registro:', err);
+  }
+}
+
+/**
+ * Recopila y exporta las constantes del usuario a un archivo JSON
  */
 export function exportUserDataToJSON(): MetavitalBackupPayload {
-  // 1. Obtener perfil del paciente
   const patientData: Partial<PatientProfile> = (typeof (window as any).patient !== 'undefined')
     ? (window as any).patient
     : {
@@ -69,12 +104,10 @@ export function exportUserDataToJSON(): MetavitalBackupPayload {
         bmiCategory: 'Normopeso'
       };
 
-  // 2. Obtener historial de mediciones
   const measurements: MeasurementRecord[] = (typeof (window as any).measurementHistory !== 'undefined' && Array.isArray((window as any).measurementHistory))
     ? (window as any).measurementHistory
     : [];
 
-  // 3. Obtener pasos diarios y dietas desde LocalStorage
   let stepsHistory: Record<string, any> = {};
   try {
     const rawSteps = localStorage.getItem('metavital_steps_history_v2');
@@ -105,7 +138,6 @@ export function exportUserDataToJSON(): MetavitalBackupPayload {
     userPlan
   };
 
-  // Generar y disparar descarga en el navegador
   const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -118,12 +150,49 @@ export function exportUserDataToJSON(): MetavitalBackupPayload {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 
-  // Guardar marca temporal para el recordatorio de 7 días
   try {
     localStorage.setItem('metavital_last_backup_date', Date.now().toString());
   } catch (e) {}
 
   return payload;
+}
+
+/**
+ * Exporta el historial de constantes a formato CSV compatible con Excel / Hojas de Cálculo
+ */
+export function exportUserDataToCSV(): void {
+  const patientData = (typeof (window as any).patient !== 'undefined') ? (window as any).patient : {};
+  const measurements: MeasurementRecord[] = (typeof (window as any).measurementHistory !== 'undefined' && Array.isArray((window as any).measurementHistory))
+    ? (window as any).measurementHistory
+    : [];
+
+  const headers = ['ID', 'Fecha_Registro', 'Tipo', 'Parametro', 'Valor', 'Estado_Clinico', 'Paciente'];
+  const rows = measurements.map(m => [
+    m.id,
+    `"${m.date || ''}"`,
+    m.type,
+    `"${m.label || ''}"`,
+    `"${m.value || ''}"`,
+    `"${m.status || ''}"`,
+    `"${patientData.fullName || 'Paciente'}"`
+  ]);
+
+  const csvContent = '\uFEFF' + [headers.join(';'), ...rows.map(r => r.join(';'))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const dateStr = new Date().toISOString().split('T')[0];
+  const safeName = (patientData.fullName || 'Paciente').replace(/\s+/g, '_');
+  a.href = url;
+  a.download = `METAVITAL_Constantes_${safeName}_${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  try {
+    localStorage.setItem('metavital_last_backup_date', Date.now().toString());
+  } catch (e) {}
 }
 
 /**
@@ -142,12 +211,10 @@ export async function importUserDataFromJSON(file: File): Promise<boolean> {
         const text = event.target?.result as string;
         const data = JSON.parse(text) as MetavitalBackupPayload;
 
-        // Validación de cabecera de integridad
         if (!data || data.app !== 'METAVITAL' || !Array.isArray(data.measurements)) {
           throw new Error('El archivo no tiene el formato válido de copia de seguridad de METAVITAL.');
         }
 
-        // 1. Restaurar paciente
         if (data.patient && typeof (window as any).patient !== 'undefined') {
           Object.assign((window as any).patient, data.patient);
           if (typeof (window as any).updateProfileUI === 'function') {
@@ -155,15 +222,15 @@ export async function importUserDataFromJSON(file: File): Promise<boolean> {
           }
         }
 
-        // 2. Restaurar historial de constantes
         if (Array.isArray(data.measurements)) {
           (window as any).measurementHistory = data.measurements;
           if (typeof (window as any).renderMeasurementHistory === 'function') {
             (window as any).renderMeasurementHistory();
           }
+          // Guardar en IndexedDB
+          data.measurements.forEach(m => saveRecordToIndexedDB(m));
         }
 
-        // 3. Restaurar pasos y dietas en LocalStorage
         if (data.stepsHistory) {
           localStorage.setItem('metavital_steps_history_v2', JSON.stringify(data.stepsHistory));
           if (typeof (window as any).stepsDailyHistory !== 'undefined') {
@@ -175,7 +242,6 @@ export async function importUserDataFromJSON(file: File): Promise<boolean> {
           localStorage.setItem('metavital_diet_logs', JSON.stringify(data.dietLogs));
         }
 
-        // Registrar restauración exitosa
         localStorage.setItem('metavital_last_backup_date', Date.now().toString());
         resolve(true);
       } catch (err) {
@@ -186,4 +252,3 @@ export async function importUserDataFromJSON(file: File): Promise<boolean> {
     reader.readAsText(file);
   });
 }
-
