@@ -1484,14 +1484,6 @@
         <p id="alert-msg">Información clínica.</p>
       </div>
 
-            <!-- BOTÓN DESTACADO DE VIRALIZACIÓN POR WHATSAPP (ACCESO DIRECTO DESDE EL INICIO) -->
-      <div style="margin-bottom:12px;">
-        <button type="button" onclick="openShareWhatsAppModal()" style="width:100%; background:linear-gradient(135deg, #25D366, #128C7E); color:#FFFFFF; border:none; border-radius:14px; padding:11px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; box-shadow:0 3px 12px rgba(37,211,102,0.3); text-align:left; -webkit-tap-highlight-color:transparent;">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <div style="background:rgba(255,255,255,0.22); width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
-              📲
-            </div>
-
       <!-- BANNER NO INTRUSIVO DE COPIA DE SEGURIDAD LOCAL (CADA 7 DÍAS - PLAN GRATUITO) -->
       <div id="backup-weekly-reminder-banner" style="display:none; background:#FEF3C7; border:1.5px solid #F59E0B; border-radius:14px; padding:12px 14px; margin-bottom:12px; box-shadow:0 3px 10px rgba(245,158,11,0.15);">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
@@ -1514,6 +1506,13 @@
         </div>
       </div>
 
+      <!-- BOTÓN DESTACADO DE VIRALIZACIÓN POR WHATSAPP (ACCESO DIRECTO DESDE EL INICIO) -->
+      <div style="margin-bottom:12px;">
+        <button type="button" onclick="openShareWhatsAppModal()" style="width:100%; background:linear-gradient(135deg, #25D366, #128C7E); color:#FFFFFF; border:none; border-radius:14px; padding:11px 14px; display:flex; align-items:center; justify-content:space-between; gap:10px; cursor:pointer; box-shadow:0 3px 12px rgba(37,211,102,0.3); text-align:left; -webkit-tap-highlight-color:transparent;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div style="background:rgba(255,255,255,0.22); width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
+              📲
+            </div>
             <div>
               <div style="font-size:13.5px; font-weight:900; letter-spacing:-0.2px;">Recomendar App por WhatsApp</div>
               <div style="font-size:11px; opacity:0.95; font-weight:600;">Comparte con familiares o amigos para que la usen gratis</div>
@@ -7622,13 +7621,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.35.0';
+        const CURRENT_VERSION = 'v2.36.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.35.0') {
+                if (k !== 'metavital-cache-v2.36.0') {
                   caches.delete(k);
                 }
               });
