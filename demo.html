@@ -3031,7 +3031,7 @@
 
             <div class="tile-icon-box" style="background:#FEF2F2; color:#EF4444;">🩸</div>
 
-            <span class="tile-tag-pill" style="background:#ECFDF5; color:#059669;">En Rango</span>
+            <span class="tile-tag-pill" style="background:#DCFCE7; color:#14532D; font-weight:800;">✓ En rango objetivo</span>
 
           </div>
 
@@ -3109,7 +3109,7 @@
 
             <div class="tile-icon-box" style="background:#F5F3FF; color:#7C3AED;">👟</div>
 
-            <span class="tile-tag-pill" style="background:#ECFDF5; color:#059669;">Superada</span>
+            <span class="tile-tag-pill" style="background:#DCFCE7; color:#14532D; font-weight:800;">✓ En rango objetivo</span>
 
           </div>
 
@@ -3246,9 +3246,9 @@
           <span style="background:rgba(255,255,255,0.22); font-size:10px; font-weight:800; padding:2px 8px; border-radius:999px; letter-spacing:0.4px;">MUESTRA DEMO</span>
           <span style="font-size:11px; font-weight:700; color:#BFDBFE;">Paso 3 de 5</span>
         </div>
-        <h3 style="font-size:15px; font-weight:900; margin:0 0 4px 0; color:#FFFFFF;">Informe Clínico Oficial en PDF A4 para tu Médico</h3>
+        <h3 style="font-size:15px; font-weight:900; margin:0 0 4px 0; color:#FFFFFF;">Resumen de Constantes para Consulta Médica en PDF A4</h3>
         <p style="font-size:12px; line-height:16px; margin:0; color:#EFF6FF;">
-          Con 1 solo clic la app compila tus tomas, medias y analítica en un informe oficial A4 listo para consulta o enviar por WhatsApp.
+          Con 1 solo clic la app compila tus tomas, medias y analítica en un resumen de constantes A4 listo para consulta o enviar por WhatsApp.
         </p>
       </div>
 
@@ -3300,7 +3300,7 @@
 
         <!-- Botón de Muestra para Ver PDF -->
         <button class="btn-primary" onclick="generateClinicalPdf()" style="margin-top:14px; background:#1E3A8A; color:#FFFFFF; font-size:12.5px; font-weight:800; padding:11px; width:100%; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:8px;">
-          <span>📄</span> Ver Maqueta del Informe Oficial (PDF A4)
+          <span>📄</span> Ver Maqueta del Resumen de Constantes (PDF A4)
         </button>
       </div>
 
@@ -3308,7 +3308,7 @@
       <div style="background:#EFF6FF; border:1.5px solid #3B82F6; border-radius:14px; padding:14px; text-align:center;">
         <div style="font-size:13px; font-weight:900; color:#1E40AF; margin-bottom:4px;">👑 Generación Ilimitada y Envío Directo al Médico</div>
         <div style="font-size:11.5px; color:#475569; line-height:16px; margin-bottom:10px;">
-          Descarga informes oficiales en 1 clic y prográmalos para que se envíen automáticamente por WhatsApp o Email a tu médico de cabecera o a tus hijos en el <strong>Plan Salud Integral</strong>.
+          Descarga tu resumen de constantes en 1 clic y prográmalos para que se envíen automáticamente por WhatsApp o Email a tu médico de cabecera o a tus hijos en el <strong>Plan Salud Integral</strong>.
         </div>
         <a href="/app?auth=open&plan=integral" class="btn-primary" style="background:#1D4ED8; color:#FFF; font-size:12px; font-weight:800; padding:9px 18px; border-radius:10px; text-decoration:none; display:inline-block; box-shadow:0 3px 8px rgba(29,78,216,0.3);">
           Comenzar Plan Salud Integral (9,99 €/mes) ➔
@@ -3843,7 +3843,7 @@
 
               <h3 id="modal-title" style="font-size:18.5px; font-weight:900; color:var(--text-main); margin:0; line-height:1.2;">Glucómetro Digital</h3>
 
-              <span id="modal-subtitle" style="font-size:12.5px; color:#475569; font-weight:700;">Registro Clínico Oficial</span>
+              <span id="modal-subtitle" style="font-size:12.5px; color:#475569; font-weight:700;">Registro de Autocontrol Exportable</span>
 
             </div>
 
@@ -4283,7 +4283,7 @@
 
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
 
-          <h3 style="font-size:18px; font-weight:800; color:var(--text-main);">📄 Subir / Escanear Informe</h3>
+          <h3 style="font-size:18px; font-weight:800; color:var(--text-main);">📄 Resumen y Registro de Constantes</h3>
 
           <span style="cursor:pointer; font-size:20px; font-weight:bold;" onclick="closeReportUploadModal()">✕</span>
 
@@ -7206,13 +7206,13 @@
 
           doc.setFont('helvetica', 'bold');
 
-          doc.text('METAVITAL - INFORME CLINICO DE EVOLUCION', 18, 22);
+          doc.text('METAVITAL - REGISTRO DE AUTOCONTROL EXPORTABLE', 18, 22);
 
           doc.setFontSize(8.5);
 
           doc.setFont('helvetica', 'normal');
 
-          doc.text('Estandar KDIGO / ADA / ESC', 148, 22);
+          doc.text('Resumen para Consulta Medica', 136, 22);
 
 
 
@@ -7426,7 +7426,7 @@
 
           doc.setFontSize(8);
 
-          doc.text('Firma y Sello del Medico Especialista', 128, 230);
+          doc.text('Elaborado por el paciente para revision medica', 115, 230);
 
           doc.text(doctor.name + ' (' + doctor.center + ')', 128, 234);
 
@@ -7438,7 +7438,8 @@
 
           doc.setTextColor(148, 163, 184);
 
-          doc.text('Documento oficial METAVITAL | Cifrado E2E AES-256 | Cumplimiento estricto HIPAA y RGPD UE 2016/679', 14, 280);
+          doc.text('Aviso: Este documento es un resumen de autocontrol registrado por el paciente. No constituye un informe clinico vinculante, prescripcion medica ni diagnostico.', 14, 278);
+          doc.text('METAVITAL Salud Personal | Cifrado local del dispositivo | Estandar de proteccion de datos RGPD (UE) 2016/679', 14, 283);
 
 
 
@@ -7456,7 +7457,7 @@
 
             document.getElementById('alert-title').innerText = '✓ PDF CLÍNICO DESCARGADO';
 
-            document.getElementById('alert-msg').innerText = 'El informe oficial en A4 se ha guardado en su dispositivo.';
+            document.getElementById('alert-msg').innerText = 'El resumen de constantes en A4 se ha guardado en su dispositivo.';
 
             setTimeout(() => banner.classList.remove('show'), 3500);
 
@@ -7514,7 +7515,7 @@
 
         `👟 *Pasos medios:* ${steps} pasos/día en llano%0A` +
 
-        `Documento oficial generado con METAVITAL.`;
+        `Registro de autocontrol generado por el paciente con METAVITAL. No constituye diagnóstico ni prescripción médica.`;
 
       window.open(`https://api.whatsapp.com/send?text=${summary}`, '_blank');
 
@@ -7794,7 +7795,7 @@
 
       const lines = [
 
-        "*METAVITAL - INFORME CLÍNICO MENSUAL DE EVOLUCIÓN*",
+        "*METAVITAL - RESUMEN DE AUTOCONTROL PARA CONSULTA MÉDICA*",
 
         "📅 *Período:* Balance Mensual (" + currentMonth + ")",
 
@@ -8461,6 +8462,7 @@
 
 
       html += '<p style="color:#1E293B; margin-bottom:10px; font-weight:600;">' + statusSummary + '</p>';
+      html += '<div style="background:#FFFBEB; border:1.5px solid #FDE68A; border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:11.5px; color:#92400E; line-height:1.45; text-align:left;"><strong>Nota clínica:</strong> El contenido de potasio y sodio en vegetales varía sustancialmente según el método de preparación (técnicas de remojo y doble cocción). Usa estos valores como guía orientativa.</div>';
 
 
 
@@ -9861,16 +9863,51 @@
 
 
 
-      <div id="pwa-ios-install-view" style="display:none; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px; text-align:left; font-size:12px; color:#334155; margin-bottom:12px; line-height:1.6;">
+      <div id="pwa-ios-install-view" style="display:none; background:#F8FAFC; border:1.5px solid #CBD5E1; border-radius:16px; padding:16px; text-align:left; font-size:13px; color:#1E293B; margin-bottom:14px; line-height:1.5;">
+        <div style="font-weight:900; font-size:14px; color:#0F172A; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>📱</span> <span>Pasos para Instalar en iPhone / iPad (Safari):</span>
+        </div>
+        
+        <!-- Paso 1: Compartir con icono real de Safari -->
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px; background:#FFFFFF; padding:10px; border-radius:12px; border:1px solid #E2E8F0;">
+          <div style="width:36px; height:36px; background:#EFF6FF; border:1.5px solid #3B82F6; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-weight:800; font-size:13px; color:#1E293B;">1. Toca "Compartir"</div>
+            <div style="font-size:11.5px; color:#64748B;">En la barra inferior de navegación de Safari.</div>
+          </div>
+        </div>
 
-        <strong>Para instalar en iPhone / iPad:</strong><br>
+        <!-- Paso 2: Deslizar hacia abajo -->
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px; background:#FFFFFF; padding:10px; border-radius:12px; border:1px solid #E2E8F0;">
+          <div style="width:36px; height:36px; background:#FEF3C7; border:1.5px solid #F59E0B; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">
+            ⬇️
+          </div>
+          <div>
+            <div style="font-weight:800; font-size:13px; color:#1E293B;">2. Desliza hacia abajo</div>
+            <div style="font-size:11.5px; color:#64748B;">En el menú de opciones que se despliega.</div>
+          </div>
+        </div>
 
-        1. Pulsa el botón <strong>Compartir</strong> <span style="font-size:14px;">📤</span> en la barra inferior de Safari.<br>
-
-        2. Desplaza hacia abajo y selecciona <strong>"Añadir a la pantalla de inicio"</strong> <span style="font-size:14px;">➕</span>.<br>
-
-        3. Pulsa <strong>Añadir</strong> arriba a la derecha.
-
+        <!-- Paso 3: Añadir a pantalla de inicio -->
+        <div style="display:flex; align-items:center; gap:12px; background:#FFFFFF; padding:10px; border-radius:12px; border:1px solid #E2E8F0;">
+          <div style="width:36px; height:36px; background:#ECFDF5; border:1.5px solid #10B981; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-weight:800; font-size:13px; color:#1E293B;">3. "Añadir a pantalla de inicio"</div>
+            <div style="font-size:11.5px; color:#64748B;">Pulsa el botón (+) y luego confirma arriba a la derecha.</div>
+          </div>
+        </div>
       </div>
 
 
@@ -10009,7 +10046,7 @@
 
       try {
 
-        const CURRENT_VERSION = 'v2.31.0';
+        const CURRENT_VERSION = 'v2.32.0';
 
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
 
@@ -10021,7 +10058,7 @@
 
               keys.forEach(k => {
 
-                if (k !== 'metavital-cache-v2.31.0') {
+                if (k !== 'metavital-cache-v2.32.0') {
 
                   caches.delete(k);
 

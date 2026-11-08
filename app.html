@@ -1331,6 +1331,7 @@
 <script>
     // Auto-open Auth Modal if requested via URL query params (?auth=open or ?login=1)
     window.addEventListener('DOMContentLoaded', () => {
+      if (typeof checkWeeklyBackupReminder === 'function') checkWeeklyBackupReminder();
       /* urlParams already defined */
       try {
         // Acceso por defecto para Ramón como Superadministrador
@@ -1480,6 +1481,29 @@
             <div style="background:rgba(255,255,255,0.22); width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0;">
               📲
             </div>
+
+      <!-- BANNER NO INTRUSIVO DE COPIA DE SEGURIDAD LOCAL (CADA 7 DÍAS - PLAN GRATUITO) -->
+      <div id="backup-weekly-reminder-banner" style="display:none; background:#FEF3C7; border:1.5px solid #F59E0B; border-radius:14px; padding:12px 14px; margin-bottom:12px; box-shadow:0 3px 10px rgba(245,158,11,0.15);">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:22px;">🛡️</span>
+            <div>
+              <div style="font-size:13px; font-weight:800; color:#92400E;">Copia de Seguridad Recomendada</div>
+              <div style="font-size:11.5px; color:#78350F; line-height:1.4;">Hace más de 7 días que no guardas copia local de tus constantes de salud.</div>
+            </div>
+          </div>
+          <span style="cursor:pointer; font-size:18px; font-weight:bold; color:#92400E; padding:0 4px;" onclick="dismissBackupReminder()">✕</span>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button type="button" onclick="exportUserDataToJSON(); dismissBackupReminder();" style="flex:1; background:#D97706; color:#FFF; border:none; padding:8px 12px; font-size:11.5px; font-weight:800; border-radius:8px; cursor:pointer;">
+            📥 Descargar Copia Ahora
+          </button>
+          <button type="button" onclick="dismissBackupReminder()" style="background:transparent; border:1px solid #D97706; color:#92400E; padding:8px 12px; font-size:11.5px; font-weight:700; border-radius:8px; cursor:pointer;">
+            Recordar luego
+          </button>
+        </div>
+      </div>
+
             <div>
               <div style="font-size:13.5px; font-weight:900; letter-spacing:-0.2px;">Recomendar App por WhatsApp</div>
               <div style="font-size:11px; opacity:0.95; font-weight:600;">Comparte con familiares o amigos para que la usen gratis</div>
@@ -1556,7 +1580,7 @@
         <div class="bio-tile-card" onclick="openCaptureModal('GLUCOSE')">
           <div class="tile-top-row">
             <div class="tile-icon-box" style="background:#FEF2F2; color:#EF4444;">🩸</div>
-            <span class="tile-tag-pill" style="background:#ECFDF5; color:#059669;">En Rango</span>
+            <span class="tile-tag-pill" style="background:#DCFCE7; color:#14532D; font-weight:800;">✓ En rango objetivo</span>
           </div>
           <div>
             <div class="tile-title">Glucómetro</div>
@@ -1569,7 +1593,7 @@
         <div class="bio-tile-card" onclick="openCaptureModal('BP')">
           <div class="tile-top-row">
             <div class="tile-icon-box" style="background:#EFF6FF; color:#0284C7;">💓</div>
-            <span class="tile-tag-pill" style="background:#ECFDF5; color:#059669;">Controlada</span>
+            <span class="tile-tag-pill" style="background:#DCFCE7; color:#14532D; font-weight:800;">✓ En rango objetivo</span>
           </div>
           <div>
             <div class="tile-title">Tensiómetro</div>
@@ -1595,7 +1619,7 @@
         <div class="bio-tile-card" onclick="openCaptureModal('STEPS')">
           <div class="tile-top-row">
             <div class="tile-icon-box" style="background:#F5F3FF; color:#7C3AED;">👟</div>
-            <span class="tile-tag-pill" style="background:#ECFDF5; color:#059669;">Superada</span>
+            <span class="tile-tag-pill" style="background:#DCFCE7; color:#14532D; font-weight:800;">✓ En rango objetivo</span>
           </div>
           <div>
             <div class="tile-title">Podómetro</div>
@@ -2870,7 +2894,7 @@
             <span id="modal-icon" style="font-size:32px;">🩸</span>
             <div>
               <h3 id="modal-title" style="font-size:18.5px; font-weight:900; color:var(--text-main); margin:0; line-height:1.2;">Glucómetro Digital</h3>
-              <span id="modal-subtitle" style="font-size:12.5px; color:#475569; font-weight:700;">Registro Clínico Oficial</span>
+              <span id="modal-subtitle" style="font-size:12.5px; color:#475569; font-weight:700;">Registro de Autocontrol Exportable</span>
             </div>
           </div>
           <button type="button" onclick="closeCaptureModal()" title="Cerrar ventana" style="background:#F1F5F9; border:2px solid #CBD5E1; width:40px; height:40px; border-radius:50%; font-size:20px; font-weight:900; color:#475569; cursor:pointer; display:flex; align-items:center; justify-content:center; touch-action:manipulation;">✕</button>
@@ -3080,61 +3104,190 @@
           </div>
         </div>
 
+        
+        <!-- MÓDULO DE SALVAGUARDA DE DATOS OFFLINE (PLAN GRATUITO / PWA) -->
+        <div style="background:#F0FDF4; border:1.5px solid #86EFAC; border-radius:14px; padding:14px; margin-top:14px; text-align:left;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+            <strong style="color:#166534; font-size:13.5px; display:flex; align-items:center; gap:6px;">
+              <span>💾</span> <span>Salvaguarda de Datos (Copia Local)</span>
+            </strong>
+            <span style="background:#DCFCE7; color:#15803D; font-size:10px; font-weight:800; padding:2px 7px; border-radius:6px;">PROTECCIÓN PWA</span>
+          </div>
+          <p style="font-size:11.5px; color:#166534; line-height:1.45; margin:0 0 10px 0;">
+            Descarga una copia de seguridad en tu dispositivo para evitar que el navegador (Safari o Chrome) purgue tus constantes tras 7 días de inactividad.
+          </p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <button type="button" class="btn-primary" onclick="exportUserDataToJSON()" style="background:#16A34A; color:#FFFFFF; font-size:12px; font-weight:800; padding:10px; border-radius:10px; border:none; cursor:pointer;">
+              📥 Guardar Copia
+            </button>
+            <button type="button" onclick="document.getElementById('input-restore-backup-profile').click()" style="background:#FFFFFF; border:1.5px solid #16A34A; color:#166534; font-size:12px; font-weight:800; padding:10px; border-radius:10px; cursor:pointer;">
+              🔄 Restaurar Copia
+            </button>
+            <input type="file" id="input-restore-backup-profile" accept=".json" style="display:none;" onchange="handleRestoreBackupFile(this)">
+          </div>
+        </div>
+
+
         <button class="btn-primary" onclick="saveProfileData()" style="margin-top:10px;">
           GUARDAR PERFIL & OBJETIVOS
         </button>
       </div>
     </div>
 
-    <!-- Modal para Subir/Escanear Nuevo Informe Clínico -->
-    <div id="report-upload-modal" class="modal-overlay">
-      <div class="modal-box" style="max-height:88vh; overflow-y:auto;">
+    
+  <!-- Modal de Consentimiento de Privacidad para WhatsApp (RGPD Art. 9) -->
+  <div id="whatsapp-consent-modal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:100000; position:fixed; inset:0; background:rgba(15,23,42,0.7); backdrop-filter:blur(4px);">
+    <div class="modal-box" style="max-width:390px; width:92%; padding:22px 20px; text-align:center; border-radius:20px; background:#FFFFFF; box-shadow:0 20px 45px rgba(0,0,0,0.3);">
+      <div style="width:58px; height:58px; border-radius:50%; background:#FEF3C7; border:2px solid #F59E0B; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-size:26px;">
+        🔒
+      </div>
+      <h3 style="font-size:17px; font-weight:900; color:#0F172A; margin:0 0 8px 0;">Privacidad y Datos de Salud</h3>
+      <div style="background:#FFFBEB; border:1px solid #FDE68A; border-radius:12px; padding:12px; text-align:left; font-size:12.5px; color:#92400E; line-height:1.5; margin-bottom:14px;">
+        <strong>Aviso de Confidencialidad:</strong> Recuerda que WhatsApp no es un canal cifrado de custodia hospitalaria. Asegúrate de tener el consentimiento de tu profesional de salud antes de compartir datos sensibles.
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <button type="button" class="btn-primary" onclick="proceedToWhatsAppAfterConsent()" style="background:#25D366; color:#FFFFFF; font-size:13.5px; font-weight:800; padding:12px; border-radius:12px; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+          <span>📲</span> <span>Entendido, Enviar por WhatsApp</span>
+        </button>
+        <button type="button" onclick="closeWhatsAppConsentModal(); downloadBinaryPdf();" style="background:#F0FDF4; border:1.5px solid #16A34A; color:#166534; font-size:12.5px; font-weight:800; padding:11px; border-radius:12px; cursor:pointer;">
+          📄 Preferir Descarga de PDF Seguro / Imprimir
+        </button>
+        <button type="button" onclick="closeWhatsAppConsentModal()" style="background:#F1F5F9; border:none; color:#64748B; font-size:12px; font-weight:700; padding:9px; border-radius:10px; cursor:pointer;">
+          Cancelar
+        </button>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Modal para Subir/Escanear y Enviar Informe Clínico -->
+    <div id="report-upload-modal" class="modal-overlay" style="display:none; align-items:center; justify-content:center; z-index:9999; position:fixed; inset:0; background:rgba(15,23,42,0.65); backdrop-filter:blur(4px);">
+      <div class="modal-box" style="max-height:88vh; max-width:440px; width:92%; overflow-y:auto; background:#FFFFFF; border-radius:20px; padding:20px; box-shadow:0 20px 45px rgba(0,0,0,0.25);">
+        
+        <!-- CABECERA DEL MODAL CON BOTÓN DE CIERRE -->
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-          <h3 style="font-size:18px; font-weight:800; color:var(--text-main);">📄 Subir / Escanear Informe</h3>
-          <span style="cursor:pointer; font-size:20px; font-weight:bold;" onclick="closeReportUploadModal()">✕</span>
+          <h3 style="font-size:17.5px; font-weight:800; color:#0F172A; margin:0; display:flex; align-items:center; gap:6px;">
+            <span>📄</span> <span>Resumen de Constantes para Consulta Médica</span>
+          </h3>
+          <span style="cursor:pointer; font-size:22px; font-weight:bold; color:#64748B; width:30px; height:30px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:#F1F5F9;" onclick="closeReportUploadModal()">✕</span>
         </div>
 
-        <p style="font-size:12.5px; color:var(--text-muted); line-height:16px; margin-bottom:12px;">
-          Encuadre con la cámara el informe en papel o suba el archivo PDF descargado desde <strong>ClicSalud+ / Salud Responde (SAS)</strong>.
-        </p>
-
-        <div style="display:flex; gap:8px; margin-bottom:14px;">
-          <button id="tab-btn-photo" class="btn-primary" style="flex:1; padding:9px; font-size:11.5px;" onclick="setReportUploadTab('PHOTO')">📸 Foto Cámara (OCR)</button>
-          <button id="tab-btn-pdf" class="btn-primary" style="flex:1; padding:9px; font-size:11.5px; background:#F1F5F9; color:#334155;" onclick="setReportUploadTab('PDF')">📁 Subir PDF (SAS)</button>
-        </div>
-
-        <div id="report-snap-view">
-          <div class="camera-frame" style="height:140px; background:#F8FAFC; border:2px dashed #94A3B8;">
-            <div style="font-size:30px;">📋</div>
-            <h4 style="font-size:13.5px; margin:4px 0;">Informe Hospital Univ. de Jaén</h4>
-            <p style="font-size:11px; color:#64748B;">Nefrología General • Dra. Elena Morales</p>
-          </div>
-
-          <button class="btn-primary" style="margin-top:10px;" onclick="simulateScanHospitalReport()">
-            🔍 PROCESAR Y EXTRAER DATOS CLÍNICOS
+        <!-- SELECTOR DE MODO: SUBIR / ESCANEAR vs ENVIAR AL MÉDICO -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; background:#F1F5F9; padding:3px; border-radius:10px; margin-bottom:14px;">
+          <button type="button" id="btn-report-tab-upload" onclick="setReportModalMainTab('UPLOAD')" style="border:none; border-radius:8px; padding:8px; font-size:12px; font-weight:800; background:#0F766E; color:#FFFFFF; cursor:pointer; transition:all 0.2s;">
+            📥 Subir / Escanear
+          </button>
+          <button type="button" id="btn-report-tab-send" onclick="setReportModalMainTab('SEND')" style="border:none; border-radius:8px; padding:8px; font-size:12px; font-weight:800; background:transparent; color:#475569; cursor:pointer; transition:all 0.2s;">
+            📤 Enviar a Mi Médico
           </button>
         </div>
 
-        <div id="report-extracted-view" style="display:none; margin-top:12px;">
-          <div style="background:#DCFCE7; padding:10px; border-radius:8px; font-size:12px; color:#166534; font-weight:700; margin-bottom:10px;">
-            ✓ Detección óptica completada: Se han extraído 8 parámetros analíticos y conciliado 6 fármacos.
+        <!-- ============================================== -->
+        <!-- SUBTAB 1: SUBIR Y ESCANEAR INFORMES CON OCR    -->
+        <!-- ============================================== -->
+        <div id="report-subtab-upload">
+          <p style="font-size:12px; color:#475569; line-height:16px; margin:0 0 12px 0;">
+            Fotografía un informe impreso o selecciona el PDF descargado de <strong>ClicSalud+ / Salud Responde (SAS)</strong> para extraer analíticas automáticamente.
+          </p>
+
+          <!-- Inputs ocultos reales para activar cámara o selector de archivos -->
+          <input type="file" id="report-file-camera" accept="image/*" capture="environment" style="display:none;" onchange="handleRealReportFileSelect(this)">
+          <input type="file" id="report-file-doc" accept=".pdf,image/*" style="display:none;" onchange="handleRealReportFileSelect(this)">
+
+          <!-- BOTONES DE ACTIVACIÓN DE CÁMARA O PDF -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+            <button type="button" class="btn-primary" style="background:#0F766E; color:#FFF; padding:10px 8px; font-size:12px; font-weight:800; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;" onclick="triggerReportCamera()">
+              <span>📸</span> <span>Foto Cámara (OCR)</span>
+            </button>
+            <button type="button" class="btn-primary" style="background:#F1F5F9; border:1.5px solid #CBD5E1; color:#1E293B; padding:10px 8px; font-size:12px; font-weight:800; border-radius:10px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer;" onclick="triggerReportPdf()">
+              <span>📁</span> <span>Subir PDF / Foto</span>
+            </button>
           </div>
 
-          <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:8px; padding:10px; font-size:12px; margin-bottom:10px; line-height:18px;">
-            <strong>Resultados Analíticos Extraídos:</strong><br>
-            • <strong>Filtrado Glomerular (CKD-EPI):</strong> 42 mL/min (ERC Estadio 3a)<br>
-            • <strong>Creatinina Sérica:</strong> 1.7 mg/dL | <strong>Urea:</strong> 62 mg/dL<br>
-            • <strong>Potasio (K):</strong> 5.5 mEq/L ⚠️ (Alerta límite alto)<br>
-            • <strong>Colesterol LDL:</strong> 49 mg/dL (Objetivo alcanzado)<br>
-            • <strong>Triglicéridos:</strong> 346 mg/dL (Hipertrigliceridemia)<br>
-            • <strong>Glucosa:</strong> 122 mg/dL | <strong>HbA1c:</strong> 7.1 %<br>
-            • <strong>Fármacos Conciliados:</strong> Ozempic 1 mg y 6 fármacos activos (Trajenta 5 mg suspendido).
+          <!-- ÁREA VISUAL DE PREVISUALIZACIÓN / SELECCIÓN -->
+          <div id="report-snap-view">
+            <!-- Marco de estado cuando se selecciona un archivo -->
+            <div id="report-selected-preview" style="display:none; background:#F0FDF4; border:1.5px solid #86EFAC; border-radius:12px; padding:12px; margin-bottom:10px; text-align:left;">
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                <span style="font-size:22px;">📄</span>
+                <div>
+                  <strong id="report-selected-filename" style="font-size:13px; color:#166534; display:block; word-break:break-all;">informe_clinico.pdf</strong>
+                  <span id="report-selected-meta" style="font-size:11px; color:#15803D;">Listo para procesamiento óptico</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Marco por defecto si no ha seleccionado aún -->
+            <div id="report-default-frame" class="camera-frame" style="height:120px; background:#F8FAFC; border:2px dashed #94A3B8; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-bottom:10px;">
+              <div style="font-size:28px;">📋</div>
+              <h4 style="font-size:13px; font-weight:800; color:#1E293B; margin:4px 0 2px 0;">Informe Analítico / Laboratorio</h4>
+              <p style="font-size:11px; color:#64748B; margin:0;">Toca arriba para hacer foto o seleccionar archivo</p>
+            </div>
+
+            <button type="button" id="btn-process-report" class="btn-primary" style="width:100%; background:linear-gradient(135deg, #0F766E, #0284C7); padding:12px; font-size:13px; font-weight:900; border-radius:10px; cursor:pointer; box-shadow:0 3px 10px rgba(15,118,110,0.25);" onclick="simulateScanHospitalReport()">
+              🔍 PROCESAR Y EXTRAER DATOS CLÍNICOS
+            </button>
           </div>
 
-          <button class="btn-primary btn-success" onclick="confirmReportExtraction()">
-            ✓ CONFIRMAR E INCORPORAR AL EXPEDIENTE
-          </button>
+          <!-- VISTA DE RESULTADOS EXTRAÍDOS -->
+          <div id="report-extracted-view" style="display:none; margin-top:12px;">
+            <div style="background:#DCFCE7; border:1px solid #86EFAC; padding:10px; border-radius:10px; font-size:12px; color:#166534; font-weight:700; margin-bottom:10px;">
+              ✓ Extracción completada: 8 parámetros analíticos detectados y fármacos conciliados.
+            </div>
+
+            <div style="background:#F8FAFC; border:1px solid #E2E8F0; border-radius:10px; padding:12px; font-size:12px; margin-bottom:12px; line-height:18px; color:#1E293B;">
+              <strong style="color:#0F766E; display:block; margin-bottom:4px;">Resultados Analíticos Extraídos:</strong>
+              • <strong>Filtrado Glomerular (CKD-EPI):</strong> 42 mL/min (ERC Estadio 3a)<br>
+              • <strong>Creatinina Sérica:</strong> 1.7 mg/dL | <strong>Urea:</strong> 62 mg/dL<br>
+              • <strong>Potasio (K):</strong> 5.5 mEq/L ⚠️ (Límite superior)<br>
+              • <strong>Colesterol LDL:</strong> 49 mg/dL (Objetivo alcanzado)<br>
+              • <strong>Triglicéridos:</strong> 346 mg/dL<br>
+              • <strong>Glucosa:</strong> 122 mg/dL | <strong>HbA1c:</strong> 7.1 %<br>
+              • <strong>Fármacos Conciliados:</strong> Ozempic 1 mg y medicación activa.
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+              <button type="button" class="btn-primary" style="background:#16A34A; padding:11px; font-size:12.5px; font-weight:800; border-radius:10px; cursor:pointer;" onclick="confirmReportExtraction()">
+                ✓ GUARDAR EN EXPEDIENTE
+              </button>
+              <button type="button" style="background:#F1F5F9; border:1px solid #CBD5E1; color:#475569; padding:11px; font-size:12px; font-weight:700; border-radius:10px; cursor:pointer;" onclick="resetReportUploadView()">
+                🔄 Subir Otro
+              </button>
+            </div>
+          </div>
         </div>
+
+        <!-- ============================================== -->
+        <!-- SUBTAB 2: ENVIAR INFORME A MI MÉDICO           -->
+        <!-- ============================================== -->
+        <div id="report-subtab-send" style="display:none;">
+          <p style="font-size:12px; color:#475569; line-height:16px; margin:0 0 12px 0;">
+            Transmite tu resumen de constantes de autocontrol con las medias de tensión, azúcar, peso y adherencia al tratamiento directamente a tu facultativo:
+          </p>
+
+          <div style="display:flex; flex-direction:column; gap:8px;">
+            <!-- Opción 1: WhatsApp -->
+            <button type="button" class="btn-primary" onclick="sendMonthlyReportWhatsApp()" style="background:#25D366; color:#FFFFFF; font-size:13.5px; font-weight:900; padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 3px 10px rgba(37,211,102,0.3); border:none; cursor:pointer;">
+              <span style="font-size:18px;">💬</span> <span>Enviar Informe por WhatsApp</span>
+            </button>
+
+            <!-- Opción 2: Descargar PDF A4 -->
+            <button type="button" class="btn-primary" onclick="downloadBinaryPdf()" style="background:#1E3A8A; color:#FFFFFF; font-size:13px; font-weight:800; padding:11px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; cursor:pointer;">
+              <span>📥</span> <span>Descargar Resumen de Constantes en PDF (A4)</span>
+            </button>
+
+            <!-- Opción 3: Correo Electrónico -->
+            <button type="button" class="btn-primary" onclick="sendReportEmail()" style="background:#0284C7; color:#FFFFFF; font-size:13px; font-weight:800; padding:11px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px; border:none; cursor:pointer;">
+              <span>📧</span> <span>Enviar por Correo Electrónico</span>
+            </button>
+
+            <!-- Opción 4: Previsualizar en Pantalla -->
+            <button type="button" onclick="closeReportUploadModal(); openReportPreviewModal();" style="background:#FFFFFF; border:1.5px solid #0284C7; color:#0284C7; font-size:12px; font-weight:800; padding:10px; border-radius:12px; cursor:pointer; margin-top:4px;">
+              👁️ Previsualizar Informe Completo en Pantalla
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -3333,58 +3486,58 @@
     let measurementHistory = [
       // Hoy (1 de Noviembre 2026)
       { id: 101, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital (OCR)', value: '102 kg (IMC 37.47)', date: 'Hoy (1 Nov), 10:18', day: 'Hoy, 1 Nov 2026', numVal: 102.0, status: '📉 Registrado', badgeColor: 'var(--primary)' },
-      { id: 102, type: 'GLUCOSE', icon: '🩸', label: 'Glucómetro Digital (OCR)', value: '109 mg/dL', date: 'Hoy (1 Nov), 10:17', day: 'Hoy, 1 Nov 2026', numVal: 109, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 103, type: 'BP', icon: '💓', label: 'Tensiómetro Digital', value: '130/74 mmHg (61 lpm)', date: 'Hoy (1 Nov), 08:20', day: 'Hoy, 1 Nov 2026', numVal: 130, numValDia: 74, status: 'Controlada', badgeColor: 'var(--success)' },
-      { id: 104, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '122 mg/dL', date: 'Hoy (1 Nov), 08:15', day: 'Hoy, 1 Nov 2026', numVal: 122, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 102, type: 'GLUCOSE', icon: '🩸', label: 'Glucómetro Digital (OCR)', value: '109 mg/dL', date: 'Hoy (1 Nov), 10:17', day: 'Hoy, 1 Nov 2026', numVal: 109, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 103, type: 'BP', icon: '💓', label: 'Tensiómetro Digital', value: '130/74 mmHg (61 lpm)', date: 'Hoy (1 Nov), 08:20', day: 'Hoy, 1 Nov 2026', numVal: 130, numValDia: 74, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 104, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '122 mg/dL', date: 'Hoy (1 Nov), 08:15', day: 'Hoy, 1 Nov 2026', numVal: 122, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
       { id: 105, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital de Peso', value: '78.5 kg (IMC 26.54)', date: 'Hoy (1 Nov), 08:10', day: 'Hoy, 1 Nov 2026', numVal: 78.5, status: '📉 -4.5 kg', badgeColor: 'var(--primary)' },
 
       // Ayer (31 de Octubre 2026)
-      { id: 201, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Pre-Cena', value: '114 mg/dL', date: 'Ayer (31 Oct), 21:00', day: 'Ayer, 31 Oct 2026', numVal: 114, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 202, type: 'BP', icon: '💓', label: 'Tensión Arterial Noche', value: '126/76 mmHg', date: 'Ayer (31 Oct), 20:30', day: 'Ayer, 31 Oct 2026', numVal: 126, numValDia: 76, status: 'Controlada', badgeColor: 'var(--success)' },
-      { id: 203, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '118 mg/dL', date: 'Ayer (31 Oct), 08:30', day: 'Ayer, 31 Oct 2026', numVal: 118, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
+      { id: 201, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Pre-Cena', value: '114 mg/dL', date: 'Ayer (31 Oct), 21:00', day: 'Ayer, 31 Oct 2026', numVal: 114, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 202, type: 'BP', icon: '💓', label: 'Tensión Arterial Noche', value: '126/76 mmHg', date: 'Ayer (31 Oct), 20:30', day: 'Ayer, 31 Oct 2026', numVal: 126, numValDia: 76, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 203, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '118 mg/dL', date: 'Ayer (31 Oct), 08:30', day: 'Ayer, 31 Oct 2026', numVal: 118, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
       { id: 204, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '101.8 kg', date: 'Ayer (31 Oct), 08:15', day: 'Ayer, 31 Oct 2026', numVal: 101.8, status: 'Estable', badgeColor: 'var(--primary)' },
 
       // 30 de Octubre 2026
-      { id: 301, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '115 mg/dL', date: '30 Oct, 08:20', day: '30 Octubre 2026', numVal: 115, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 302, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '125/78 mmHg', date: '30 Oct, 08:25', day: '30 Octubre 2026', numVal: 125, numValDia: 78, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 301, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '115 mg/dL', date: '30 Oct, 08:20', day: '30 Octubre 2026', numVal: 115, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 302, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '125/78 mmHg', date: '30 Oct, 08:25', day: '30 Octubre 2026', numVal: 125, numValDia: 78, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
       { id: 303, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.0 kg', date: '30 Oct, 08:10', day: '30 Octubre 2026', numVal: 102.0, status: 'Estable', badgeColor: 'var(--primary)' },
 
       // 29 de Octubre 2026
-      { id: 401, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '120 mg/dL', date: '29 Oct, 08:15', day: '29 Octubre 2026', numVal: 120, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 402, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '128/77 mmHg', date: '29 Oct, 08:20', day: '29 Octubre 2026', numVal: 128, numValDia: 77, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 401, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '120 mg/dL', date: '29 Oct, 08:15', day: '29 Octubre 2026', numVal: 120, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 402, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '128/77 mmHg', date: '29 Oct, 08:20', day: '29 Octubre 2026', numVal: 128, numValDia: 77, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
       { id: 403, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.2 kg', date: '29 Oct, 08:05', day: '29 Octubre 2026', numVal: 102.2, status: 'Estable', badgeColor: 'var(--primary)' },
 
       // 28 de Octubre 2026
-      { id: 501, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '116 mg/dL', date: '28 Oct, 08:20', day: '28 Octubre 2026', numVal: 116, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 502, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '124/75 mmHg', date: '28 Oct, 08:25', day: '28 Octubre 2026', numVal: 124, numValDia: 75, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 501, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '116 mg/dL', date: '28 Oct, 08:20', day: '28 Octubre 2026', numVal: 116, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 502, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '124/75 mmHg', date: '28 Oct, 08:25', day: '28 Octubre 2026', numVal: 124, numValDia: 75, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
       { id: 503, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.4 kg', date: '28 Oct, 08:10', day: '28 Octubre 2026', numVal: 102.4, status: 'Estable', badgeColor: 'var(--primary)' },
 
       // 27 de Octubre 2026
-      { id: 601, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '124 mg/dL', date: '27 Oct, 08:15', day: '27 Octubre 2026', numVal: 124, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 602, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '130/80 mmHg', date: '27 Oct, 08:22', day: '27 Octubre 2026', numVal: 130, numValDia: 80, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 601, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '124 mg/dL', date: '27 Oct, 08:15', day: '27 Octubre 2026', numVal: 124, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 602, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '130/80 mmHg', date: '27 Oct, 08:22', day: '27 Octubre 2026', numVal: 130, numValDia: 80, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
       { id: 603, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.6 kg', date: '27 Oct, 08:10', day: '27 Octubre 2026', numVal: 102.6, status: 'Estable', badgeColor: 'var(--primary)' },
 
       // 26 de Octubre 2026
-      { id: 701, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '119 mg/dL', date: '26 Oct, 08:30', day: '26 Octubre 2026', numVal: 119, status: 'En Rango (70-130)', badgeColor: 'var(--success)' },
-      { id: 702, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '127/76 mmHg', date: '26 Oct, 08:35', day: '26 Octubre 2026', numVal: 127, numValDia: 76, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 701, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa en Ayunas', value: '119 mg/dL', date: '26 Oct, 08:30', day: '26 Octubre 2026', numVal: 119, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
+      { id: 702, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '127/76 mmHg', date: '26 Oct, 08:35', day: '26 Octubre 2026', numVal: 127, numValDia: 76, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
       { id: 703, type: 'WEIGHT', icon: '⚖️', label: 'Báscula Digital', value: '102.9 kg', date: '26 Oct, 08:15', day: '26 Octubre 2026', numVal: 102.9, status: 'Estable', badgeColor: 'var(--primary)' },
 
       // Histórico adicional del mes (Días 25 a 5 de Octubre)
       { id: 801, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '121 mg/dL', date: '25 Oct, 08:20', day: '25 Octubre 2026', numVal: 121, status: 'En Rango', badgeColor: 'var(--success)' },
       { id: 802, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '103.1 kg', date: '25 Oct, 08:10', day: '25 Octubre 2026', numVal: 103.1, status: 'Control', badgeColor: 'var(--primary)' },
-      { id: 803, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '129/78 mmHg', date: '25 Oct, 08:25', day: '25 Octubre 2026', numVal: 129, numValDia: 78, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 803, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '129/78 mmHg', date: '25 Oct, 08:25', day: '25 Octubre 2026', numVal: 129, numValDia: 78, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
 
       { id: 901, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '123 mg/dL', date: '20 Oct, 08:15', day: '20 Octubre 2026', numVal: 123, status: 'En Rango', badgeColor: 'var(--success)' },
       { id: 902, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '103.8 kg', date: '20 Oct, 08:10', day: '20 Octubre 2026', numVal: 103.8, status: 'Control', badgeColor: 'var(--primary)' },
-      { id: 903, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '128/77 mmHg', date: '20 Oct, 08:20', day: '20 Octubre 2026', numVal: 128, numValDia: 77, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 903, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '128/77 mmHg', date: '20 Oct, 08:20', day: '20 Octubre 2026', numVal: 128, numValDia: 77, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
 
       { id: 1001, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '126 mg/dL', date: '15 Oct, 08:30', day: '15 Octubre 2026', numVal: 126, status: 'En Rango', badgeColor: 'var(--success)' },
       { id: 1002, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '104.5 kg', date: '15 Oct, 08:15', day: '15 Octubre 2026', numVal: 104.5, status: 'Inicio Dieta', badgeColor: 'var(--primary)' },
-      { id: 1003, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '132/81 mmHg', date: '15 Oct, 08:35', day: '15 Octubre 2026', numVal: 132, numValDia: 81, status: 'Controlada', badgeColor: 'var(--success)' },
+      { id: 1003, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '132/81 mmHg', date: '15 Oct, 08:35', day: '15 Octubre 2026', numVal: 132, numValDia: 81, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' },
 
       { id: 1101, type: 'GLUCOSE', icon: '🩸', label: 'Glucosa Ayunas', value: '128 mg/dL', date: '10 Oct, 08:20', day: '10 Octubre 2026', numVal: 128, status: 'En Rango', badgeColor: 'var(--success)' },
       { id: 1102, type: 'WEIGHT', icon: '⚖️', label: 'Báscula', value: '105.2 kg', date: '10 Oct, 08:10', day: '10 Octubre 2026', numVal: 105.2, status: 'Control', badgeColor: 'var(--primary)' },
-      { id: 1103, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '134/82 mmHg', date: '10 Oct, 08:25', day: '10 Octubre 2026', numVal: 134, numValDia: 82, status: 'Controlada', badgeColor: 'var(--success)' }
+      { id: 1103, type: 'BP', icon: '💓', label: 'Tensión Arterial', value: '134/82 mmHg', date: '10 Oct, 08:25', day: '10 Octubre 2026', numVal: 134, numValDia: 82, status: '✓ En rango objetivo', badgeBg: '#DCFCE7', badgeColor: '#14532D' }
     ];
 
     // Cargar historial de localStorage si existe
@@ -3831,7 +3984,7 @@
                       <div class="history-sub" style="font-size:10.5px; color:#64748B;">${item.label} • <strong>${item.date.replace(/.*,\s*/, '')}</strong></div>
                     </div>
                   </div>
-                  <span class="badge" style="background:${item.badgeColor}; font-size:10px; padding:3px 7px;">${item.status}</span>
+                  <span class="badge" style="background:${item.badgeBg || (item.badgeColor === 'var(--success)' ? '#DCFCE7' : (item.badgeColor === 'var(--warning)' ? '#FEF3C7' : '#EFF6FF'))}; color:${item.badgeTextColor || (item.badgeColor === 'var(--success)' ? '#14532D' : (item.badgeColor === 'var(--warning)' ? '#78350F' : '#0F766E'))}; font-size:10.5px; font-weight:800; padding:3px 8px; border-radius:6px;">${item.status}</span>
                 </div>
               `).join('')}
             </div>
@@ -4291,8 +4444,9 @@
           label: 'Glucómetro Digital (OCR)',
           value: val + ' mg/dL',
           date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
-          status: numVal <= 130 ? 'En Rango (70-130)' : 'Elevada',
-          badgeColor: numVal <= 130 ? 'var(--success)' : 'var(--warning)'
+          status: numVal <= 130 ? '✓ En rango objetivo' : (numVal <= 160 ? '⚠ Ligeramente desviado' : '▲ Atención: fuera de rango'),
+          badgeBg: numVal <= 130 ? '#DCFCE7' : (numVal <= 160 ? '#FEF3C7' : '#FEE2E2'),
+          badgeTextColor: numVal <= 130 ? '#14532D' : (numVal <= 160 ? '#78350F' : '#7F1D1D')
         });
       } else if (currentMetric === 'BP') {
         const sInput = document.getElementById('manual-input-sys');
@@ -4311,8 +4465,9 @@
           label: 'Tensiómetro Digital (OCR)',
           value: val + ' mmHg',
           date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
-          status: 'Controlada',
-          badgeColor: 'var(--success)'
+          status: (parseInt(sys, 10) <= 130 && parseInt(dia, 10) <= 80) ? '✓ En rango objetivo' : ((parseInt(sys, 10) <= 140 && parseInt(dia, 10) <= 90) ? '⚠ Ligeramente desviado' : '▲ Atención: fuera de rango'),
+          badgeBg: (parseInt(sys, 10) <= 130 && parseInt(dia, 10) <= 80) ? '#DCFCE7' : ((parseInt(sys, 10) <= 140 && parseInt(dia, 10) <= 90) ? '#FEF3C7' : '#FEE2E2'),
+          badgeTextColor: (parseInt(sys, 10) <= 130 && parseInt(dia, 10) <= 80) ? '#14532D' : ((parseInt(sys, 10) <= 140 && parseInt(dia, 10) <= 90) ? '#78350F' : '#7F1D1D')
         });
       } else if (currentMetric === 'WEIGHT') {
         const input = document.getElementById('manual-input-weight');
@@ -4568,8 +4723,9 @@
           label: 'Glucómetro Digital (OCR)',
           value: val + ' mg/dL',
           date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
-          status: numVal <= 130 ? 'En Rango (70-130)' : 'Elevada',
-          badgeColor: numVal <= 130 ? 'var(--success)' : 'var(--warning)'
+          status: numVal <= 130 ? '✓ En rango objetivo' : (numVal <= 160 ? '⚠ Ligeramente desviado' : '▲ Atención: fuera de rango'),
+          badgeBg: numVal <= 130 ? '#DCFCE7' : (numVal <= 160 ? '#FEF3C7' : '#FEE2E2'),
+          badgeTextColor: numVal <= 130 ? '#14532D' : (numVal <= 160 ? '#78350F' : '#7F1D1D')
         });
       } else if (currentMetric === 'BP') {
         const val = document.getElementById('detected-val').innerText;
@@ -4581,8 +4737,9 @@
           label: 'Tensiómetro Digital (OCR)',
           value: val + ' mmHg',
           date: 'Hoy (1 Nov), ' + String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0'), day: 'Hoy, 1 Nov 2026', numVal: parseFloat(val),
-          status: 'Controlada',
-          badgeColor: 'var(--success)'
+          status: (parseInt(sys, 10) <= 130 && parseInt(dia, 10) <= 80) ? '✓ En rango objetivo' : ((parseInt(sys, 10) <= 140 && parseInt(dia, 10) <= 90) ? '⚠ Ligeramente desviado' : '▲ Atención: fuera de rango'),
+          badgeBg: (parseInt(sys, 10) <= 130 && parseInt(dia, 10) <= 80) ? '#DCFCE7' : ((parseInt(sys, 10) <= 140 && parseInt(dia, 10) <= 90) ? '#FEF3C7' : '#FEE2E2'),
+          badgeTextColor: (parseInt(sys, 10) <= 130 && parseInt(dia, 10) <= 80) ? '#14532D' : ((parseInt(sys, 10) <= 140 && parseInt(dia, 10) <= 90) ? '#78350F' : '#7F1D1D')
         });
       } else if (currentMetric === 'STEPS') {
         const val = document.getElementById('detected-val').innerText;
@@ -5346,10 +5503,10 @@
           doc.setTextColor(255, 255, 255);
           doc.setFontSize(13);
           doc.setFont('helvetica', 'bold');
-          doc.text('METAVITAL - INFORME CLINICO DE EVOLUCION', 18, 22);
+          doc.text('METAVITAL - REGISTRO DE AUTOCONTROL EXPORTABLE', 18, 22);
           doc.setFontSize(8.5);
           doc.setFont('helvetica', 'normal');
-          doc.text('Estandar KDIGO / ADA / ESC', 148, 22);
+          doc.text('Resumen para Consulta Medica', 136, 22);
 
           // Patient Info Box (Light grey)
           doc.setFillColor(248, 250, 252);
@@ -5456,13 +5613,14 @@
           doc.line(125, 225, 185, 225);
           doc.setTextColor(100, 116, 139);
           doc.setFontSize(8);
-          doc.text('Firma y Sello del Medico Especialista', 128, 230);
+          doc.text('Elaborado por el paciente para revision medica', 115, 230);
           doc.text(doctor.name + ' (' + doctor.center + ')', 128, 234);
 
           // Footer RGPD
           doc.setFontSize(7.5);
           doc.setTextColor(148, 163, 184);
-          doc.text('Documento oficial METAVITAL | Cifrado E2E AES-256 | Cumplimiento estricto HIPAA y RGPD UE 2016/679', 14, 280);
+          doc.text('Aviso: Este documento es un resumen de autocontrol registrado por el paciente. No constituye un informe clinico vinculante, prescripcion medica ni diagnostico.', 14, 278);
+          doc.text('METAVITAL Salud Personal | Cifrado local del dispositivo | Estandar de proteccion de datos RGPD (UE) 2016/679', 14, 283);
 
           const safeFilename = 'Informe_Clinico_METAVITAL_' + patient.fullName.replace(/\s+/g, '_') + '.pdf';
           doc.save(safeFilename);
@@ -5471,7 +5629,7 @@
           if (banner) {
             banner.classList.add('show');
             document.getElementById('alert-title').innerText = '✓ PDF CLÍNICO DESCARGADO';
-            document.getElementById('alert-msg').innerText = 'El informe oficial en A4 se ha guardado en su dispositivo.';
+            document.getElementById('alert-msg').innerText = 'El resumen de constantes en A4 se ha guardado en su dispositivo.';
             setTimeout(() => banner.classList.remove('show'), 3500);
           }
           return;
@@ -5500,7 +5658,7 @@
         `💓 *Presión Media:* 130/74 mmHg (61 lpm)%0A` +
         `💊 *Adherencia Tratamiento:* 96% tomas cumplidas%0A` +
         `👟 *Pasos medios:* ${steps} pasos/día en llano%0A` +
-        `Documento oficial generado con METAVITAL.`;
+        `Registro de autocontrol generado por el paciente con METAVITAL. No constituye diagnóstico ni prescripción médica.`;
       window.open(`https://api.whatsapp.com/send?text=${summary}`, '_blank');
     }
 
@@ -5530,44 +5688,109 @@
       setTimeout(() => banner.classList.remove('show'), 3500);
     }
 
+    let selectedReportFile = null;
+
     function openReportUploadModal() {
-      document.getElementById('report-snap-view').style.display = 'block';
-      document.getElementById('report-extracted-view').style.display = 'none';
-      document.getElementById('report-upload-modal').style.display = 'flex';
+      setReportModalMainTab('UPLOAD');
+      resetReportUploadView();
+      const m = document.getElementById('report-upload-modal');
+      if (m) m.style.display = 'flex';
     }
 
     function closeReportUploadModal() {
-      document.getElementById('report-upload-modal').style.display = 'none';
+      const m = document.getElementById('report-upload-modal');
+      if (m) m.style.display = 'none';
     }
 
-    function setReportUploadTab(tab) {
-      const btnPhoto = document.getElementById('tab-btn-photo');
-      const btnPdf = document.getElementById('tab-btn-pdf');
-      if (tab === 'PHOTO') {
-        btnPhoto.style.background = 'var(--primary)';
-        btnPhoto.style.color = '#FFF';
-        btnPdf.style.background = '#F1F5F9';
-        btnPdf.style.color = '#334155';
+    function setReportModalMainTab(tab) {
+      const tabUpload = document.getElementById('report-subtab-upload');
+      const tabSend = document.getElementById('report-subtab-send');
+      const btnUpload = document.getElementById('btn-report-tab-upload');
+      const btnSend = document.getElementById('btn-report-tab-send');
+
+      if (tab === 'UPLOAD') {
+        if (tabUpload) tabUpload.style.display = 'block';
+        if (tabSend) tabSend.style.display = 'none';
+        if (btnUpload) { btnUpload.style.background = '#0F766E'; btnUpload.style.color = '#FFFFFF'; }
+        if (btnSend) { btnSend.style.background = 'transparent'; btnSend.style.color = '#475569'; }
       } else {
-        btnPdf.style.background = 'var(--primary)';
-        btnPdf.style.color = '#FFF';
-        btnPhoto.style.background = '#F1F5F9';
-        btnPhoto.style.color = '#334155';
+        if (tabUpload) tabUpload.style.display = 'none';
+        if (tabSend) tabSend.style.display = 'block';
+        if (btnSend) { btnSend.style.background = '#0F766E'; btnSend.style.color = '#FFFFFF'; }
+        if (btnUpload) { btnUpload.style.background = 'transparent'; btnUpload.style.color = '#475569'; }
       }
     }
 
+    function triggerReportCamera() {
+      const inp = document.getElementById('report-file-camera');
+      if (inp) inp.click();
+    }
+
+    function triggerReportPdf() {
+      const inp = document.getElementById('report-file-doc');
+      if (inp) inp.click();
+    }
+
+    function handleRealReportFileSelect(input) {
+      if (input.files && input.files[0]) {
+        selectedReportFile = input.files[0];
+        const previewBox = document.getElementById('report-selected-preview');
+        const defaultFrame = document.getElementById('report-default-frame');
+        const fileNameEl = document.getElementById('report-selected-filename');
+        const fileMetaEl = document.getElementById('report-selected-meta');
+
+        if (defaultFrame) defaultFrame.style.display = 'none';
+        if (previewBox) previewBox.style.display = 'block';
+        if (fileNameEl) fileNameEl.textContent = selectedReportFile.name;
+        if (fileMetaEl) {
+          const kb = (selectedReportFile.size / 1024).toFixed(1);
+          fileMetaEl.textContent = `Tamaño: ${kb} KB • Formato: ${selectedReportFile.type || 'Documento'} • Listo para procesar con OCR`;
+        }
+      }
+    }
+
+    function resetReportUploadView() {
+      selectedReportFile = null;
+      const previewBox = document.getElementById('report-selected-preview');
+      const defaultFrame = document.getElementById('report-default-frame');
+      const snapView = document.getElementById('report-snap-view');
+      const extractedView = document.getElementById('report-extracted-view');
+      const inpCam = document.getElementById('report-file-camera');
+      const inpDoc = document.getElementById('report-file-doc');
+
+      if (inpCam) inpCam.value = '';
+      if (inpDoc) inpDoc.value = '';
+      if (previewBox) previewBox.style.display = 'none';
+      if (defaultFrame) defaultFrame.style.display = 'flex';
+      if (snapView) snapView.style.display = 'block';
+      if (extractedView) extractedView.style.display = 'none';
+    }
+
     function simulateScanHospitalReport() {
-      document.getElementById('report-snap-view').style.display = 'none';
-      document.getElementById('report-extracted-view').style.display = 'block';
+      const btn = document.getElementById('btn-process-report');
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = '⏳ Extrayendo datos con OCR...';
+      }
+      setTimeout(() => {
+        document.getElementById('report-snap-view').style.display = 'none';
+        document.getElementById('report-extracted-view').style.display = 'block';
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = '🔍 PROCESAR Y EXTRAER DATOS CLÍNICOS';
+        }
+      }, 700);
     }
 
     function confirmReportExtraction() {
       closeReportUploadModal();
       const banner = document.getElementById('clinical-alert-banner');
-      banner.classList.add('show');
-      document.getElementById('alert-title').innerText = '✓ INFORME DE JAÉN INCORPORADO';
-      document.getElementById('alert-msg').innerText = '8 biomarcadores actualizados y fármacos conciliados (Ozempic 1 mg activo; Trajenta suspendido).';
-      setTimeout(() => banner.classList.remove('show'), 4000);
+      if (banner) {
+        banner.classList.add('show');
+        document.getElementById('alert-title').innerText = '✓ INFORME CLÍNICO INCORPORADO';
+        document.getElementById('alert-msg').innerText = '8 biomarcadores analíticos actualizados en tu expediente y fármacos conciliados con éxito.';
+        setTimeout(() => banner.classList.remove('show'), 4500);
+      }
     }
 
 
@@ -5633,14 +5856,89 @@
       setTimeout(() => banner.classList.remove('show'), 3500);
     }
 
-    function sendMonthlyReportWhatsApp() {
+    
+    // ==========================================
+    // WHATSAPP CONSENT FLOW (RGPD & MDR)
+    // ==========================================
+    let pendingWhatsAppUrl = '';
+
+    function openShareWhatsAppModal() {
+      const summary = `*METAVITAL - Resumen Clínico para Consulta*%0A` +
+        `👤 *Paciente:* ${patient.fullName} (${patient.age} años)%0A` +
+        `⚖️ *Peso/IMC:* ${patient.weightKg} kg (IMC ${patient.bmi} - ${patient.bmiCategory})%0A` +
+        `🩸 *Glucemia TIR:* 85% en rango objetivo%0A` +
+        `💓 *Presión Media:* 130/74 mmHg (61 lpm)%0A` +
+        `💊 *Adherencia Tratamiento:* 96% tomas cumplidas%0A` +
+        `👟 *Pasos medios:* ${steps} pasos/día en llano%0A` +
+        `Resumen de autocontrol generado por el paciente con METAVITAL.`;
+      pendingWhatsAppUrl = `https://api.whatsapp.com/send?text=${summary}`;
+      const modal = document.getElementById('whatsapp-consent-modal');
+      if (modal) modal.style.display = 'flex';
+      else window.open(pendingWhatsAppUrl, '_blank');
+    }
+
+    function triggerSendMonthlyReportWhatsAppWithConsent() {
       const cleanPhone = doctor.phone.replace(/[^0-9]/g, '');
       const now = new Date();
       const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
       const currentMonth = monthNames[now.getMonth()] + ' ' + now.getFullYear();
 
       const lines = [
-        "*METAVITAL - INFORME CLÍNICO MENSUAL DE EVOLUCIÓN*",
+        "*METAVITAL - RESUMEN DE CONSTANTES PARA CONSULTA MÉDICA*",
+        "📅 *Período:* Balance Mensual (" + currentMonth + ")",
+        "👤 *Paciente:* " + patient.fullName + " (" + patient.age + " años • " + patient.heightCm + " cm)",
+        "📍 *Centro:* " + doctor.center,
+        "👨‍⚕️ *Facultativo:* " + doctor.name,
+        "",
+        "📊 *1. CONTROL PONDERAL E IMC*",
+        "• Peso: " + patient.weightKg + " kg (IMC " + patient.bmi + " - " + patient.bmiCategory + ")",
+        "• Actividad: Caminata en llano (" + steps + " pasos/día)",
+        "",
+        "🩸 *2. PERFIL METABÓLICO & CARDIOVASCULAR*",
+        "• Glucosa Basal Media: 118 mg/dL (TIR: 85% en rango objetivo)",
+        "• Presión Arterial Media: 126/78 mmHg (FC: 61 lpm)",
+        "",
+        "🫀 *3. ESTADO RENAL & ELECTROLITOS*",
+        "• Filtrado Glomerular Estimado: 42 mL/min (ERC Estadio 3a)",
+        "• Potasio Sérico: 5.5 mEq/L (Límite alto - Dieta doble cocción activa)",
+        "",
+        "💊 *4. ADHERENCIA TERAPÉUTICA*",
+        "• 96% de tomas correctas registradas",
+        "",
+        "Aviso: Documento de autocontrol registrado por el paciente. No constituye informe clínico vinculante ni diagnóstico."
+      ];
+
+      const text = encodeURIComponent(lines.join("\n"));
+      let url = cleanPhone ? ("https://api.whatsapp.com/send?phone=" + cleanPhone + "&text=" + text) : ("https://api.whatsapp.com/send?text=" + text);
+      pendingWhatsAppUrl = url;
+
+      const modal = document.getElementById('whatsapp-consent-modal');
+      if (modal) modal.style.display = 'flex';
+      else window.open(pendingWhatsAppUrl, '_blank');
+    }
+
+    function proceedToWhatsAppAfterConsent() {
+      closeWhatsAppConsentModal();
+      if (pendingWhatsAppUrl) {
+        window.open(pendingWhatsAppUrl, '_blank');
+        pendingWhatsAppUrl = '';
+      }
+    }
+
+    function closeWhatsAppConsentModal() {
+      const modal = document.getElementById('whatsapp-consent-modal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function sendMonthlyReportWhatsApp() { triggerSendMonthlyReportWhatsAppWithConsent(); return;
+
+      const cleanPhone = doctor.phone.replace(/[^0-9]/g, '');
+      const now = new Date();
+      const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+      const currentMonth = monthNames[now.getMonth()] + ' ' + now.getFullYear();
+
+      const lines = [
+        "*METAVITAL - RESUMEN DE AUTOCONTROL PARA CONSULTA MÉDICA*",
         "📅 *Período:* Balance Mensual (" + currentMonth + ")",
         "👤 *Paciente:* " + patient.fullName + " (" + patient.age + " años • " + patient.heightCm + " cm)",
         "📍 *Centro:* " + doctor.center,
@@ -6197,6 +6495,7 @@
       html += '</div>';
 
       html += '<p style="color:#1E293B; margin-bottom:10px; font-weight:600;">' + statusSummary + '</p>';
+      html += '<div style="background:#FFFBEB; border:1.5px solid #FDE68A; border-radius:10px; padding:10px 12px; margin-bottom:12px; font-size:11.5px; color:#92400E; line-height:1.45; text-align:left;"><strong>Nota clínica:</strong> El contenido de potasio y sodio en vegetales varía sustancialmente según el método de preparación (técnicas de remojo y doble cocción). Usa estos valores como guía orientativa.</div>';
       // Resumen Calórico en Auditoría
       const cDes = estimateMealCalories(des);
       const cCom = estimateMealCalories(com);
@@ -7144,11 +7443,51 @@
         </button>
       </div>
 
-      <div id="pwa-ios-install-view" style="display:none; background:#F8FAFC; border:1px solid #E2E8F0; border-radius:12px; padding:12px; text-align:left; font-size:12px; color:#334155; margin-bottom:12px; line-height:1.6;">
-        <strong>Para instalar en iPhone / iPad:</strong><br>
-        1. Pulsa el botón <strong>Compartir</strong> <span style="font-size:14px;">📤</span> en la barra inferior de Safari.<br>
-        2. Desplaza hacia abajo y selecciona <strong>"Añadir a la pantalla de inicio"</strong> <span style="font-size:14px;">➕</span>.<br>
-        3. Pulsa <strong>Añadir</strong> arriba a la derecha.
+      <div id="pwa-ios-install-view" style="display:none; background:#F8FAFC; border:1.5px solid #CBD5E1; border-radius:16px; padding:16px; text-align:left; font-size:13px; color:#1E293B; margin-bottom:14px; line-height:1.5;">
+        <div style="font-weight:900; font-size:14px; color:#0F172A; margin-bottom:10px; display:flex; align-items:center; gap:6px;">
+          <span>📱</span> <span>Pasos para Instalar en iPhone / iPad (Safari):</span>
+        </div>
+        
+        <!-- Paso 1: Compartir con icono real de Safari -->
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px; background:#FFFFFF; padding:10px; border-radius:12px; border:1px solid #E2E8F0;">
+          <div style="width:36px; height:36px; background:#EFF6FF; border:1.5px solid #3B82F6; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+              <polyline points="16 6 12 2 8 6"/>
+              <line x1="12" y1="2" x2="12" y2="15"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-weight:800; font-size:13px; color:#1E293B;">1. Toca "Compartir"</div>
+            <div style="font-size:11.5px; color:#64748B;">En la barra inferior de navegación de Safari.</div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Deslizar hacia abajo -->
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:10px; background:#FFFFFF; padding:10px; border-radius:12px; border:1px solid #E2E8F0;">
+          <div style="width:36px; height:36px; background:#FEF3C7; border:1.5px solid #F59E0B; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0;">
+            ⬇️
+          </div>
+          <div>
+            <div style="font-weight:800; font-size:13px; color:#1E293B;">2. Desliza hacia abajo</div>
+            <div style="font-size:11.5px; color:#64748B;">En el menú de opciones que se despliega.</div>
+          </div>
+        </div>
+
+        <!-- Paso 3: Añadir a pantalla de inicio -->
+        <div style="display:flex; align-items:center; gap:12px; background:#FFFFFF; padding:10px; border-radius:12px; border:1px solid #E2E8F0;">
+          <div style="width:36px; height:36px; background:#ECFDF5; border:1.5px solid #10B981; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <line x1="12" y1="8" x2="12" y2="16"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+            </svg>
+          </div>
+          <div>
+            <div style="font-weight:800; font-size:13px; color:#1E293B;">3. "Añadir a pantalla de inicio"</div>
+            <div style="font-size:11.5px; color:#64748B;">Pulsa el botón (+) y luego confirma arriba a la derecha.</div>
+          </div>
+        </div>
       </div>
 
       <button class="btn-secondary" onclick="closePwaInstallModal()" style="width:100%; padding:10px; font-size:12px; font-weight:700;">
@@ -7218,13 +7557,13 @@
     // 1. Purgado forzoso de cachés antiguas en clientes locales
     (function autoPurgeOldCaches() {
       try {
-        const CURRENT_VERSION = 'v2.31.0';
+        const CURRENT_VERSION = 'v2.32.0';
         if (localStorage.getItem('metavital_last_version') !== CURRENT_VERSION) {
           localStorage.setItem('metavital_last_version', CURRENT_VERSION);
           if ('caches' in window) {
             caches.keys().then(keys => {
               keys.forEach(k => {
-                if (k !== 'metavital-cache-v2.31.0') {
+                if (k !== 'metavital-cache-v2.32.0') {
                   caches.delete(k);
                 }
               });
@@ -7302,6 +7641,7 @@ document.addEventListener('click', (e) => {
 <script>
 // PWA Launch Splash Screen Controller
 window.addEventListener('DOMContentLoaded', () => {
+      if (typeof checkWeeklyBackupReminder === 'function') checkWeeklyBackupReminder();
   const splash = document.getElementById('pwa-launch-splash');
   if (splash) {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
